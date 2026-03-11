@@ -81,6 +81,16 @@ fun TimelineScreen(
                             )
                         }
                     }
+                    if (state.compareData != null) {
+                        item(key = "compare_card") {
+                            CompareCard(
+                                data = state.compareData,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = MaterialTheme.spacing.md),
+                            )
+                        }
+                    }
                     items(state.records, key = { it.id }) { record ->
                         TimelineRecordItem(record)
                     }

@@ -4,9 +4,9 @@
 ## 当前状态（新session必读5行）
 - **阶段**: MVP Phase 1
 - **当前里程碑**: M1 - 核心功能（进行中）
-- **当前工作**: 时间线趋势图（TrendChart）已完成 — Canvas 自绘折线图 + overallScore
+- **当前工作**: 前后对比图（CompareCard）已完成 — 自动取首尾有分记录并排展示
 - **阻塞问题**: 无（Supabase项目待创建，用placeholder）
-- **下一步**: AI图像分析接口 → 分析结果存储 → 前后对比图
+- **下一步**: AI图像分析接口 → 分析结果存储 → 归因分析报告页
 
 ## 技术栈
 - **客户端**: Compose Multiplatform (KMP) — composeApp(commonMain/androidMain/iosMain)
@@ -38,7 +38,7 @@
 - [x] 修复 ImageCompressor expect class 缺少默认构造函数
 - [ ] Supabase项目创建 + 数据库表初始化
 
-### M1: 核心功能 [■■■■□□□□□□] 40%
+### M1: 核心功能 [■■■■■□□□□□] 50%
 - [x] 相机页 + 人脸引导框 (expect/actual)
 - [x] 图片压缩 + 本地存储 (ImageStorage expect/actual → filesDir/skin_photos/)
 - [x] 拍照保存流程 (CameraViewModel: compress → saveImage → SkinRecord → Room)
@@ -47,7 +47,7 @@
 - [ ] AI图像分析接口 (Ktor → LLM API)
 - [ ] 分析结果本地存储 (Room)
 - [x] 时间线趋势图 (TrendChart — Canvas折线图, overallScore, 升序, >=2点显示)
-- [ ] 前后对比图 (CompareCard)
+- [x] 前后对比图 (CompareCard — 自动首尾对比, overallScore 变化, 文本箭头指示)
 - [ ] 归因分析报告页 (LLM归因)
 - [ ] 用户认证 (Supabase Auth)
 - [ ] 个人中心页
@@ -80,7 +80,7 @@
 |------|------|------|
 | TrendChart | 折线趋势图（皮肤指标变化） | ✅ 完成 |
 | RadarChart | 雷达图（多维度皮肤评分） | 待开始 |
-| CompareCard | 前后对比卡片 | 待开始 |
+| CompareCard | 前后对比卡片 | ✅ 完成 |
 
 ## expect/actual 模块
 | 模块 | Android | iOS | 状态 |

@@ -17,13 +17,22 @@ class TimelineViewModel(
         .getRecordsByUser("local-user")
         .map { records ->
             if (records.isEmpty()) TimelineUiState.Empty
-            else TimelineUiState.Content(
-                records = records,
-                chartPoints = records
+            else {
+                val scoredRecords = records
                     .filter { it.overallScore != null }
                     .sortedBy { it.recordedAt }
-                    .map { ChartRecord(date = it.recordedAt, overallScore = it.overallScore!!) },
-            )
+
+                val compareData = if (scoredRecords.size >= 2)
+                    CompareData(before = scoredRecords.first(), after = scoredRecords.last())
+                else null
+
+                TimelineUiState.Content(
+                    records = records,
+                    chartPoints = scoredRecords
+                        .map { ChartRecord(date = it.recordedAt, overallScore = it.overallScore!!) },
+                    compareData = compareData,
+                )
+            }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TimelineUiState.Loading)
 }
@@ -34,5 +43,6 @@ sealed interface TimelineUiState {
     data class Content(
         val records: List<SkinRecord>,
         val chartPoints: List<ChartRecord>,
+        val compareData: CompareData? = null,
     ) : TimelineUiState
 }
