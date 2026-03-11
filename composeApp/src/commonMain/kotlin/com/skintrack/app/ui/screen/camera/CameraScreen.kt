@@ -12,7 +12,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -28,6 +31,7 @@ import coil3.compose.AsyncImage
 import com.skintrack.app.platform.CameraPreview
 import com.skintrack.app.platform.PermissionStatus
 import com.skintrack.app.platform.rememberCameraPermissionState
+import com.skintrack.app.ui.component.ErrorContent
 import com.skintrack.app.ui.component.LoadingContent
 import com.skintrack.app.ui.theme.extendedColors
 import com.skintrack.app.ui.theme.spacing
@@ -98,13 +102,39 @@ private fun CameraContent(viewModel: CameraViewModel) {
             }
         }
         is CameraUiState.Saved -> {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(
+                    MaterialTheme.spacing.md,
+                    Alignment.CenterVertically,
+                ),
+            ) {
+                Icon(
+                    imageVector = Icons.Default.CheckCircle,
+                    contentDescription = null,
+                    modifier = Modifier.size(MaterialTheme.spacing.section),
+                    tint = MaterialTheme.extendedColors.functional.success,
+                )
+                Text(
+                    text = "保存成功",
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+                Text(
+                    text = "照片已保存到本地记录",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+        is CameraUiState.Error -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(
-                    text = "保存成功",
-                    style = MaterialTheme.typography.headlineSmall,
+                ErrorContent(
+                    message = state.message,
+                    onRetry = viewModel::resetToPreview,
                 )
             }
         }

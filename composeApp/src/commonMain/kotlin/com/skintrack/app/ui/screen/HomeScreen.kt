@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import cafe.adriel.voyager.core.screen.Screen
 import com.skintrack.app.ui.screen.camera.CameraScreen
+import com.skintrack.app.ui.screen.timeline.TimelineScreen
 
 class HomeScreen : Screen {
 
@@ -84,8 +85,7 @@ private fun CameraTabContent() {
 
 @Composable
 private fun TimelineTabContent() {
-    // TODO: Replace with TimelineScreen
-    Text("皮肤趋势")
+    TimelineScreen()
 }
 
 @Composable

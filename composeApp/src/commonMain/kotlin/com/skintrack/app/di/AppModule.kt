@@ -8,7 +8,9 @@ import com.skintrack.app.data.repository.SkinRecordRepositoryImpl
 import com.skintrack.app.domain.repository.ProductRepository
 import com.skintrack.app.domain.repository.SkinRecordRepository
 import com.skintrack.app.platform.ImageCompressor
+import com.skintrack.app.platform.ImageStorage
 import com.skintrack.app.ui.screen.camera.CameraViewModel
+import com.skintrack.app.ui.screen.timeline.TimelineViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
@@ -54,7 +56,9 @@ val appModule = module {
 
     // Platform
     single { ImageCompressor() }
+    single { ImageStorage() }
 
     // ViewModels
     viewModelOf(::CameraViewModel)
+    viewModelOf(::TimelineViewModel)
 }

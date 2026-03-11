@@ -4,9 +4,9 @@
 ## 当前状态（新session必读5行）
 - **阶段**: MVP Phase 1
 - **当前里程碑**: M1 - 核心功能（进行中）
-- **当前工作**: 设计系统已建立，相机页代码已完成（未编译验证）
+- **当前工作**: 拍照→压缩→本地存储→Room记录→时间线展示 完整闭环已打通
 - **阻塞问题**: 无（Supabase项目待创建，用placeholder）
-- **下一步**: Gradle编译验证 → 图片压缩 + Storage上传 → AI分析接口
+- **下一步**: AI图像分析接口 → 分析结果存储 → 护肤品记录页
 
 ## 技术栈
 - **客户端**: Compose Multiplatform (KMP) — composeApp(commonMain/androidMain/iosMain)
@@ -26,7 +26,7 @@
 - [x] 改造 FaceGuideOverlay / CameraScreen / LoadingContent 使用设计 token
 - [x] DESIGN_SYSTEM.md 文档
 
-### M0: 项目搭建 [■■■■■■■■■□] 90%
+### M0: 项目搭建 [■■■■■■■■■■] 95%
 - [x] KMP项目初始化 (Gradle + libs.versions.toml)
 - [x] 配置 Room + Ktor + Supabase + Koin
 - [x] 基础架构搭建 (domain/data/ui/platform分层)
@@ -34,12 +34,15 @@
 - [x] 域模型 + Repository接口 + Room实体/DAO
 - [x] Koin DI模块 + SkinTrackApplication
 - [x] expect/actual 占位 (CameraController, ImageCompressor)
+- [x] Gradle构建验证 ✅ BUILD SUCCESSFUL
+- [x] 修复 ImageCompressor expect class 缺少默认构造函数
 - [ ] Supabase项目创建 + 数据库表初始化
-- [ ] Gradle构建验证
 
-### M1: 核心功能 [□□□□□□□□□□] 0%
-- [ ] 相机页 + 人脸引导框 (expect/actual)
-- [ ] 图片压缩 + Supabase Storage上传
+### M1: 核心功能 [■■□□□□□□□□] 20%
+- [x] 相机页 + 人脸引导框 (expect/actual)
+- [x] 图片压缩 + 本地存储 (ImageStorage expect/actual → filesDir/skin_photos/)
+- [x] 拍照保存流程 (CameraViewModel: compress → saveImage → SkinRecord → Room)
+- [x] 时间线页 (TimelineScreen + TimelineViewModel + formatters)
 - [ ] AI图像分析接口 (Ktor → LLM API)
 - [ ] 分析结果本地存储 (Room)
 - [ ] 护肤品记录页 (扫码/搜索/历史复用)
@@ -65,8 +68,8 @@
 ## 页面完成度
 | # | 页面 | CMP(common) | expect/actual | Supabase | 状态 |
 |---|------|-------------|---------------|----------|------|
-| 1 | 拍照页 CameraScreen | — | 相机 | 图片上传 | 待开始 |
-| 2 | 时间线 TimelineScreen | — | — | 查询数据 | 待开始 |
+| 1 | 拍照页 CameraScreen | ✅ | 相机+存储 | 图片上传 | 基础完成 |
+| 2 | 时间线 TimelineScreen | ✅ | — | 查询数据 | 基础完成 |
 | 3 | 护肤品记录 SkincareScreen | — | — | CRUD | 待开始 |
 | 4 | 归因报告 ReportScreen | — | — | 查询+LLM | 待开始 |
 | 5 | 个人中心 ProfileScreen | — | — | 用户信息 | 待开始 |
@@ -82,7 +85,8 @@
 ## expect/actual 模块
 | 模块 | Android | iOS | 状态 |
 |------|---------|-----|------|
-| CameraController | CameraX | AVFoundation | 待开始 |
-| ImageCompressor | Bitmap压缩 | UIImage压缩 | 待开始 |
+| CameraController | CameraX | AVFoundation | Android完成 |
+| ImageCompressor | Bitmap压缩 | UIImage压缩 | Android完成 |
+| ImageStorage | filesDir写入 | — | Android完成 |
 | PaymentManager | 微信支付SDK | StoreKit 2 | 待开始 |
 | NotificationManager | FCM | APNs | 待开始 |
