@@ -5,14 +5,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.skintrack.app.data.local.applicationContext
 import com.skintrack.app.di.appModule
 import org.koin.core.context.startKoin
 
 class SkinTrackApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        applicationContext = this
+        com.skintrack.app.data.local.applicationContext = this
         startKoin {
             modules(appModule)
         }

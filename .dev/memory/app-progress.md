@@ -1,12 +1,12 @@
-<!-- Last updated: 2026-03-10 -->
+<!-- Last updated: 2026-03-11 -->
 # SkinTrack 开发进度
 
 ## 当前状态（新session必读5行）
 - **阶段**: MVP Phase 1
-- **当前里程碑**: M0 - 项目搭建（90%完成）
-- **当前工作**: 项目脚手架已完成，待Gradle构建验证
+- **当前里程碑**: M1 - 核心功能（进行中）
+- **当前工作**: 设计系统已建立，相机页代码已完成（未编译验证）
 - **阻塞问题**: 无（Supabase项目待创建，用placeholder）
-- **下一步**: 验证Gradle构建 → 创建Supabase项目 → 开始M1相机页
+- **下一步**: Gradle编译验证 → 图片压缩 + Storage上传 → AI分析接口
 
 ## 技术栈
 - **客户端**: Compose Multiplatform (KMP) — composeApp(commonMain/androidMain/iosMain)
@@ -15,6 +15,17 @@
 - **代码仓库**: H:\projects\skintrack
 
 ## 里程碑规划
+### M0.5: 设计系统 [■■■■■■■■■■] 100%
+- [x] Color.kt — 品牌色阶 + 功能色 + 皮肤指标色 + 相机色
+- [x] ExtendedColors.kt — SkinMetricColors / FunctionalColors / CameraColors + CompositionLocal
+- [x] Spacing.kt — xs/sm/md/lg/xl/xxl/section tokens
+- [x] Shape.kt — Material 3 Shapes + FullRoundedShape
+- [x] Gradient.kt — primary / scoreRing / warm / surface gradients
+- [x] Type.kt — Typography (系统字体 + 自定义 weight/size)
+- [x] Theme.kt — 重写：ColorScheme + ExtendedColors + Gradients + Spacing + Typography + Shapes
+- [x] 改造 FaceGuideOverlay / CameraScreen / LoadingContent 使用设计 token
+- [x] DESIGN_SYSTEM.md 文档
+
 ### M0: 项目搭建 [■■■■■■■■■□] 90%
 - [x] KMP项目初始化 (Gradle + libs.versions.toml)
 - [x] 配置 Room + Ktor + Supabase + Koin

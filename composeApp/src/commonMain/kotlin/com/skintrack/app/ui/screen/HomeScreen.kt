@@ -4,12 +4,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.ShowChart
-import androidx.compose.material.icons.outlined.CameraAlt
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.ShowChart
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import cafe.adriel.voyager.core.screen.Screen
+import com.skintrack.app.ui.screen.camera.CameraScreen
 
 class HomeScreen : Screen {
 
@@ -32,8 +33,8 @@ class HomeScreen : Screen {
         var selectedTab by remember { mutableStateOf(0) }
 
         val tabs = listOf(
-            TabItem("拍照", Icons.Filled.CameraAlt, Icons.Outlined.CameraAlt),
-            TabItem("趋势", Icons.Filled.ShowChart, Icons.Outlined.ShowChart),
+            TabItem("拍照", Icons.Filled.Home, Icons.Outlined.Home),
+            TabItem("趋势", Icons.Filled.Search, Icons.Outlined.Search),
             TabItem("我的", Icons.Filled.Person, Icons.Outlined.Person),
         )
 
@@ -78,8 +79,7 @@ private data class TabItem(
 
 @Composable
 private fun CameraTabContent() {
-    // TODO: Replace with CameraScreen
-    Text("拍照记录")
+    CameraScreen()
 }
 
 @Composable

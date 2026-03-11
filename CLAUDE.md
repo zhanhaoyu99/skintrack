@@ -11,6 +11,18 @@
 
 **每次完成实质工作后，必须更新 `.dev/memory/app-progress.md`。**
 
+## 设计系统
+
+详见 `DESIGN_SYSTEM.md`。UI 代码必须使用设计 token，禁止硬编码颜色/间距。
+
+```kotlin
+MaterialTheme.extendedColors.xxx  // 扩展色
+MaterialTheme.spacing.xxx         // 间距
+MaterialTheme.gradients.xxx       // 渐变
+MaterialTheme.colorScheme.xxx     // Material 3 标准色
+MaterialTheme.shapes.xxx          // 圆角
+```
+
 ## 技术栈
 
 KMP + Compose Multiplatform + Supabase + Room KMP

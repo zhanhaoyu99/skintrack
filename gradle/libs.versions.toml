@@ -32,6 +32,9 @@ supabase = "3.1.1"
 # Logging
 napier = "2.7.1"
 
+# CameraX
+androidx-camera = "1.4.1"
+
 # Android
 android-minSdk = "26"
 android-compileSdk = "35"
@@ -89,6 +92,12 @@ voyager-koin = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voy
 supabase-auth = { module = "io.github.jan-tennert.supabase:auth-kt", version.ref = "supabase" }
 supabase-postgrest = { module = "io.github.jan-tennert.supabase:postgrest-kt", version.ref = "supabase" }
 supabase-storage = { module = "io.github.jan-tennert.supabase:storage-kt", version.ref = "supabase" }
+
+# CameraX
+androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "androidx-camera" }
+androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "androidx-camera" }
+androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "androidx-camera" }
+androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "androidx-camera" }
 
 # Logging
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }

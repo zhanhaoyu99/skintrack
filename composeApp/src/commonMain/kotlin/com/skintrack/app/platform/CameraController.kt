@@ -1,6 +1,5 @@
 package com.skintrack.app.platform
 
-expect class CameraController {
+interface CameraController {
     suspend fun takePhoto(): ByteArray?
-    fun isAvailable(): Boolean
 }

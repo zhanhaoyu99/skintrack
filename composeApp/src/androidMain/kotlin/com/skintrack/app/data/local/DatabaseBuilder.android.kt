@@ -6,7 +6,7 @@ import androidx.room.RoomDatabase
 
 lateinit var applicationContext: Context
 
-fun getDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
+actual fun getDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
     val dbFile = applicationContext.getDatabasePath("skintrack.db")
     return Room.databaseBuilder<AppDatabase>(
         context = applicationContext,
