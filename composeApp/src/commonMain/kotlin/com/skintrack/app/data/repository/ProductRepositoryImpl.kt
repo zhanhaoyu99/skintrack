@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 class ProductRepositoryImpl(
     private val productDao: SkincareProductDao,
@@ -37,6 +38,23 @@ class ProductRepositoryImpl(
         val epochMs = date.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
         return usageDao.getUsageByDate(userId, epochMs).map { entities ->
             entities.map { it.toDomain(date) }
+        }
+    }
+
+    override fun getUsageBetween(
+        userId: String,
+        startDate: LocalDate,
+        endDate: LocalDate,
+    ): Flow<List<DailyProductUsage>> {
+        val startMs = startDate.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+        val endMs = endDate.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+        return usageDao.getUsageBetween(userId, startMs, endMs).map { entities ->
+            entities.map { entity ->
+                val epochMs = entity.usedDate
+                val instant = kotlinx.datetime.Instant.fromEpochMilliseconds(epochMs)
+                val date = instant.toLocalDateTime(TimeZone.currentSystemDefault()).date
+                entity.toDomain(date)
+            }
         }
     }
 

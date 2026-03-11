@@ -4,9 +4,9 @@
 ## 当前状态（新session必读5行）
 - **阶段**: MVP Phase 1
 - **当前里程碑**: M1 - 核心功能（进行中）
-- **当前工作**: 记录详情页 RecordDetailScreen 已完成 — 时间线点击→push详情页→评分+指标+AI摘要+当日用品
+- **当前工作**: 归因分析报告页 AttributionReportScreen 已完成 — 本地统计归因（使用日均分 vs 未使用日均分）+ 产品影响排行 + 综合趋势
 - **阻塞问题**: 无（Supabase项目待创建，用placeholder）
-- **下一步**: 归因分析报告页 → 用户认证 → 个人中心
+- **下一步**: 用户认证 → 个人中心
 
 ## 技术栈
 - **客户端**: Compose Multiplatform (KMP) — composeApp(commonMain/androidMain/iosMain)
@@ -38,7 +38,7 @@
 - [x] 修复 ImageCompressor expect class 缺少默认构造函数
 - [ ] Supabase项目创建 + 数据库表初始化
 
-### M1: 核心功能 [■■■■■■■□□□] 70%
+### M1: 核心功能 [■■■■■■■■□□] 80%
 - [x] 相机页 + 人脸引导框 (expect/actual)
 - [x] 图片压缩 + 本地存储 (ImageStorage expect/actual → filesDir/skin_photos/)
 - [x] 拍照保存流程 (CameraViewModel: compress → saveImage → SkinRecord → Room)
@@ -49,7 +49,7 @@
 - [x] 时间线趋势图 (TrendChart — Canvas折线图, overallScore, 升序, >=2点显示)
 - [x] 前后对比图 (CompareCard — 自动首尾对比, overallScore 变化, 文本箭头指示)
 - [x] 记录详情页 (RecordDetailScreen — 评分总览+指标条形图+AI摘要+当日用品+记录信息)
-- [ ] 归因分析报告页 (LLM归因)
+- [x] 归因分析报告页 (本地统计归因 MVP, 后续替换 LLM)
 - [ ] 用户认证 (Supabase Auth)
 - [ ] 个人中心页
 
@@ -73,7 +73,7 @@
 | 2 | 时间线 TimelineScreen | ✅ | — | 查询数据 | 基础完成 |
 | 3 | 护肤品记录 ProductScreen | ✅ | — | CRUD | 基础完成 |
 | 4 | 记录详情 RecordDetailScreen | ✅ | — | — | 基础完成 |
-| 5 | 归因报告 ReportScreen | — | — | 查询+LLM | 待开始 |
+| 5 | 归因报告 AttributionReportScreen | ✅ | — | 查询+LLM | 基础完成 |
 | 6 | 个人中心 ProfileScreen | — | — | 用户信息 | 待开始 |
 | 7 | 登录/注册 AuthScreen | — | — | Supabase Auth | 待开始 |
 

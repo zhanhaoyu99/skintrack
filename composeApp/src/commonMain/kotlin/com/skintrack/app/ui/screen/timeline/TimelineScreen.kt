@@ -30,6 +30,7 @@ import com.skintrack.app.domain.model.SkinRecord
 import com.skintrack.app.platform.pathToImageModel
 import com.skintrack.app.ui.component.EmptyContent
 import com.skintrack.app.ui.component.LoadingContent
+import com.skintrack.app.ui.screen.attribution.AttributionReportScreen
 import com.skintrack.app.ui.screen.report.RecordDetailScreen
 import com.skintrack.app.ui.theme.spacing
 import org.koin.compose.viewmodel.koinViewModel
@@ -96,6 +97,16 @@ fun TimelineScreen(
                             )
                         }
                     }
+                    if (state.records.size >= 3) {
+                        item(key = "attribution_entry") {
+                            AttributionEntryCard(
+                                onClick = { navigator.push(AttributionReportScreen()) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = MaterialTheme.spacing.md),
+                            )
+                        }
+                    }
                     items(state.records, key = { it.id }) { record ->
                         TimelineRecordItem(
                             record = record,
@@ -156,6 +167,45 @@ private fun TimelineRecordItem(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun AttributionEntryCard(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        modifier = modifier.clickable(onClick = onClick),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(MaterialTheme.spacing.md),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs),
+            ) {
+                Text(
+                    text = "归因分析报告",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+                Text(
+                    text = "查看产品对皮肤的影响",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Text(
+                text = "→",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

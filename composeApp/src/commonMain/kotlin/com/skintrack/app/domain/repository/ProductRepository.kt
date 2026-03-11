@@ -11,6 +11,7 @@ interface ProductRepository {
     suspend fun saveProduct(product: SkincareProduct)
     suspend fun deleteProduct(product: SkincareProduct)
     fun getUsageByDate(userId: String, date: LocalDate): Flow<List<DailyProductUsage>>
+    fun getUsageBetween(userId: String, startDate: LocalDate, endDate: LocalDate): Flow<List<DailyProductUsage>>
     suspend fun logUsage(usage: DailyProductUsage)
     suspend fun removeUsage(userId: String, productId: String, date: LocalDate)
     suspend fun syncToRemote()

@@ -18,6 +18,9 @@ interface DailyProductUsageDao {
     @Query("SELECT * FROM daily_product_usage WHERE synced = 0")
     suspend fun getUnsynced(): List<DailyProductUsageEntity>
 
+    @Query("SELECT * FROM daily_product_usage WHERE userId = :userId AND usedDate BETWEEN :startDate AND :endDate")
+    fun getUsageBetween(userId: String, startDate: Long, endDate: Long): Flow<List<DailyProductUsageEntity>>
+
     @Query("DELETE FROM daily_product_usage WHERE userId = :userId AND productId = :productId AND usedDate = :date")
     suspend fun deleteByUserAndProductAndDate(userId: String, productId: String, date: Long)
 

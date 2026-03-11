@@ -9,6 +9,7 @@ import com.skintrack.app.domain.repository.ProductRepository
 import com.skintrack.app.domain.repository.SkinRecordRepository
 import com.skintrack.app.platform.ImageCompressor
 import com.skintrack.app.platform.ImageStorage
+import com.skintrack.app.ui.screen.attribution.AttributionReportViewModel
 import com.skintrack.app.ui.screen.camera.CameraViewModel
 import com.skintrack.app.ui.screen.product.ProductViewModel
 import com.skintrack.app.ui.screen.report.RecordDetailViewModel
@@ -61,6 +62,7 @@ val appModule = module {
     single { ImageStorage() }
 
     // ViewModels
+    viewModelOf(::AttributionReportViewModel)
     viewModelOf(::CameraViewModel)
     viewModelOf(::ProductViewModel)
     viewModelOf(::RecordDetailViewModel)
