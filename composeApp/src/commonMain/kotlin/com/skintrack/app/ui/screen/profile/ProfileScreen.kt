@@ -32,8 +32,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.skintrack.app.domain.model.AuthUser
 import com.skintrack.app.ui.component.LoadingContent
 import com.skintrack.app.ui.screen.attribution.AttributionReportScreen
+import com.skintrack.app.ui.screen.auth.AuthScreen
 import com.skintrack.app.ui.screen.product.ProductManageScreen
 import com.skintrack.app.ui.theme.spacing
 import org.koin.compose.viewmodel.koinViewModel
@@ -44,6 +46,7 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val authUser by viewModel.authUser.collectAsState()
     val navigator = LocalNavigator.currentOrThrow
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -64,11 +67,15 @@ fun ProfileScreen(
                         .padding(horizontal = MaterialTheme.spacing.lg),
                     verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
                 ) {
-                    UserInfoCard()
+                    UserInfoCard(authUser)
                     StatsCard(state)
                     MenuSection(
                         onProductManage = { navigator.push(ProductManageScreen()) },
                         onAttributionReport = { navigator.push(AttributionReportScreen()) },
+                        onLogout = {
+                            viewModel.logout()
+                            navigator.replaceAll(AuthScreen())
+                        },
                     )
                 }
             }
@@ -77,7 +84,7 @@ fun ProfileScreen(
 }
 
 @Composable
-private fun UserInfoCard() {
+private fun UserInfoCard(authUser: AuthUser?) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
@@ -102,11 +109,11 @@ private fun UserInfoCard() {
             }
             Column {
                 Text(
-                    text = "本地用户",
+                    text = authUser?.displayName ?: authUser?.email ?: "本地用户",
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
-                    text = "登录后同步数据",
+                    text = if (authUser != null) authUser.email else "登录后同步数据",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -171,6 +178,7 @@ private fun StatItem(
 private fun MenuSection(
     onProductManage: () -> Unit,
     onAttributionReport: () -> Unit,
+    onLogout: () -> Unit,
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column {
@@ -180,6 +188,17 @@ private fun MenuSection(
             HorizontalDivider(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md))
             MenuItem(title = "关于 SkinTrack", onClick = {})
         }
+    }
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = "退出登录",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.error,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onLogout)
+                .padding(MaterialTheme.spacing.md),
+        )
     }
 }
 

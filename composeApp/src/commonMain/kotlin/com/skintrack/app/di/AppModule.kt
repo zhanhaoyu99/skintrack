@@ -3,13 +3,16 @@ package com.skintrack.app.di
 import com.skintrack.app.data.local.AppDatabase
 import com.skintrack.app.data.local.getDatabaseBuilder
 import com.skintrack.app.data.remote.AiAnalysisService
+import com.skintrack.app.data.repository.MockAuthRepository
 import com.skintrack.app.data.repository.ProductRepositoryImpl
 import com.skintrack.app.data.repository.SkinRecordRepositoryImpl
+import com.skintrack.app.domain.repository.AuthRepository
 import com.skintrack.app.domain.repository.ProductRepository
 import com.skintrack.app.domain.repository.SkinRecordRepository
 import com.skintrack.app.platform.ImageCompressor
 import com.skintrack.app.platform.ImageStorage
 import com.skintrack.app.ui.screen.attribution.AttributionReportViewModel
+import com.skintrack.app.ui.screen.auth.AuthViewModel
 import com.skintrack.app.ui.screen.camera.CameraViewModel
 import com.skintrack.app.ui.screen.product.ProductViewModel
 import com.skintrack.app.ui.screen.profile.ProfileViewModel
@@ -29,11 +32,12 @@ val appModule = module {
     // Database
     single {
         val builder = getDatabaseBuilder()
-        builder.build()
+        builder.fallbackToDestructiveMigration(true).build()
     }
     single { get<AppDatabase>().skinRecordDao() }
     single { get<AppDatabase>().skincareProductDao() }
     single { get<AppDatabase>().dailyProductUsageDao() }
+    single { get<AppDatabase>().authSessionDao() }
 
     // Network
     single {
@@ -55,6 +59,7 @@ val appModule = module {
     single { AiAnalysisService(get()) }
 
     // Repositories
+    single<AuthRepository> { MockAuthRepository(get()) }
     single<SkinRecordRepository> { SkinRecordRepositoryImpl(get()) }
     single<ProductRepository> { ProductRepositoryImpl(get(), get()) }
 
@@ -63,6 +68,7 @@ val appModule = module {
     single { ImageStorage() }
 
     // ViewModels
+    viewModelOf(::AuthViewModel)
     viewModelOf(::AttributionReportViewModel)
     viewModelOf(::CameraViewModel)
     viewModelOf(::ProductViewModel)

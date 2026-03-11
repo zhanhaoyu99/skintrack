@@ -4,9 +4,9 @@
 ## 当前状态（新session必读5行）
 - **阶段**: MVP Phase 1
 - **当前里程碑**: M1 - 核心功能（进行中）
-- **当前工作**: 个人中心 ProfileScreen 已完成 — 用户信息卡 + 皮肤统计卡 + 功能菜单（护肤品管理/归因报告/关于）
-- **阻塞问题**: 无（Supabase项目待创建，用placeholder）
-- **下一步**: 用户认证（Supabase Auth）
+- **当前工作**: 用户认证 AuthScreen 已完成 — Mock 模式登录/注册 + Room 持久化 auth_session + 退出登录
+- **阻塞问题**: 无（Supabase项目待创建，用 MockAuthRepository）
+- **下一步**: M2 变现功能 或 Supabase 接入（替换 Mock 为 SupabaseAuthRepository）
 
 ## 技术栈
 - **客户端**: Compose Multiplatform (KMP) — composeApp(commonMain/androidMain/iosMain)
@@ -38,7 +38,7 @@
 - [x] 修复 ImageCompressor expect class 缺少默认构造函数
 - [ ] Supabase项目创建 + 数据库表初始化
 
-### M1: 核心功能 [■■■■■■■■■□] 85%
+### M1: 核心功能 [■■■■■■■■■■] 95%
 - [x] 相机页 + 人脸引导框 (expect/actual)
 - [x] 图片压缩 + 本地存储 (ImageStorage expect/actual → filesDir/skin_photos/)
 - [x] 拍照保存流程 (CameraViewModel: compress → saveImage → SkinRecord → Room)
@@ -50,7 +50,7 @@
 - [x] 前后对比图 (CompareCard — 自动首尾对比, overallScore 变化, 文本箭头指示)
 - [x] 记录详情页 (RecordDetailScreen — 评分总览+指标条形图+AI摘要+当日用品+记录信息)
 - [x] 归因分析报告页 (本地统计归因 MVP, 后续替换 LLM)
-- [ ] 用户认证 (Supabase Auth)
+- [x] 用户认证 (Mock Auth — Room auth_session, 后续替换 Supabase Auth)
 - [x] 个人中心页 (ProfileScreen + ProfileViewModel + ProductManageScreen包装)
 
 ### M2: 变现功能 [□□□□□□□□□□] 0%
@@ -75,7 +75,7 @@
 | 4 | 记录详情 RecordDetailScreen | ✅ | — | — | 基础完成 |
 | 5 | 归因报告 AttributionReportScreen | ✅ | — | 查询+LLM | 基础完成 |
 | 6 | 个人中心 ProfileScreen | ✅ | — | 用户信息 | 基础完成 |
-| 7 | 登录/注册 AuthScreen | — | — | Supabase Auth | 待开始 |
+| 7 | 登录/注册 AuthScreen | ✅ | — | Supabase Auth | Mock 完成 |
 
 ## 自绘图表组件
 | 组件 | 用途 | 状态 |
