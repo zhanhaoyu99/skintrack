@@ -1,5 +1,6 @@
 package com.skintrack.app.ui.screen.timeline
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,11 +23,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
 import com.skintrack.app.domain.model.SkinRecord
 import com.skintrack.app.platform.pathToImageModel
 import com.skintrack.app.ui.component.EmptyContent
 import com.skintrack.app.ui.component.LoadingContent
+import com.skintrack.app.ui.screen.report.RecordDetailScreen
 import com.skintrack.app.ui.theme.spacing
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -35,6 +39,7 @@ fun TimelineScreen(
     viewModel: TimelineViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val navigator = LocalNavigator.currentOrThrow
 
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
@@ -92,7 +97,10 @@ fun TimelineScreen(
                         }
                     }
                     items(state.records, key = { it.id }) { record ->
-                        TimelineRecordItem(record)
+                        TimelineRecordItem(
+                            record = record,
+                            onClick = { navigator.push(RecordDetailScreen(record.id)) },
+                        )
                     }
                 }
             }
@@ -101,9 +109,14 @@ fun TimelineScreen(
 }
 
 @Composable
-private fun TimelineRecordItem(record: SkinRecord) {
+private fun TimelineRecordItem(
+    record: SkinRecord,
+    onClick: () -> Unit,
+) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
     ) {
         Row(
             modifier = Modifier
