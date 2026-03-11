@@ -44,6 +44,11 @@ class ProductRepositoryImpl(
         usageDao.insert(usage.toEntity())
     }
 
+    override suspend fun removeUsage(userId: String, productId: String, date: LocalDate) {
+        val epochMs = date.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+        usageDao.deleteByUserAndProductAndDate(userId, productId, epochMs)
+    }
+
     override suspend fun syncToRemote() {
         // TODO: Sync unsynced products and usage to Supabase
     }

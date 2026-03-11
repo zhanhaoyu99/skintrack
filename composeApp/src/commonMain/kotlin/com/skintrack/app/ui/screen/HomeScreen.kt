@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import cafe.adriel.voyager.core.screen.Screen
 import com.skintrack.app.ui.screen.camera.CameraScreen
+import com.skintrack.app.ui.screen.product.ProductScreen
 import com.skintrack.app.ui.screen.timeline.TimelineScreen
 
 class HomeScreen : Screen {
@@ -90,6 +91,5 @@ private fun TimelineTabContent() {
 
 @Composable
 private fun ProfileTabContent() {
-    // TODO: Replace with ProfileScreen
-    Text("个人中心")
+    ProductScreen()
 }

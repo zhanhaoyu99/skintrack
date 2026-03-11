@@ -4,9 +4,9 @@
 ## 当前状态（新session必读5行）
 - **阶段**: MVP Phase 1
 - **当前里程碑**: M1 - 核心功能（进行中）
-- **当前工作**: 拍照→压缩→本地存储→Room记录→时间线展示 完整闭环已打通
+- **当前工作**: 护肤品记录页（ProductScreen）已完成 — 产品CRUD + 每日打卡
 - **阻塞问题**: 无（Supabase项目待创建，用placeholder）
-- **下一步**: AI图像分析接口 → 分析结果存储 → 护肤品记录页
+- **下一步**: AI图像分析接口 → 分析结果存储 → 时间线趋势图
 
 ## 技术栈
 - **客户端**: Compose Multiplatform (KMP) — composeApp(commonMain/androidMain/iosMain)
@@ -38,14 +38,14 @@
 - [x] 修复 ImageCompressor expect class 缺少默认构造函数
 - [ ] Supabase项目创建 + 数据库表初始化
 
-### M1: 核心功能 [■■□□□□□□□□] 20%
+### M1: 核心功能 [■■■□□□□□□□] 30%
 - [x] 相机页 + 人脸引导框 (expect/actual)
 - [x] 图片压缩 + 本地存储 (ImageStorage expect/actual → filesDir/skin_photos/)
 - [x] 拍照保存流程 (CameraViewModel: compress → saveImage → SkinRecord → Room)
 - [x] 时间线页 (TimelineScreen + TimelineViewModel + formatters)
+- [x] 护肤品记录页 (ProductScreen + ProductViewModel + AddProductSheet + 每日打卡)
 - [ ] AI图像分析接口 (Ktor → LLM API)
 - [ ] 分析结果本地存储 (Room)
-- [ ] 护肤品记录页 (扫码/搜索/历史复用)
 - [ ] 时间线趋势图 (Compose Canvas折线图)
 - [ ] 前后对比图 (CompareCard)
 - [ ] 归因分析报告页 (LLM归因)
@@ -70,7 +70,7 @@
 |---|------|-------------|---------------|----------|------|
 | 1 | 拍照页 CameraScreen | ✅ | 相机+存储 | 图片上传 | 基础完成 |
 | 2 | 时间线 TimelineScreen | ✅ | — | 查询数据 | 基础完成 |
-| 3 | 护肤品记录 SkincareScreen | — | — | CRUD | 待开始 |
+| 3 | 护肤品记录 ProductScreen | ✅ | — | CRUD | 基础完成 |
 | 4 | 归因报告 ReportScreen | — | — | 查询+LLM | 待开始 |
 | 5 | 个人中心 ProfileScreen | — | — | 用户信息 | 待开始 |
 | 6 | 登录/注册 AuthScreen | — | — | Supabase Auth | 待开始 |

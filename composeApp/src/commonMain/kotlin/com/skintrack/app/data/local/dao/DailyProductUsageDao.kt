@@ -18,6 +18,9 @@ interface DailyProductUsageDao {
     @Query("SELECT * FROM daily_product_usage WHERE synced = 0")
     suspend fun getUnsynced(): List<DailyProductUsageEntity>
 
+    @Query("DELETE FROM daily_product_usage WHERE userId = :userId AND productId = :productId AND usedDate = :date")
+    suspend fun deleteByUserAndProductAndDate(userId: String, productId: String, date: Long)
+
     @Query("UPDATE daily_product_usage SET synced = 1 WHERE id = :id")
     suspend fun markSynced(id: String)
 }
