@@ -101,6 +101,14 @@ private fun CameraContent(viewModel: CameraViewModel) {
                 LoadingContent(message = "保存中...")
             }
         }
+        is CameraUiState.Analyzing -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                LoadingContent(message = "AI 分析中...")
+            }
+        }
         is CameraUiState.Saved -> {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -120,11 +128,24 @@ private fun CameraContent(viewModel: CameraViewModel) {
                     text = "保存成功",
                     style = MaterialTheme.typography.headlineSmall,
                 )
-                Text(
-                    text = "照片已保存到本地记录",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                if (state.analysisResult != null) {
+                    Text(
+                        text = "综合评分: ${state.analysisResult.overallScore}",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                    Text(
+                        text = state.analysisResult.summary,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                } else {
+                    Text(
+                        text = "照片已保存到本地记录",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
         }
         is CameraUiState.Error -> {

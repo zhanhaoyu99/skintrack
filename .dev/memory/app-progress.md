@@ -4,9 +4,9 @@
 ## 当前状态（新session必读5行）
 - **阶段**: MVP Phase 1
 - **当前里程碑**: M1 - 核心功能（进行中）
-- **当前工作**: 前后对比图（CompareCard）已完成 — 自动取首尾有分记录并排展示
+- **当前工作**: AI图像分析接口（Mock）已完成 — 拍照→保存→AI分析→更新记录全流程
 - **阻塞问题**: 无（Supabase项目待创建，用placeholder）
-- **下一步**: AI图像分析接口 → 分析结果存储 → 归因分析报告页
+- **下一步**: 归因分析报告页 → 用户认证 → 个人中心
 
 ## 技术栈
 - **客户端**: Compose Multiplatform (KMP) — composeApp(commonMain/androidMain/iosMain)
@@ -38,14 +38,14 @@
 - [x] 修复 ImageCompressor expect class 缺少默认构造函数
 - [ ] Supabase项目创建 + 数据库表初始化
 
-### M1: 核心功能 [■■■■■□□□□□] 50%
+### M1: 核心功能 [■■■■■■□□□□] 60%
 - [x] 相机页 + 人脸引导框 (expect/actual)
 - [x] 图片压缩 + 本地存储 (ImageStorage expect/actual → filesDir/skin_photos/)
 - [x] 拍照保存流程 (CameraViewModel: compress → saveImage → SkinRecord → Room)
 - [x] 时间线页 (TimelineScreen + TimelineViewModel + formatters)
 - [x] 护肤品记录页 (ProductScreen + ProductViewModel + AddProductSheet + 每日打卡)
-- [ ] AI图像分析接口 (Ktor → LLM API)
-- [ ] 分析结果本地存储 (Room)
+- [x] AI图像分析接口 (Mock实现, 1.5s延迟 + 随机评分, 预留httpClient供真实API)
+- [x] 分析结果本地存储 (Room — record.copy() + save, REPLACE策略)
 - [x] 时间线趋势图 (TrendChart — Canvas折线图, overallScore, 升序, >=2点显示)
 - [x] 前后对比图 (CompareCard — 自动首尾对比, overallScore 变化, 文本箭头指示)
 - [ ] 归因分析报告页 (LLM归因)
