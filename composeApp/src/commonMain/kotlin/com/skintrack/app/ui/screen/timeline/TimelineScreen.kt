@@ -71,6 +71,16 @@ fun TimelineScreen(
                     ),
                     verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
                 ) {
+                    if (state.chartPoints.size >= 2) {
+                        item(key = "trend_chart") {
+                            TrendChart(
+                                points = state.chartPoints,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = MaterialTheme.spacing.md),
+                            )
+                        }
+                    }
                     items(state.records, key = { it.id }) { record ->
                         TimelineRecordItem(record)
                     }

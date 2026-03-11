@@ -17,7 +17,13 @@ class TimelineViewModel(
         .getRecordsByUser("local-user")
         .map { records ->
             if (records.isEmpty()) TimelineUiState.Empty
-            else TimelineUiState.Content(records)
+            else TimelineUiState.Content(
+                records = records,
+                chartPoints = records
+                    .filter { it.overallScore != null }
+                    .sortedBy { it.recordedAt }
+                    .map { ChartRecord(date = it.recordedAt, overallScore = it.overallScore!!) },
+            )
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TimelineUiState.Loading)
 }
@@ -25,5 +31,8 @@ class TimelineViewModel(
 sealed interface TimelineUiState {
     data object Loading : TimelineUiState
     data object Empty : TimelineUiState
-    data class Content(val records: List<SkinRecord>) : TimelineUiState
+    data class Content(
+        val records: List<SkinRecord>,
+        val chartPoints: List<ChartRecord>,
+    ) : TimelineUiState
 }
