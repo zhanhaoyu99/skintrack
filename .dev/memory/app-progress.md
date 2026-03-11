@@ -4,9 +4,9 @@
 ## 当前状态（新session必读5行）
 - **阶段**: MVP Phase 1
 - **当前里程碑**: M1 - 核心功能（进行中）
-- **当前工作**: 归因分析报告页 AttributionReportScreen 已完成 — 本地统计归因（使用日均分 vs 未使用日均分）+ 产品影响排行 + 综合趋势
+- **当前工作**: 个人中心 ProfileScreen 已完成 — 用户信息卡 + 皮肤统计卡 + 功能菜单（护肤品管理/归因报告/关于）
 - **阻塞问题**: 无（Supabase项目待创建，用placeholder）
-- **下一步**: 用户认证 → 个人中心
+- **下一步**: 用户认证（Supabase Auth）
 
 ## 技术栈
 - **客户端**: Compose Multiplatform (KMP) — composeApp(commonMain/androidMain/iosMain)
@@ -38,7 +38,7 @@
 - [x] 修复 ImageCompressor expect class 缺少默认构造函数
 - [ ] Supabase项目创建 + 数据库表初始化
 
-### M1: 核心功能 [■■■■■■■■□□] 80%
+### M1: 核心功能 [■■■■■■■■■□] 85%
 - [x] 相机页 + 人脸引导框 (expect/actual)
 - [x] 图片压缩 + 本地存储 (ImageStorage expect/actual → filesDir/skin_photos/)
 - [x] 拍照保存流程 (CameraViewModel: compress → saveImage → SkinRecord → Room)
@@ -51,7 +51,7 @@
 - [x] 记录详情页 (RecordDetailScreen — 评分总览+指标条形图+AI摘要+当日用品+记录信息)
 - [x] 归因分析报告页 (本地统计归因 MVP, 后续替换 LLM)
 - [ ] 用户认证 (Supabase Auth)
-- [ ] 个人中心页
+- [x] 个人中心页 (ProfileScreen + ProfileViewModel + ProductManageScreen包装)
 
 ### M2: 变现功能 [□□□□□□□□□□] 0%
 - [ ] 会员订阅 — Android微信支付 (expect/actual)
@@ -74,7 +74,7 @@
 | 3 | 护肤品记录 ProductScreen | ✅ | — | CRUD | 基础完成 |
 | 4 | 记录详情 RecordDetailScreen | ✅ | — | — | 基础完成 |
 | 5 | 归因报告 AttributionReportScreen | ✅ | — | 查询+LLM | 基础完成 |
-| 6 | 个人中心 ProfileScreen | — | — | 用户信息 | 待开始 |
+| 6 | 个人中心 ProfileScreen | ✅ | — | 用户信息 | 基础完成 |
 | 7 | 登录/注册 AuthScreen | — | — | Supabase Auth | 待开始 |
 
 ## 自绘图表组件

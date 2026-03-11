@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -31,6 +32,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.skintrack.app.domain.model.SkincareProduct
 import com.skintrack.app.ui.component.EmptyContent
 import com.skintrack.app.ui.component.LoadingContent
@@ -40,16 +43,25 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductScreen(
+    showBackButton: Boolean = false,
     viewModel: ProductViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val showAddSheet by viewModel.showAddSheet.collectAsState()
+    val navigator = LocalNavigator.currentOrThrow
 
     var productToDelete by remember { mutableStateOf<SkincareProduct?>(null) }
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
             title = { Text("我的护肤") },
+            navigationIcon = {
+                if (showBackButton) {
+                    IconButton(onClick = { navigator.pop() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
+                    }
+                }
+            },
             actions = {
                 IconButton(onClick = { viewModel.showAddSheet() }) {
                     Icon(Icons.Default.Add, contentDescription = "添加产品")

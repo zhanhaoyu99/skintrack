@@ -12,6 +12,7 @@ import com.skintrack.app.platform.ImageStorage
 import com.skintrack.app.ui.screen.attribution.AttributionReportViewModel
 import com.skintrack.app.ui.screen.camera.CameraViewModel
 import com.skintrack.app.ui.screen.product.ProductViewModel
+import com.skintrack.app.ui.screen.profile.ProfileViewModel
 import com.skintrack.app.ui.screen.report.RecordDetailViewModel
 import com.skintrack.app.ui.screen.timeline.TimelineViewModel
 import io.ktor.client.HttpClient
@@ -65,6 +66,7 @@ val appModule = module {
     viewModelOf(::AttributionReportViewModel)
     viewModelOf(::CameraViewModel)
     viewModelOf(::ProductViewModel)
+    viewModelOf(::ProfileViewModel)
     viewModelOf(::RecordDetailViewModel)
     viewModelOf(::TimelineViewModel)
 }
