@@ -2,11 +2,11 @@
 # SkinTrack 开发进度
 
 ## 当前状态（新session必读5行）
-- **阶段**: MVP Phase 2 → Pre-M3
-- **当前里程碑**: Supabase 后端集成（进行中）
-- **当前工作**: Supabase Auth/Sync/Storage 客户端集成完成，DB schema 就绪，Roborazzi 快照测试基础设施就绪
+- **阶段**: Pre-M3（UI 商业级质感 + 离线同步完成）
+- **当前里程碑**: M2.5 接近完成（90%），M3 准备启动
+- **当前工作**: RadarChart/ScoreRing 组件完成，SyncManager 离线同步架构就绪，全量 userId 修复
 - **阻塞问题**: 无（Supabase 项目未创建，代码已支持 Mock/Real 自动切换）
-- **下一步**: 创建 Supabase 项目 → 填入 credentials → 端到端测试 → M3 内测
+- **下一步**: 创建 Supabase 项目 → 端到端联调 → M3 内测
 
 ## 技术栈
 - **客户端**: Compose Multiplatform (KMP) — composeApp(commonMain/androidMain/iosMain)
@@ -90,21 +90,27 @@
 - [x] ProfileScreen 打卡提醒菜单 — MenuSection 加"打卡提醒"MenuItem
 - [x] BUILD SUCCESSFUL ✅ 零错误
 
-### M2.5: Supabase 后端集成 [■■■■■■□□□□] 60%
+### M2.5: Supabase 后端集成 [■■■■■■■■■□] 90%
 - [x] Supabase DB schema — 6 表 + RLS + Storage bucket + auto-profile trigger
 - [x] SupabaseAuthRepository — 邮箱注册/登录/登出 + 中文错误映射
 - [x] SupabaseProvider — BuildConfig 读取 credentials + isConfigured 自动切换
 - [x] SupabaseSyncService — uploadSkinRecords/loadSkinRecords/uploadProducts/uploadImage
 - [x] SkinRecordRepositoryImpl — syncToRemote() + pullFromRemote() 实现
-- [x] ProductRepositoryImpl — syncToRemote() 实现
+- [x] ProductRepositoryImpl — syncToRemote() + pullFromRemote() 实现
 - [x] CameraViewModel — 真实 userId + Storage 图片上传 + 后端同步
 - [x] AppModule DI — Supabase client + SyncService + 条件绑定 Auth/Sync
 - [x] AiAnalysisService — 4 级皮肤状态档位 Mock（EXCELLENT/GOOD/MODERATE/CONCERN）
-- [x] Roborazzi 快照测试基础设施 — SnapshotTestBase + 12 个测试用例
+- [x] Roborazzi 快照测试基础设施 — SnapshotTestBase + 20 个测试用例
+- [x] SyncManager — push/pull 协调，登录和启动时自动全量同步
+- [x] SkincareProductEntity userId 字段修复
+- [x] 全量 ViewModel userId 修复（Timeline/Profile/Product 使用真实 userId）
+- [x] RadarChart 雷达图组件 — Canvas 六边形，动画，多维度皮肤指标可视化
+- [x] ScoreRing 环形评分组件 — sweepGradient 进度环 + 动画
+- [x] RecordDetailScreen 商业级重构 — ScoreRing + RadarChart + ScoreBar 三级展示
+- [x] TimelineScreen 质感提升 — 迷你 ScoreRing 替代纯文本分数
+- [x] AuthScreen 暗色模式修复 — Surface 包裹
 - [ ] 创建 Supabase 项目 + 填入 credentials
 - [ ] 端到端联调测试
-- [ ] 离线同步策略（WorkManager 定期上传）
-- [ ] 用户资料同步（ProfileScreen ↔ Supabase profiles）
 
 ### M3: 测试上线 [□□□□□□□□□□] 0%
 - [ ] 内测 20-30人
@@ -129,8 +135,11 @@
 | 测试文件 | 用例数 | 状态 |
 |---------|--------|------|
 | ComponentSnapshotTest | 6 | ✅ 通过 |
-| AuthScreenSnapshotTest | 3 | ✅ 通过 |
+| AuthScreenSnapshotTest | 3 | ✅ 通过（暗色修复） |
 | PaywallScreenSnapshotTest | 3 | ✅ 通过 |
+| RecordDetailSnapshotTest | 4 | ✅ 通过（RadarChart+ScoreRing） |
+| TimelineSnapshotTest | 2 | ✅ 通过（迷你ScoreRing） |
+| ProfileSnapshotTest | 2 | ✅ 通过 |
 
 ## 自绘/共享组件
 | 组件 | 位置 | 用途 | 状态 |
@@ -145,7 +154,8 @@
 | animateListItem | component | 列表入场动画 | ✅ 完成 |
 | LockedFeatureCard | component | 付费门控提示卡片 | ✅ 完成 |
 | ShareCardContent | screen/share | 分享对比卡片内容 | ✅ 完成 |
-| RadarChart | — | 雷达图（多维度皮肤评分） | 待开始 |
+| RadarChart | component | 六边形雷达图（多维度皮肤评分） | ✅ 完成 |
+| ScoreRing | component | 环形进度评分（sweepGradient） | ✅ 完成 |
 
 ## expect/actual 模块
 | 模块 | Android | iOS | 状态 |
@@ -166,6 +176,7 @@
 | SupabaseSyncService | data/remote/SupabaseSyncService.kt | ✅ 就绪 |
 | DTO | data/remote/dto/SupabaseDto.kt | ✅ 6 个 DTO |
 | Storage | skin-photos bucket + RLS | ✅ schema 就绪 |
+| SyncManager | data/remote/SyncManager.kt | ✅ push/pull 协调 |
 
 ## 商业模型
 | 功能 | 免费版（试用期后） | 付费版 / 试用期内 |

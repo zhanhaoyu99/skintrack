@@ -34,5 +34,6 @@
 | D3 | gradients.scoreRing 未使用，预留给 RadarChart | UI | 低 | 2026-03-12 | 待 RadarChart 开发 |
 | D4 | Supabase 项目未创建，需填入 credentials 激活后端 | Backend | 中 | 2026-03-10 | 代码就绪，待创建项目 |
 | D5 | iOS expect/actual 全部为空占位 (Camera/ImageCompressor/ImageStorage) | Platform | 中 | 2026-03-10 | M3 iOS 适配时处理 |
-| D6 | AuthScreen 暗色模式背景未生效（缺 Surface 包裹） | UI | 低 | 2026-03-12 | 快照测试发现 |
-| D7 | 离线同步策略未实现（WorkManager 定期上传 unsynced 记录） | Backend | 中 | 2026-03-12 | M3 前完成 |
+| D6 | ~~AuthScreen 暗色模式背景未生效（缺 Surface 包裹）~~ | UI | 低 | 2026-03-12 | ✅ 已修复 |
+| D7 | ~~离线同步策略未实现~~ | Backend | 中 | 2026-03-12 | ✅ SyncManager 已实现 |
+| D8 | ShareCardViewModel/AttributionReportViewModel 仍用 hardcoded "local-user" | Backend | 低 | 2026-03-12 | 功能可用，待统一 |
