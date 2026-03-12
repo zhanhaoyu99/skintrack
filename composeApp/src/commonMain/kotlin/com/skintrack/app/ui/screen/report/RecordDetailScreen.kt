@@ -38,7 +38,10 @@ import com.skintrack.app.domain.model.FeatureGate
 import com.skintrack.app.domain.model.lockedMessage
 import com.skintrack.app.ui.component.LoadingContent
 import com.skintrack.app.ui.component.LockedFeatureCard
+import com.skintrack.app.ui.component.RadarChart
+import com.skintrack.app.ui.component.RadarMetric
 import com.skintrack.app.ui.component.ScoreBar
+import com.skintrack.app.ui.component.ScoreRing
 import com.skintrack.app.ui.component.SectionCard
 import com.skintrack.app.ui.component.SectionHeader
 import com.skintrack.app.ui.screen.paywall.PaywallScreen
@@ -126,6 +129,11 @@ private fun DetailContent(
             ScoreOverviewCard(record)
         }
 
+        // Radar chart
+        item(key = "radar_chart") {
+            RadarChartCard(record)
+        }
+
         // Metric detail bars
         item(key = "metric_bars") {
             MetricBarsCard(record)
@@ -166,25 +174,74 @@ private fun ScoreOverviewCard(record: SkinRecord) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(MaterialTheme.spacing.md),
+                .padding(
+                    horizontal = MaterialTheme.spacing.md,
+                    vertical = MaterialTheme.spacing.lg,
+                ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
         ) {
-            Text(
-                text = record.overallScore?.toString() ?: "--",
-                style = MaterialTheme.typography.displayMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            Text(
-                text = "综合评分",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            if (record.overallScore != null) {
+                ScoreRing(score = record.overallScore)
+            } else {
+                Text(
+                    text = "--",
+                    style = MaterialTheme.typography.displayMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+                Text(
+                    text = "综合评分",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             Text(
                 text = record.skinType.displayName,
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.secondary,
+            )
+        }
+    }
+}
+
+@Composable
+private fun RadarChartCard(record: SkinRecord) {
+    val skinMetric = MaterialTheme.extendedColors.skinMetric
+    val hasMetrics = record.poreScore != null || record.rednessScore != null ||
+        record.evenScore != null || record.blackheadDensity != null
+
+    if (!hasMetrics) return
+
+    val metrics = buildList {
+        record.overallScore?.let {
+            add(RadarMetric("综合", it.toFloat(), color = MaterialTheme.colorScheme.primary))
+        }
+        record.poreScore?.let {
+            add(RadarMetric("毛孔", it.toFloat(), color = skinMetric.pore))
+        }
+        record.rednessScore?.let {
+            add(RadarMetric("泛红", it.toFloat(), color = skinMetric.redness))
+        }
+        record.evenScore?.let {
+            add(RadarMetric("均匀度", it.toFloat(), color = skinMetric.evenness))
+        }
+        record.blackheadDensity?.let {
+            add(RadarMetric("黑头", it.toFloat(), color = skinMetric.hydration))
+        }
+        record.acneCount?.let {
+            // Normalize acne count to 0-100 scale (0 acne = 100 score, 20+ acne = 0 score)
+            val normalized = (100f - it * 5f).coerceIn(0f, 100f)
+            add(RadarMetric("痘痘", normalized, color = skinMetric.acne))
+        }
+    }
+
+    if (metrics.size >= 3) {
+        SectionCard {
+            SectionHeader("皮肤维度分析")
+            RadarChart(
+                metrics = metrics,
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     }

@@ -119,6 +119,23 @@
   - 照片标准化是准确度的前提
   - 归因分析：时间序列数据 + 护肤品记录 一起喂给LLM
 
+## ADR-008: 数据优先云端存储
+- **日期**: 2026-03-12
+- **状态**: 已采纳
+- **上下文**: 未来需要多端同步（Android + iOS + 可能的Web），数据架构需前瞻性设计
+- **决策**: 数据尽量存储在云端（Supabase），本地 Room 作为缓存/离线层
+- **理由**:
+  - 多端同步时，云端为 single source of truth
+  - 本地 Room 提供离线体验，上线后自动同步
+  - Supabase RLS 保证数据隔离安全
+- **后果**:
+  - (+) 未来加 iOS/Web 时数据天然可用
+  - (-) 需要实现可靠的离线同步策略
+- **约束**:
+  - 所有 CRUD 操作：先写本地 Room → 标记 synced=false → 后台同步到 Supabase
+  - 登录后首次拉取：Supabase → 合并到 Room（冲突以云端为准）
+  - 图片：本地压缩后上传 Supabase Storage，Room 存 localPath + remoteUrl
+
 ## ADR-007: 图表方案 — Compose Canvas 自绘
 - **日期**: 2026-03-10
 - **状态**: 已采纳

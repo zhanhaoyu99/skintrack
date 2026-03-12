@@ -26,14 +26,17 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
 import com.skintrack.app.domain.model.SkinRecord
+import com.skintrack.app.domain.model.displayName
 import com.skintrack.app.platform.pathToImageModel
 import com.skintrack.app.ui.component.EmptyContent
 import com.skintrack.app.ui.component.LoadingContent
+import com.skintrack.app.ui.component.ScoreRing
 import com.skintrack.app.ui.component.animateListItem
 import com.skintrack.app.ui.screen.attribution.AttributionReportScreen
 import com.skintrack.app.ui.screen.report.RecordDetailScreen
 import com.skintrack.app.ui.screen.share.ShareCardScreen
 import com.skintrack.app.ui.theme.dimens
+import com.skintrack.app.ui.theme.extendedColors
 import com.skintrack.app.ui.theme.spacing
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -168,14 +171,24 @@ private fun TimelineRecordItem(
                     text = formatRecordDate(record.recordedAt),
                     style = MaterialTheme.typography.bodyLarge,
                 )
-                val scoreText = if (record.overallScore != null) {
-                    "综合评分: ${record.overallScore}"
-                } else {
-                    "待分析"
-                }
                 Text(
-                    text = scoreText,
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = record.skinType.displayName,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
+            if (record.overallScore != null) {
+                ScoreRing(
+                    score = record.overallScore,
+                    size = MaterialTheme.dimens.thumbnailSize,
+                    strokeWidth = MaterialTheme.dimens.chartDotRadius,
+                    label = "",
+                )
+            } else {
+                Text(
+                    text = "待分析",
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }

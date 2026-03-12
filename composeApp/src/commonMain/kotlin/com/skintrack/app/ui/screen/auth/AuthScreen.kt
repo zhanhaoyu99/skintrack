@@ -40,6 +40,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.skintrack.app.ui.screen.HomeScreen
 import com.skintrack.app.ui.theme.Motion
+import androidx.compose.material3.Surface
 import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.gradients
 import com.skintrack.app.ui.theme.spacing
@@ -53,6 +54,9 @@ class AuthScreen : Screen {
         val uiState by viewModel.uiState.collectAsState()
         val navigator = LocalNavigator.currentOrThrow
 
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+        ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -204,6 +208,7 @@ class AuthScreen : Screen {
                     }
                 }
             }
+        }
         }
     }
 }

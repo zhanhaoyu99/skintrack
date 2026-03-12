@@ -25,6 +25,7 @@ import com.skintrack.app.ui.theme.Motion
 import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.gradients
 import com.skintrack.app.ui.theme.spacing
+import androidx.compose.material3.Surface
 import org.junit.Test
 
 class AuthScreenSnapshotTest : SnapshotTestBase() {
@@ -47,6 +48,7 @@ class AuthScreenSnapshotTest : SnapshotTestBase() {
 
 @androidx.compose.runtime.Composable
 private fun AuthScreenPreview(isLoginMode: Boolean) {
+    Surface(modifier = Modifier.fillMaxSize()) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
@@ -121,5 +123,6 @@ private fun AuthScreenPreview(isLoginMode: Boolean) {
                 )
             }
         }
+    }
     }
 }
