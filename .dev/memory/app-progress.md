@@ -2,11 +2,11 @@
 # SkinTrack 开发进度
 
 ## 当前状态（新session必读5行）
-- **阶段**: MVP Phase 1
-- **当前里程碑**: M1 - 核心功能（完成）
-- **当前工作**: M1 UI 质量打磨完成 — 设计系统 token 补全 + 公共组件沉淀 + 渐变激活 + 基础动画 + 交互反馈
-- **阻塞问题**: 无（Supabase项目待创建，用 MockAuthRepository）
-- **下一步**: M2 变现功能 或 Supabase 接入（替换 Mock 为 SupabaseAuthRepository）
+- **阶段**: MVP Phase 2
+- **当前里程碑**: M2 - 变现功能（完成）
+- **当前工作**: M2 订阅+门控+分享+打卡 全部完成 — Mock 支付，DB v3，功能门控
+- **阻塞问题**: 无（支付全 Mock，后续接入真实 SDK）
+- **下一步**: M3 测试上线 或 Supabase 接入（替换 Mock 为真实后端）
 
 ## 技术栈
 - **客户端**: Compose Multiplatform (KMP) — composeApp(commonMain/androidMain/iosMain)
@@ -63,12 +63,31 @@
 - [x] UI 质量打磨 — Tab 图标语义修正 (Home→Add, 趋势→记录)
 - [x] UI 质量打磨 — 交互反馈 (Card onClick/MenuItem trailing/EmptyContent icon)
 
-### M2: 变现功能 [□□□□□□□□□□] 0%
-- [ ] 会员订阅 — Android微信支付 (expect/actual)
-- [ ] 会员订阅 — iOS StoreKit 2 (expect/actual)
-- [ ] 免费/付费功能门控
-- [ ] 分享对比卡片生成
-- [ ] 打卡提醒 + 激励机制
+### M2: 变现功能 [■■■■■■■■■■] 100%
+- [x] 订阅模型 — SubscriptionPlan/UserSubscription/CheckInStreak 域模型
+- [x] DB v3 — UserSubscriptionEntity + CheckInStreakEntity (Room, fallbackToDestructiveMigration)
+- [x] SubscriptionRepository — 订阅+打卡 CRUD，isPremium 判断（试用期14天+订阅有效期）
+- [x] PaymentManager — expect/actual Mock（delay 1s → Success）
+- [x] ShareManager — expect/actual Mock（log 输出）
+- [x] NotificationManager — expect/actual Mock（scheduleReminder/cancelReminder）
+- [x] 功能门控 — FeatureGate 枚举 + CheckFeatureAccess use case
+- [x] 门控组件 — LockedFeatureCard（🔒 + 消息 + 升级按钮）
+- [x] CameraScreen 门控 — 免费版 ≤3 条记录，超出显示 FeatureGated
+- [x] RecordDetailScreen 门控 — 非会员隐藏 AI 详细分析，显示 LockedFeatureCard
+- [x] AttributionReportScreen 门控 — 非会员隐藏排行列表，显示 LockedFeatureCard
+- [x] PaywallScreen — 品牌区+权益列表+方案选择(月/年)+购买按钮+恢复购买
+- [x] PaywallViewModel — selectedPlan/isPurchasing/error/success，Mock purchase flow
+- [x] ProfileScreen 会员中心入口 — MenuSection 新增"会员中心"MenuItem
+- [x] 分享对比卡片 — ShareCardContent（品牌头+对比照+分数变化+水印）
+- [x] ShareCardScreen + ShareCardViewModel — 加载 before/after + 门控检查
+- [x] CompareCard 分享按钮 — 标题行加"分享"TextButton → ShareCardScreen
+- [x] RecordDetailScreen 分享按钮 — TopAppBar actions 加"分享"TextButton
+- [x] 打卡连续 — UpdateCheckInStreak use case（currentStreak/longestStreak/milestone 7/14/30天）
+- [x] CameraViewModel 打卡集成 — confirm() 保存后调 onNewRecord()
+- [x] CameraScreen 里程碑显示 — Saved 状态显示 milestoneMessage
+- [x] ProfileScreen 打卡统计 — StatsCard 加"连续打卡 N天"
+- [x] ProfileScreen 打卡提醒菜单 — MenuSection 加"打卡提醒"MenuItem
+- [x] BUILD SUCCESSFUL ✅ 零错误
 
 ### M3: 测试上线 [□□□□□□□□□□] 0%
 - [ ] 内测 20-30人
@@ -79,25 +98,29 @@
 ## 页面完成度
 | # | 页面 | CMP(common) | expect/actual | Supabase | 状态 |
 |---|------|-------------|---------------|----------|------|
-| 1 | 拍照页 CameraScreen | ✅ | 相机+存储 | 图片上传 | 基础完成 |
-| 2 | 时间线 TimelineScreen | ✅ | — | 查询数据 | 基础完成 |
+| 1 | 拍照页 CameraScreen | ✅ | 相机+存储 | 图片上传 | M2门控完成 |
+| 2 | 时间线 TimelineScreen | ✅ | — | 查询数据 | 分享入口完成 |
 | 3 | 护肤品记录 ProductScreen | ✅ | — | CRUD | 基础完成 |
-| 4 | 记录详情 RecordDetailScreen | ✅ | — | — | 基础完成 |
-| 5 | 归因报告 AttributionReportScreen | ✅ | — | 查询+LLM | 基础完成 |
-| 6 | 个人中心 ProfileScreen | ✅ | — | 用户信息 | 基础完成 |
+| 4 | 记录详情 RecordDetailScreen | ✅ | — | — | M2门控+分享完成 |
+| 5 | 归因报告 AttributionReportScreen | ✅ | — | 查询+LLM | M2门控完成 |
+| 6 | 个人中心 ProfileScreen | ✅ | — | 用户信息 | M2打卡+会员入口完成 |
 | 7 | 登录/注册 AuthScreen | ✅ | — | Supabase Auth | Mock 完成 |
+| 8 | 会员订阅 PaywallScreen | ✅ | PaymentManager | — | Mock 完成 |
+| 9 | 分享卡片 ShareCardScreen | ✅ | ShareManager | — | Mock 完成 |
 
 ## 自绘/共享组件
 | 组件 | 位置 | 用途 | 状态 |
 |------|------|------|------|
 | TrendChart | screen/timeline | 折线趋势图（皮肤指标变化） | ✅ 完成 |
 | ScoreBar | component | 水平评分条（带动画填充） | ✅ 完成 |
-| CompareCard | screen/timeline | 前后对比卡片 | ✅ 完成 |
+| CompareCard | screen/timeline | 前后对比卡片 | ✅ 完成（+分享按钮） |
 | SectionCard | component | 全宽内容卡片 | ✅ 完成 |
 | SectionHeader | component | 区块标题 | ✅ 完成 |
 | TrendIndicator | component | 趋势指示器 ↑↓→ | ✅ 完成 |
 | MenuItem | component | 菜单列表项 | ✅ 完成 |
 | animateListItem | component | 列表入场动画 | ✅ 完成 |
+| LockedFeatureCard | component | 付费门控提示卡片 | ✅ 完成 |
+| ShareCardContent | screen/share | 分享对比卡片内容 | ✅ 完成 |
 | RadarChart | — | 雷达图（多维度皮肤评分） | 待开始 |
 
 ## expect/actual 模块
@@ -106,5 +129,19 @@
 | CameraController | CameraX | AVFoundation | Android完成 |
 | ImageCompressor | Bitmap压缩 | UIImage压缩 | Android完成 |
 | ImageStorage | filesDir写入 | — | Android完成 |
-| PaymentManager | 微信支付SDK | StoreKit 2 | 待开始 |
-| NotificationManager | FCM | APNs | 待开始 |
+| PaymentManager | Mock(delay) | — | Mock完成 |
+| ShareManager | Mock(log) | — | Mock完成 |
+| NotificationManager | Mock(log) | — | Mock完成 |
+
+## 商业模型
+| 功能 | 免费版（试用期后） | 付费版 / 试用期内 |
+|------|------------------|-----------------|
+| 拍照记录 | 最多 3 条 | 无限 |
+| 基础评分 | ✅ | ✅ |
+| AI 详细分析 | 🔒 | ✅ |
+| 归因分析报告 | 🔒 | ✅ |
+| 分享对比卡片 | 🔒 | ✅ |
+
+- 试用期：注册后 14 天全功能免费
+- 月度会员：¥19.9/月
+- 年度会员：¥168/年（省¥70.8）

@@ -33,4 +33,7 @@ interface SkinRecordDao {
 
     @Query("UPDATE skin_records SET synced = 1 WHERE id = :id")
     suspend fun markSynced(id: String)
+
+    @Query("SELECT COUNT(*) FROM skin_records WHERE userId = :userId")
+    suspend fun countByUser(userId: String): Int
 }

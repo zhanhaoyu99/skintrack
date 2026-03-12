@@ -28,6 +28,8 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
 import kotlinx.datetime.toLocalDateTime
 
+import androidx.compose.material3.TextButton
+
 data class CompareData(
     val before: SkinRecord,
     val after: SkinRecord,
@@ -37,6 +39,7 @@ data class CompareData(
 fun CompareCard(
     data: CompareData,
     modifier: Modifier = Modifier,
+    onShare: (() -> Unit)? = null,
 ) {
     val daySpan = data.before.recordedAt.daysUntil(data.after.recordedAt, TimeZone.currentSystemDefault())
     val scoreDiff = (data.after.overallScore ?: 0) - (data.before.overallScore ?: 0)
@@ -58,11 +61,21 @@ fun CompareCard(
                     text = "前后对比",
                     style = MaterialTheme.typography.titleMedium,
                 )
-                Text(
-                    text = "${daySpan}天",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = "${daySpan}天",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    if (onShare != null) {
+                        TextButton(onClick = onShare) {
+                            Text("分享", style = MaterialTheme.typography.labelMedium)
+                        }
+                    }
+                }
             }
 
             // Photo row

@@ -13,15 +13,30 @@
 
 ## 设计系统
 
-详见 `DESIGN_SYSTEM.md`。UI 代码必须使用设计 token，禁止硬编码颜色/间距。
+完整 token 表见 `DESIGN_SYSTEM.md`。
 
 ```kotlin
-MaterialTheme.extendedColors.xxx  // 扩展色
-MaterialTheme.spacing.xxx         // 间距
-MaterialTheme.gradients.xxx       // 渐变
 MaterialTheme.colorScheme.xxx     // Material 3 标准色
+MaterialTheme.extendedColors.xxx  // 扩展色（skinMetric/functional/camera）
+MaterialTheme.spacing.xxx         // 间距（xs/sm/md/lg/xl/xxl/section）
+MaterialTheme.dimens.xxx          // 组件尺寸（buttonHeight/avatarLarge/thumbnailSize 等）
+MaterialTheme.gradients.xxx       // 渐变（primary/warm/surface/scoreRing）
 MaterialTheme.shapes.xxx          // 圆角
 ```
+
+### UI 编码规范
+
+- **禁止硬编码**：颜色用 token（Canvas 内部除外），间距用 `spacing.xxx`，组件尺寸用 `dimens.xxx`
+- **列表间距**：`Arrangement.spacedBy(spacing.xxx)` 代替手动 Spacer
+- **动画时长**：使用 `Motion.SHORT/MEDIUM/LONG`，缓动用 `Motion.EmphasizedDecelerate/Standard`
+- **列表入场**：`itemsIndexed` + `Modifier.animateListItem(index)`
+- **卡片模式**：Card+Column+padding 用 `SectionCard`，区块标题用 `SectionHeader`
+- **趋势显示**：用 `TrendIndicator(value)` 统一 ↑↓→ + functional color
+- **Material Icons**：项目仅有 icons-core，ArrowUpward/TrendingUp 等不可用，用 Unicode 箭头替代
+
+### 共享组件 `ui/component/`
+
+SectionCard / SectionHeader / TrendIndicator / MenuItem / ScoreBar / LoadingContent / EmptyContent / ErrorContent / animateListItem
 
 ## 技术栈
 

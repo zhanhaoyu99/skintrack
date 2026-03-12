@@ -32,6 +32,7 @@ import com.skintrack.app.ui.component.LoadingContent
 import com.skintrack.app.ui.component.animateListItem
 import com.skintrack.app.ui.screen.attribution.AttributionReportScreen
 import com.skintrack.app.ui.screen.report.RecordDetailScreen
+import com.skintrack.app.ui.screen.share.ShareCardScreen
 import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.spacing
 import org.koin.compose.viewmodel.koinViewModel
@@ -92,6 +93,14 @@ fun TimelineScreen(
                         item(key = "compare_card") {
                             CompareCard(
                                 data = state.compareData,
+                                onShare = {
+                                    navigator.push(
+                                        ShareCardScreen(
+                                            beforeId = state.compareData.before.id,
+                                            afterId = state.compareData.after.id,
+                                        )
+                                    )
+                                },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(bottom = MaterialTheme.spacing.md),

@@ -35,6 +35,7 @@ import com.skintrack.app.ui.component.LoadingContent
 import com.skintrack.app.ui.component.MenuItem
 import com.skintrack.app.ui.screen.attribution.AttributionReportScreen
 import com.skintrack.app.ui.screen.auth.AuthScreen
+import com.skintrack.app.ui.screen.paywall.PaywallScreen
 import com.skintrack.app.ui.screen.product.ProductManageScreen
 import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.gradients
@@ -71,6 +72,7 @@ fun ProfileScreen(
                     UserInfoCard(authUser)
                     StatsCard(state)
                     MenuSection(
+                        onMemberCenter = { navigator.push(PaywallScreen()) },
                         onProductManage = { navigator.push(ProductManageScreen()) },
                         onAttributionReport = { navigator.push(AttributionReportScreen()) },
                         onLogout = {
@@ -147,6 +149,11 @@ private fun StatsCard(state: ProfileUiState.Content) {
                 value = state.latestScore?.toString() ?: "--",
                 modifier = Modifier.weight(1f),
             )
+            StatItem(
+                label = "连续打卡",
+                value = "${state.currentStreak}天",
+                modifier = Modifier.weight(1f),
+            )
         }
     }
 }
@@ -178,6 +185,7 @@ private fun StatItem(
 
 @Composable
 private fun MenuSection(
+    onMemberCenter: () -> Unit,
     onProductManage: () -> Unit,
     onAttributionReport: () -> Unit,
     onLogout: () -> Unit,
@@ -192,9 +200,13 @@ private fun MenuSection(
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column {
+            MenuItem(title = "会员中心", onClick = onMemberCenter, trailing = menuTrailing)
+            HorizontalDivider(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md))
             MenuItem(title = "护肤品管理", onClick = onProductManage, trailing = menuTrailing)
             HorizontalDivider(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md))
             MenuItem(title = "归因分析报告", onClick = onAttributionReport, trailing = menuTrailing)
+            HorizontalDivider(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md))
+            MenuItem(title = "打卡提醒", onClick = {}, trailing = menuTrailing)
             HorizontalDivider(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md))
             MenuItem(title = "关于 SkinTrack", onClick = {}, trailing = menuTrailing)
         }

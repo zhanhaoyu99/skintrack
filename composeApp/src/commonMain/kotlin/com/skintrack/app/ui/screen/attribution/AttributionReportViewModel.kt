@@ -7,6 +7,7 @@ import com.skintrack.app.domain.model.SkinRecord
 import com.skintrack.app.domain.model.SkincareProduct
 import com.skintrack.app.domain.repository.ProductRepository
 import com.skintrack.app.domain.repository.SkinRecordRepository
+import com.skintrack.app.domain.usecase.CheckFeatureAccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -17,6 +18,7 @@ import kotlinx.datetime.toLocalDateTime
 class AttributionReportViewModel(
     private val skinRecordRepository: SkinRecordRepository,
     private val productRepository: ProductRepository,
+    private val checkFeatureAccess: CheckFeatureAccess,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AttributionUiState>(AttributionUiState.Loading)
@@ -59,12 +61,15 @@ class AttributionReportViewModel(
 
             val dateRange = "${formatDate(startDate)} — ${formatDate(endDate)}"
 
+            val isPremium = checkFeatureAccess.isPremium()
+
             _uiState.value = AttributionUiState.Content(
                 totalRecords = scoredRecords.size,
                 dateRange = dateRange,
                 overallTrend = overallTrend,
                 trendDelta = trendDelta,
                 attributions = attributions,
+                isPremium = isPremium,
             )
         }
     }
@@ -123,5 +128,6 @@ sealed interface AttributionUiState {
         val overallTrend: String,
         val trendDelta: Int,
         val attributions: List<ProductAttribution>,
+        val isPremium: Boolean = true,
     ) : AttributionUiState
 }

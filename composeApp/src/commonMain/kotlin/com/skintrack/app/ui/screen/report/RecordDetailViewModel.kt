@@ -9,6 +9,7 @@ import com.skintrack.app.domain.repository.SkinRecordRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import com.skintrack.app.domain.usecase.CheckFeatureAccess
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
@@ -21,6 +22,7 @@ import kotlinx.serialization.json.jsonPrimitive
 class RecordDetailViewModel(
     private val skinRecordRepository: SkinRecordRepository,
     private val productRepository: ProductRepository,
+    private val checkFeatureAccess: CheckFeatureAccess,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<RecordDetailUiState>(RecordDetailUiState.Loading)
@@ -46,11 +48,14 @@ class RecordDetailViewModel(
                 productRepository.getProductById(usage.productId)
             }
 
+            val isPremium = checkFeatureAccess.isPremium()
+
             _uiState.value = RecordDetailUiState.Content(
                 record = record,
                 summary = summary,
                 recommendations = recommendations,
                 usedProducts = products,
+                isPremium = isPremium,
             )
         }
     }
@@ -78,5 +83,6 @@ sealed interface RecordDetailUiState {
         val summary: String?,
         val recommendations: List<String>,
         val usedProducts: List<SkincareProduct>,
+        val isPremium: Boolean = true,
     ) : RecordDetailUiState
 }

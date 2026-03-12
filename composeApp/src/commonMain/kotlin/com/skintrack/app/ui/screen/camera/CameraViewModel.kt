@@ -4,9 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.skintrack.app.data.remote.AiAnalysisService
 import com.skintrack.app.data.remote.SkinAnalysisResult
+import com.skintrack.app.domain.model.FeatureGate
 import com.skintrack.app.domain.model.SkinRecord
 import com.skintrack.app.domain.model.SkinType
+import com.skintrack.app.domain.model.lockedMessage
 import com.skintrack.app.domain.repository.SkinRecordRepository
+import com.skintrack.app.domain.usecase.CheckFeatureAccess
+import com.skintrack.app.domain.usecase.UpdateCheckInStreak
 import com.skintrack.app.platform.CameraController
 import com.skintrack.app.platform.ImageCompressor
 import com.skintrack.app.platform.ImageStorage
@@ -28,6 +32,8 @@ class CameraViewModel(
     private val imageStorage: ImageStorage,
     private val skinRecordRepository: SkinRecordRepository,
     private val aiAnalysisService: AiAnalysisService,
+    private val checkFeatureAccess: CheckFeatureAccess,
+    private val updateCheckInStreak: UpdateCheckInStreak,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<CameraUiState>(CameraUiState.Previewing)
@@ -68,6 +74,13 @@ class CameraViewModel(
 
         viewModelScope.launch {
             try {
+                // Check record limit for free users
+                if (!checkFeatureAccess.canAccess(FeatureGate.UNLIMITED_RECORDS)) {
+                    _uiState.value = CameraUiState.FeatureGated(
+                        FeatureGate.UNLIMITED_RECORDS.lockedMessage
+                    )
+                    return@launch
+                }
                 val compressed = imageCompressor.compress(state.photoBytes)
                 val id = Uuid.random().toString()
                 val fileName = "skin_$id.jpg"
@@ -100,11 +113,16 @@ class CameraViewModel(
                         analysisJson = result.toJson(),
                     )
                     skinRecordRepository.save(updatedRecord)
-                    _uiState.value = CameraUiState.Saved(result)
+                    val milestoneMessage = updateCheckInStreak.onNewRecord()
+                    _uiState.value = CameraUiState.Saved(result, milestoneMessage)
                 } catch (e: Exception) {
                     // Analysis failed — don't block the save, just show Saved without scores
                     println("AI analysis failed: ${e.message}")
-                    _uiState.value = CameraUiState.Saved(analysisResult = null)
+                    val milestoneMessage = updateCheckInStreak.onNewRecord()
+                    _uiState.value = CameraUiState.Saved(
+                        analysisResult = null,
+                        milestoneMessage = milestoneMessage,
+                    )
                 }
 
                 delay(2000)
@@ -140,6 +158,10 @@ sealed interface CameraUiState {
     data class Confirming(val photoBytes: ByteArray) : CameraUiState
     data object Saving : CameraUiState
     data object Analyzing : CameraUiState
-    data class Saved(val analysisResult: SkinAnalysisResult?) : CameraUiState
+    data class Saved(
+        val analysisResult: SkinAnalysisResult?,
+        val milestoneMessage: String? = null,
+    ) : CameraUiState
+    data class FeatureGated(val message: String) : CameraUiState
     data class Error(val message: String) : CameraUiState
 }

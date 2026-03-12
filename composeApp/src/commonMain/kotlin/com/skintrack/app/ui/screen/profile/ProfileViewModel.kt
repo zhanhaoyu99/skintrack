@@ -3,9 +3,11 @@ package com.skintrack.app.ui.screen.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.skintrack.app.domain.model.AuthUser
+import com.skintrack.app.domain.model.CheckInStreak
 import com.skintrack.app.domain.repository.AuthRepository
 import com.skintrack.app.domain.repository.ProductRepository
 import com.skintrack.app.domain.repository.SkinRecordRepository
+import com.skintrack.app.domain.usecase.UpdateCheckInStreak
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -16,6 +18,7 @@ class ProfileViewModel(
     private val authRepository: AuthRepository,
     skinRecordRepository: SkinRecordRepository,
     productRepository: ProductRepository,
+    updateCheckInStreak: UpdateCheckInStreak,
 ) : ViewModel() {
 
     val authUser: StateFlow<AuthUser?> = authRepository.observeAuthUser()
@@ -24,7 +27,8 @@ class ProfileViewModel(
     val uiState: StateFlow<ProfileUiState> = combine(
         skinRecordRepository.getRecordsByUser("local-user"),
         productRepository.getAllProducts(),
-    ) { records, products ->
+        updateCheckInStreak.observeStreak(),
+    ) { records, products, streak ->
         val scoredRecords = records.filter { it.overallScore != null }
         ProfileUiState.Content(
             totalRecords = records.size,
@@ -35,6 +39,8 @@ class ProfileViewModel(
             averageScore = scoredRecords
                 .takeIf { it.isNotEmpty() }
                 ?.let { list -> list.sumOf { it.overallScore!! } / list.size },
+            currentStreak = streak?.currentStreak ?: 0,
+            longestStreak = streak?.longestStreak ?: 0,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ProfileUiState.Loading)
 
@@ -52,5 +58,7 @@ sealed interface ProfileUiState {
         val totalProducts: Int,
         val latestScore: Int?,
         val averageScore: Int?,
+        val currentStreak: Int = 0,
+        val longestStreak: Int = 0,
     ) : ProfileUiState
 }

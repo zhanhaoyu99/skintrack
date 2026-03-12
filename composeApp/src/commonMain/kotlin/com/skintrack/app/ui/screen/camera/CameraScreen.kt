@@ -34,8 +34,12 @@ import coil3.compose.AsyncImage
 import com.skintrack.app.platform.CameraPreview
 import com.skintrack.app.platform.PermissionStatus
 import com.skintrack.app.platform.rememberCameraPermissionState
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.skintrack.app.ui.component.ErrorContent
 import com.skintrack.app.ui.component.LoadingContent
+import com.skintrack.app.ui.component.LockedFeatureCard
+import com.skintrack.app.ui.screen.paywall.PaywallScreen
 import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.extendedColors
 import com.skintrack.app.ui.theme.spacing
@@ -155,6 +159,25 @@ private fun CameraContent(viewModel: CameraViewModel) {
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
+                if (state.milestoneMessage != null) {
+                    Text(
+                        text = state.milestoneMessage,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.secondary,
+                    )
+                }
+            }
+        }
+        is CameraUiState.FeatureGated -> {
+            val navigator = LocalNavigator.currentOrThrow
+            Box(
+                modifier = Modifier.fillMaxSize().padding(MaterialTheme.spacing.lg),
+                contentAlignment = Alignment.Center,
+            ) {
+                LockedFeatureCard(
+                    message = state.message,
+                    onUpgrade = { navigator.push(PaywallScreen()) },
+                )
             }
         }
         is CameraUiState.Error -> {

@@ -32,11 +32,15 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.skintrack.app.domain.model.ProductAttribution
 import com.skintrack.app.domain.model.displayName
+import com.skintrack.app.domain.model.FeatureGate
+import com.skintrack.app.domain.model.lockedMessage
 import com.skintrack.app.ui.component.LoadingContent
+import com.skintrack.app.ui.component.LockedFeatureCard
 import com.skintrack.app.ui.component.SectionCard
 import com.skintrack.app.ui.component.SectionHeader
 import com.skintrack.app.ui.component.TrendIndicator
 import com.skintrack.app.ui.component.animateListItem
+import com.skintrack.app.ui.screen.paywall.PaywallScreen
 import com.skintrack.app.ui.theme.extendedColors
 import com.skintrack.app.ui.theme.spacing
 import org.koin.compose.viewmodel.koinViewModel
@@ -125,7 +129,15 @@ private fun ReportContent(
             TrendCard(state)
         }
 
-        if (state.attributions.isNotEmpty()) {
+        if (!state.isPremium) {
+            item(key = "locked") {
+                val navigator = LocalNavigator.currentOrThrow
+                LockedFeatureCard(
+                    message = FeatureGate.ATTRIBUTION_REPORT.lockedMessage,
+                    onUpgrade = { navigator.push(PaywallScreen()) },
+                )
+            }
+        } else if (state.attributions.isNotEmpty()) {
             item(key = "ranking_header") {
                 Text(
                     text = "产品影响排行",

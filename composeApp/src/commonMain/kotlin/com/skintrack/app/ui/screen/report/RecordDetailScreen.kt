@@ -19,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,10 +34,15 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.skintrack.app.domain.model.SkinRecord
 import com.skintrack.app.domain.model.SkincareProduct
 import com.skintrack.app.domain.model.displayName
+import com.skintrack.app.domain.model.FeatureGate
+import com.skintrack.app.domain.model.lockedMessage
 import com.skintrack.app.ui.component.LoadingContent
+import com.skintrack.app.ui.component.LockedFeatureCard
 import com.skintrack.app.ui.component.ScoreBar
 import com.skintrack.app.ui.component.SectionCard
 import com.skintrack.app.ui.component.SectionHeader
+import com.skintrack.app.ui.screen.paywall.PaywallScreen
+import com.skintrack.app.ui.screen.share.ShareCardScreen
 import com.skintrack.app.ui.screen.timeline.formatRecordDate
 import com.skintrack.app.ui.theme.extendedColors
 import com.skintrack.app.ui.theme.spacing
@@ -60,6 +66,11 @@ data class RecordDetailScreen(val recordId: String) : Screen {
                     navigationIcon = {
                         IconButton(onClick = { navigator.pop() }) {
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
+                        }
+                    },
+                    actions = {
+                        TextButton(onClick = { navigator.push(ShareCardScreen()) }) {
+                            Text("分享")
                         }
                     },
                 )
@@ -121,9 +132,19 @@ private fun DetailContent(
         }
 
         // AI summary card
-        if (state.summary != null || state.recommendations.isNotEmpty()) {
-            item(key = "ai_summary") {
-                AiSummaryCard(state.summary, state.recommendations)
+        if (state.isPremium) {
+            if (state.summary != null || state.recommendations.isNotEmpty()) {
+                item(key = "ai_summary") {
+                    AiSummaryCard(state.summary, state.recommendations)
+                }
+            }
+        } else {
+            item(key = "ai_locked") {
+                val navigator = LocalNavigator.currentOrThrow
+                LockedFeatureCard(
+                    message = FeatureGate.DETAILED_AI_REPORT.lockedMessage,
+                    onUpgrade = { navigator.push(PaywallScreen()) },
+                )
             }
         }
 
