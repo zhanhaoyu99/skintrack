@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.skintrack.app.domain.model.ProductCategory
+import com.skintrack.app.domain.model.displayName
 import com.skintrack.app.ui.theme.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -35,7 +36,9 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.skintrack.app.domain.model.SkincareProduct
+import com.skintrack.app.domain.model.displayName
 import com.skintrack.app.ui.component.EmptyContent
+import com.skintrack.app.ui.component.animateListItem
 import com.skintrack.app.ui.component.LoadingContent
 import com.skintrack.app.ui.theme.spacing
 import org.koin.compose.viewmodel.koinViewModel
@@ -165,10 +168,11 @@ private fun ProductContent(
             )
         }
 
-        items(products, key = { "card_${it.id}" }) { product ->
+        itemsIndexed(products, key = { _, it -> "card_${it.id}" }) { index, product ->
             ProductCard(
                 product = product,
                 onLongClick = { onLongClickProduct(product) },
+                modifier = Modifier.animateListItem(index),
             )
         }
     }
@@ -197,9 +201,10 @@ private fun CheckInRow(
 private fun ProductCard(
     product: SkincareProduct,
     onLongClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .combinedClickable(
                 onClick = {},

@@ -4,10 +4,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
@@ -35,8 +34,8 @@ class HomeScreen : Screen {
         var selectedTab by remember { mutableStateOf(0) }
 
         val tabs = listOf(
-            TabItem("拍照", Icons.Filled.Home, Icons.Outlined.Home),
-            TabItem("趋势", Icons.Filled.Search, Icons.Outlined.Search),
+            TabItem("拍照", Icons.Filled.Add, Icons.Default.Add),
+            TabItem("记录", Icons.Filled.Search, Icons.Outlined.Search),
             TabItem("我的", Icons.Filled.Person, Icons.Outlined.Person),
         )
 

@@ -1,10 +1,10 @@
-<!-- Last updated: 2026-03-11 -->
+<!-- Last updated: 2026-03-12 -->
 # SkinTrack 开发进度
 
 ## 当前状态（新session必读5行）
 - **阶段**: MVP Phase 1
-- **当前里程碑**: M1 - 核心功能（进行中）
-- **当前工作**: 用户认证 AuthScreen 已完成 — Mock 模式登录/注册 + Room 持久化 auth_session + 退出登录
+- **当前里程碑**: M1 - 核心功能（完成）
+- **当前工作**: M1 UI 质量打磨完成 — 设计系统 token 补全 + 公共组件沉淀 + 渐变激活 + 基础动画 + 交互反馈
 - **阻塞问题**: 无（Supabase项目待创建，用 MockAuthRepository）
 - **下一步**: M2 变现功能 或 Supabase 接入（替换 Mock 为 SupabaseAuthRepository）
 
@@ -25,6 +25,10 @@
 - [x] Theme.kt — 重写：ColorScheme + ExtendedColors + Gradients + Spacing + Typography + Shapes
 - [x] 改造 FaceGuideOverlay / CameraScreen / LoadingContent 使用设计 token
 - [x] DESIGN_SYSTEM.md 文档
+- [x] Dimens.kt — 组件尺寸 token (buttonHeight/avatarLarge/captureButton/thumbnail/chart/scoreBar)
+- [x] Motion.kt — 动画规格 (SHORT/MEDIUM/LONG + EmphasizedDecelerate/Standard)
+- [x] 全量硬编码 dp 替换为 dimens token（Auth/Camera/Profile/Compare/TrendChart/Timeline/ScoreBar）
+- [x] 渐变激活（primary→AuthScreen按钮, warm→CompareCard, surface→ProfileScreen用户卡片）
 
 ### M0: 项目搭建 [■■■■■■■■■■] 95%
 - [x] KMP项目初始化 (Gradle + libs.versions.toml)
@@ -38,7 +42,7 @@
 - [x] 修复 ImageCompressor expect class 缺少默认构造函数
 - [ ] Supabase项目创建 + 数据库表初始化
 
-### M1: 核心功能 [■■■■■■■■■■] 95%
+### M1: 核心功能 [■■■■■■■■■■] 100%
 - [x] 相机页 + 人脸引导框 (expect/actual)
 - [x] 图片压缩 + 本地存储 (ImageStorage expect/actual → filesDir/skin_photos/)
 - [x] 拍照保存流程 (CameraViewModel: compress → saveImage → SkinRecord → Room)
@@ -52,6 +56,12 @@
 - [x] 归因分析报告页 (本地统计归因 MVP, 后续替换 LLM)
 - [x] 用户认证 (Mock Auth — Room auth_session, 后续替换 Supabase Auth)
 - [x] 个人中心页 (ProfileScreen + ProfileViewModel + ProductManageScreen包装)
+- [x] UI 质量打磨 — 公共组件提取 (SectionCard/SectionHeader/TrendIndicator/MenuItem/Animation)
+- [x] UI 质量打磨 — displayName 扩展统一 (ProductCategoryExt+SkinTypeExt → domain/model)
+- [x] UI 质量打磨 — 列表入场动画 (animateListItem: Timeline/Product/Attribution)
+- [x] UI 质量打磨 — ScoreBar 动画填充 + CameraScreen AnimatedContent
+- [x] UI 质量打磨 — Tab 图标语义修正 (Home→Add, 趋势→记录)
+- [x] UI 质量打磨 — 交互反馈 (Card onClick/MenuItem trailing/EmptyContent icon)
 
 ### M2: 变现功能 [□□□□□□□□□□] 0%
 - [ ] 会员订阅 — Android微信支付 (expect/actual)
@@ -77,13 +87,18 @@
 | 6 | 个人中心 ProfileScreen | ✅ | — | 用户信息 | 基础完成 |
 | 7 | 登录/注册 AuthScreen | ✅ | — | Supabase Auth | Mock 完成 |
 
-## 自绘图表组件
-| 组件 | 用途 | 状态 |
-|------|------|------|
-| TrendChart | 折线趋势图（皮肤指标变化） | ✅ 完成 |
-| ScoreBar | 水平评分条（指标详情） | ✅ 完成 |
-| RadarChart | 雷达图（多维度皮肤评分） | 待开始 |
-| CompareCard | 前后对比卡片 | ✅ 完成 |
+## 自绘/共享组件
+| 组件 | 位置 | 用途 | 状态 |
+|------|------|------|------|
+| TrendChart | screen/timeline | 折线趋势图（皮肤指标变化） | ✅ 完成 |
+| ScoreBar | component | 水平评分条（带动画填充） | ✅ 完成 |
+| CompareCard | screen/timeline | 前后对比卡片 | ✅ 完成 |
+| SectionCard | component | 全宽内容卡片 | ✅ 完成 |
+| SectionHeader | component | 区块标题 | ✅ 完成 |
+| TrendIndicator | component | 趋势指示器 ↑↓→ | ✅ 完成 |
+| MenuItem | component | 菜单列表项 | ✅ 完成 |
+| animateListItem | component | 列表入场动画 | ✅ 完成 |
+| RadarChart | — | 雷达图（多维度皮肤评分） | 待开始 |
 
 ## expect/actual 模块
 | 模块 | Android | iOS | 状态 |

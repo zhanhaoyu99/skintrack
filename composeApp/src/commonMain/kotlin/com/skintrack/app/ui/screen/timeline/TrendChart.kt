@@ -19,7 +19,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.spacing
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
@@ -38,8 +38,11 @@ fun TrendChart(
     val lineColor = MaterialTheme.colorScheme.primary
     val fillColor = lineColor.copy(alpha = 0.1f)
     val labelColor = MaterialTheme.colorScheme.onSurfaceVariant
-    val labelStyle = TextStyle(fontSize = 11.sp, color = labelColor)
+    val labelStyle = MaterialTheme.typography.labelSmall.copy(color = labelColor)
     val textMeasurer = rememberTextMeasurer()
+    val chartHeightDp = MaterialTheme.dimens.chartHeight
+    val chartLineWidthDp = MaterialTheme.dimens.chartLineWidth
+    val chartDotRadiusDp = MaterialTheme.dimens.chartDotRadius
 
     val yLabels = remember { listOf("100", "50", "0") }
     val xLabels = remember(points) {
@@ -61,7 +64,7 @@ fun TrendChart(
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
+                .height(chartHeightDp)
                 .padding(MaterialTheme.spacing.md),
         ) {
             val yLabelWidth = yLabelLayouts.maxOf { it.size.width }.toFloat()
@@ -136,14 +139,14 @@ fun TrendChart(
             drawPath(
                 path = linePath,
                 color = lineColor,
-                style = Stroke(width = 2.dp.toPx()),
+                style = Stroke(width = chartLineWidthDp.toPx()),
             )
 
             // Draw data point circles
             coords.forEach { offset ->
                 drawCircle(
                     color = lineColor,
-                    radius = 4.dp.toPx(),
+                    radius = chartDotRadiusDp.toPx(),
                     center = offset,
                 )
             }

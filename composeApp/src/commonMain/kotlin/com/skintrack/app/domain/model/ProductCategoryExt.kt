@@ -1,6 +1,4 @@
-package com.skintrack.app.ui.screen.product
-
-import com.skintrack.app.domain.model.ProductCategory
+package com.skintrack.app.domain.model
 
 val ProductCategory.displayName: String
     get() = when (this) {

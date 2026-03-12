@@ -38,6 +38,7 @@ fun ErrorContent(
     message: String?,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
+    icon: @Composable (() -> Unit)? = null,
 ) {
     Column(
         modifier = modifier,
@@ -47,6 +48,7 @@ fun ErrorContent(
             Alignment.CenterVertically,
         ),
     ) {
+        icon?.invoke()
         Text(
             text = message ?: "出错了",
             style = MaterialTheme.typography.bodyLarge,
@@ -62,12 +64,17 @@ fun ErrorContent(
 fun EmptyContent(
     message: String = "暂无数据",
     modifier: Modifier = Modifier,
+    icon: @Composable (() -> Unit)? = null,
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(
+            MaterialTheme.spacing.md,
+            Alignment.CenterVertically,
+        ),
     ) {
+        icon?.invoke()
         Text(
             text = message,
             style = MaterialTheme.typography.bodyLarge,

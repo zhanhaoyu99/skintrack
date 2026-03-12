@@ -1,5 +1,7 @@
-package com.skintrack.app.ui.screen.report
+package com.skintrack.app.ui.component
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,12 +11,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import com.skintrack.app.ui.theme.FullRoundedShape
+import com.skintrack.app.ui.theme.Motion
+import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.spacing
 
 @Composable
@@ -25,7 +29,14 @@ fun ScoreBar(
     color: Color,
     modifier: Modifier = Modifier,
 ) {
-    val fraction = (score.toFloat() / maxScore).coerceIn(0f, 1f)
+    val targetFraction = (score.toFloat() / maxScore).coerceIn(0f, 1f)
+    val fraction by animateFloatAsState(
+        targetValue = targetFraction,
+        animationSpec = tween(
+            durationMillis = Motion.LONG,
+            easing = Motion.EmphasizedDecelerate,
+        ),
+    )
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -41,14 +52,14 @@ fun ScoreBar(
         Box(
             modifier = Modifier
                 .weight(3f)
-                .height(8.dp)
+                .height(MaterialTheme.dimens.scoreBarHeight)
                 .clip(FullRoundedShape)
                 .background(MaterialTheme.colorScheme.surfaceVariant),
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth(fraction)
-                    .height(8.dp)
+                    .height(MaterialTheme.dimens.scoreBarHeight)
                     .clip(FullRoundedShape)
                     .background(color),
             )

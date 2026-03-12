@@ -15,13 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.skintrack.app.domain.model.SkinRecord
 import com.skintrack.app.platform.pathToImageModel
-import com.skintrack.app.ui.theme.extendedColors
+import com.skintrack.app.ui.component.TrendIndicator
+import com.skintrack.app.ui.theme.dimens
+import com.skintrack.app.ui.theme.gradients
 import com.skintrack.app.ui.theme.spacing
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
@@ -43,7 +43,9 @@ fun CompareCard(
 
     Card(modifier = modifier) {
         Column(
-            modifier = Modifier.padding(MaterialTheme.spacing.md),
+            modifier = Modifier
+                .background(MaterialTheme.gradients.warm)
+                .padding(MaterialTheme.spacing.md),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
         ) {
             // Title row
@@ -96,24 +98,6 @@ private fun ScoreComparisonRow(
     afterScore: Int?,
     scoreDiff: Int,
 ) {
-    val diffColor: Color
-    val diffText: String
-
-    when {
-        scoreDiff > 0 -> {
-            diffColor = MaterialTheme.extendedColors.functional.success
-            diffText = "↑ +$scoreDiff"
-        }
-        scoreDiff < 0 -> {
-            diffColor = MaterialTheme.extendedColors.functional.error
-            diffText = "↓ $scoreDiff"
-        }
-        else -> {
-            diffColor = MaterialTheme.colorScheme.onSurfaceVariant
-            diffText = "± 0"
-        }
-    }
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -131,11 +115,7 @@ private fun ScoreComparisonRow(
             )
         }
 
-        Text(
-            text = diffText,
-            style = MaterialTheme.typography.titleMedium,
-            color = diffColor,
-        )
+        TrendIndicator(value = scoreDiff)
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
@@ -169,7 +149,7 @@ private fun ComparePhoto(
                 contentDescription = "皮肤照片",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(160.dp)
+                    .height(MaterialTheme.dimens.photoCompareHeight)
                     .clip(MaterialTheme.shapes.medium),
                 contentScale = ContentScale.Crop,
             )
@@ -177,7 +157,7 @@ private fun ComparePhoto(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(160.dp)
+                    .height(MaterialTheme.dimens.photoCompareHeight)
                     .clip(MaterialTheme.shapes.medium)
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center,

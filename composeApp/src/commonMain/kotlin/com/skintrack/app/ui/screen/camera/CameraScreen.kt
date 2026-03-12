@@ -1,5 +1,9 @@
 package com.skintrack.app.ui.screen.camera
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,13 +30,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.skintrack.app.platform.CameraPreview
 import com.skintrack.app.platform.PermissionStatus
 import com.skintrack.app.platform.rememberCameraPermissionState
 import com.skintrack.app.ui.component.ErrorContent
 import com.skintrack.app.ui.component.LoadingContent
+import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.extendedColors
 import com.skintrack.app.ui.theme.spacing
 import org.koin.compose.viewmodel.koinViewModel
@@ -62,7 +66,12 @@ fun CameraScreen(
 private fun CameraContent(viewModel: CameraViewModel) {
     val uiState by viewModel.uiState.collectAsState()
 
-    when (val state = uiState) {
+    AnimatedContent(
+        targetState = uiState,
+        transitionSpec = { fadeIn() togetherWith fadeOut() },
+        contentKey = { it::class },
+    ) { state ->
+    when (state) {
         is CameraUiState.Previewing,
         is CameraUiState.Capturing -> {
             Box(modifier = Modifier.fillMaxSize()) {
@@ -160,6 +169,7 @@ private fun CameraContent(viewModel: CameraViewModel) {
             }
         }
     }
+    }
 }
 
 @Composable
@@ -168,12 +178,13 @@ private fun CaptureButton(
     enabled: Boolean,
 ) {
     val cameraColors = MaterialTheme.extendedColors.camera
+    val dimens = MaterialTheme.dimens
     Box(
         modifier = Modifier
-            .size(72.dp)
+            .size(dimens.captureButtonSize)
             .clip(CircleShape)
-            .border(4.dp, cameraColors.buttonBorder, CircleShape)
-            .padding(6.dp)
+            .border(dimens.captureButtonBorder, cameraColors.buttonBorder, CircleShape)
+            .padding(dimens.captureButtonInnerPadding)
             .clip(CircleShape)
             .background(if (enabled) cameraColors.buttonFill else cameraColors.buttonDisabled)
             .clickable(enabled = enabled, onClick = onClick),

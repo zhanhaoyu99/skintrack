@@ -1,5 +1,7 @@
 package com.skintrack.app.ui.screen.auth
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,25 +16,32 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.skintrack.app.ui.screen.HomeScreen
+import com.skintrack.app.ui.theme.Motion
+import com.skintrack.app.ui.theme.dimens
+import com.skintrack.app.ui.theme.gradients
 import com.skintrack.app.ui.theme.spacing
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -50,6 +59,15 @@ class AuthScreen : Screen {
                 .imePadding(),
             contentAlignment = Alignment.Center,
         ) {
+            val brandAlpha = remember { Animatable(0f) }
+            val brandOffsetY = remember { Animatable(16f) }
+            LaunchedEffect(Unit) {
+                brandAlpha.animateTo(1f, tween(Motion.LONG, easing = Motion.EmphasizedDecelerate))
+            }
+            LaunchedEffect(Unit) {
+                brandOffsetY.animateTo(0f, tween(Motion.LONG, easing = Motion.EmphasizedDecelerate))
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -63,11 +81,18 @@ class AuthScreen : Screen {
                     text = "SkinTrack",
                     style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.graphicsLayer {
+                        alpha = brandAlpha.value
+                        translationY = brandOffsetY.value
+                    },
                 )
                 Text(
                     text = "记录你的皮肤变化",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.graphicsLayer {
+                        alpha = brandAlpha.value
+                    },
                 )
 
                 // Mode toggle
@@ -147,23 +172,35 @@ class AuthScreen : Screen {
                 }
 
                 // Submit
-                Button(
-                    onClick = {
-                        viewModel.submit { navigator.replaceAll(HomeScreen()) }
-                    },
-                    enabled = !uiState.isSubmitting,
+                val isEnabled = !uiState.isSubmitting
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp),
+                        .height(MaterialTheme.dimens.buttonHeight)
+                        .clip(MaterialTheme.shapes.large)
+                        .background(
+                            brush = MaterialTheme.gradients.primary,
+                            alpha = if (isEnabled) 1f else 0.38f,
+                        )
+                        .then(
+                            if (isEnabled) Modifier.clickable {
+                                viewModel.submit { navigator.replaceAll(HomeScreen()) }
+                            } else Modifier,
+                        ),
+                    contentAlignment = Alignment.Center,
                 ) {
                     if (uiState.isSubmitting) {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            strokeWidth = 2.dp,
+                            modifier = Modifier.size(MaterialTheme.dimens.buttonSpinnerSize),
+                            strokeWidth = MaterialTheme.dimens.buttonStrokeWidth,
                             color = MaterialTheme.colorScheme.onPrimary,
                         )
                     } else {
-                        Text(if (uiState.isLoginMode) "登录" else "注册")
+                        Text(
+                            text = if (uiState.isLoginMode) "登录" else "注册",
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            style = MaterialTheme.typography.labelLarge,
+                        )
                     }
                 }
             }

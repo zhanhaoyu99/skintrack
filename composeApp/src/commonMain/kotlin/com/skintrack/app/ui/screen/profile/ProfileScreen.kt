@@ -1,7 +1,6 @@
 package com.skintrack.app.ui.screen.profile
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,14 +28,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.skintrack.app.domain.model.AuthUser
 import com.skintrack.app.ui.component.LoadingContent
+import com.skintrack.app.ui.component.MenuItem
 import com.skintrack.app.ui.screen.attribution.AttributionReportScreen
 import com.skintrack.app.ui.screen.auth.AuthScreen
 import com.skintrack.app.ui.screen.product.ProductManageScreen
+import com.skintrack.app.ui.theme.dimens
+import com.skintrack.app.ui.theme.gradients
 import com.skintrack.app.ui.theme.spacing
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -89,13 +90,14 @@ private fun UserInfoCard(authUser: AuthUser?) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(MaterialTheme.gradients.surface)
                 .padding(MaterialTheme.spacing.md),
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
                 modifier = Modifier
-                    .size(56.dp)
+                    .size(MaterialTheme.dimens.avatarLarge)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.primaryContainer),
                 contentAlignment = Alignment.Center,
@@ -103,7 +105,7 @@ private fun UserInfoCard(authUser: AuthUser?) {
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = null,
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(MaterialTheme.dimens.avatarIcon),
                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
@@ -180,39 +182,28 @@ private fun MenuSection(
     onAttributionReport: () -> Unit,
     onLogout: () -> Unit,
 ) {
+    val menuTrailing: @Composable () -> Unit = {
+        Text(
+            text = ">",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+
     Card(modifier = Modifier.fillMaxWidth()) {
         Column {
-            MenuItem(title = "护肤品管理", onClick = onProductManage)
+            MenuItem(title = "护肤品管理", onClick = onProductManage, trailing = menuTrailing)
             HorizontalDivider(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md))
-            MenuItem(title = "归因分析报告", onClick = onAttributionReport)
+            MenuItem(title = "归因分析报告", onClick = onAttributionReport, trailing = menuTrailing)
             HorizontalDivider(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md))
-            MenuItem(title = "关于 SkinTrack", onClick = {})
+            MenuItem(title = "关于 SkinTrack", onClick = {}, trailing = menuTrailing)
         }
     }
     Card(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = "退出登录",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.error,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onLogout)
-                .padding(MaterialTheme.spacing.md),
+        MenuItem(
+            title = "退出登录",
+            onClick = onLogout,
+            textColor = MaterialTheme.colorScheme.error,
         )
     }
-}
-
-@Composable
-private fun MenuItem(
-    title: String,
-    onClick: () -> Unit,
-) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.bodyLarge,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(MaterialTheme.spacing.md),
-    )
 }

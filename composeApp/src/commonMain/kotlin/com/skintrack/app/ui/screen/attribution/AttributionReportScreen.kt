@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
@@ -31,8 +31,12 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.skintrack.app.domain.model.ProductAttribution
-import com.skintrack.app.domain.model.ProductCategory
+import com.skintrack.app.domain.model.displayName
 import com.skintrack.app.ui.component.LoadingContent
+import com.skintrack.app.ui.component.SectionCard
+import com.skintrack.app.ui.component.SectionHeader
+import com.skintrack.app.ui.component.TrendIndicator
+import com.skintrack.app.ui.component.animateListItem
 import com.skintrack.app.ui.theme.extendedColors
 import com.skintrack.app.ui.theme.spacing
 import org.koin.compose.viewmodel.koinViewModel
@@ -129,8 +133,8 @@ private fun ReportContent(
                     modifier = Modifier.padding(top = spacing.sm),
                 )
             }
-            items(state.attributions, key = { it.product.id }) { attribution ->
-                ProductAttributionItem(attribution)
+            itemsIndexed(state.attributions, key = { _, it -> it.product.id }) { index, attribution ->
+                ProductAttributionItem(attribution, Modifier.animateListItem(index))
             }
         } else {
             item(key = "no_product_data") {
@@ -149,111 +153,80 @@ private fun ReportContent(
 
 @Composable
 private fun SummaryCard(state: AttributionUiState.Content) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(MaterialTheme.spacing.md),
-            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
+    SectionCard {
+        SectionHeader("综合总结")
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                text = "综合总结",
-                style = MaterialTheme.typography.titleMedium,
+                text = "分析记录数",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(
-                    text = "分析记录数",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(
-                    text = "${state.totalRecords} 条",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium,
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(
-                    text = "分析周期",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(
-                    text = state.dateRange,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium,
-                )
-            }
+            Text(
+                text = "${state.totalRecords} 条",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+            )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = "分析周期",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                text = state.dateRange,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+            )
         }
     }
 }
 
 @Composable
 private fun TrendCard(state: AttributionUiState.Content) {
-    val functional = MaterialTheme.extendedColors.functional
-    val trendColor = when (state.overallTrend) {
-        "上升" -> functional.success
-        "下降" -> functional.error
-        else -> MaterialTheme.colorScheme.onSurfaceVariant
-    }
-    val trendIcon = when (state.overallTrend) {
-        "上升" -> "↑"
-        "下降" -> "↓"
-        else -> "→"
-    }
-
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(MaterialTheme.spacing.md),
-            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
+    SectionCard {
+        SectionHeader("综合评分趋势")
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
         ) {
-            Text(
-                text = "综合评分趋势",
-                style = MaterialTheme.typography.titleMedium,
+            TrendIndicator(
+                value = state.trendDelta,
+                style = MaterialTheme.typography.headlineMedium,
             )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
-            ) {
+            Column {
                 Text(
-                    text = trendIcon,
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = trendColor,
+                    text = state.overallTrend,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
                 )
-                Column {
-                    Text(
-                        text = state.overallTrend,
-                        style = MaterialTheme.typography.titleSmall,
-                        color = trendColor,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    val deltaPrefix = if (state.trendDelta >= 0) "+" else ""
-                    Text(
-                        text = "变化 ${deltaPrefix}${state.trendDelta} 分",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
+                val deltaPrefix = if (state.trendDelta >= 0) "+" else ""
+                Text(
+                    text = "变化 ${deltaPrefix}${state.trendDelta} 分",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
         }
     }
 }
 
 @Composable
-private fun ProductAttributionItem(attribution: ProductAttribution) {
+private fun ProductAttributionItem(
+    attribution: ProductAttribution,
+    modifier: Modifier = Modifier,
+) {
     val functional = MaterialTheme.extendedColors.functional
     val impactColor = if (attribution.impact >= 0) functional.success else functional.error
     val impactLabel = if (attribution.impact >= 0) "有益" else "有害"
 
-    Card(modifier = Modifier.fillMaxWidth()) {
+    Card(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -271,7 +244,7 @@ private fun ProductAttributionItem(attribution: ProductAttribution) {
                     horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
                 ) {
                     Text(
-                        text = attribution.product.category.displayName(),
+                        text = attribution.product.category.displayName,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -319,15 +292,3 @@ private fun formatImpact(value: Float): String {
     }
 }
 
-private fun ProductCategory.displayName(): String = when (this) {
-    ProductCategory.CLEANSER -> "洁面"
-    ProductCategory.TONER -> "化妆水"
-    ProductCategory.SERUM -> "精华"
-    ProductCategory.EMULSION -> "乳液"
-    ProductCategory.CREAM -> "面霜"
-    ProductCategory.SUNSCREEN -> "防晒"
-    ProductCategory.MASK -> "面膜"
-    ProductCategory.EYE_CREAM -> "眼霜"
-    ProductCategory.EXFOLIATOR -> "去角质"
-    ProductCategory.OTHER -> "其他"
-}

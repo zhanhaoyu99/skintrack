@@ -59,6 +59,7 @@ fun SkinTrackTheme(
         LocalExtendedColors provides extendedColors,
         LocalGradientColors provides gradients,
         LocalSpacing provides Spacing(),
+        LocalDimens provides Dimens(),
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
@@ -79,3 +80,6 @@ val MaterialTheme.spacing: Spacing
 
 val MaterialTheme.gradients: GradientColors
     @Composable get() = LocalGradientColors.current
+
+val MaterialTheme.dimens: Dimens
+    @Composable get() = LocalDimens.current
