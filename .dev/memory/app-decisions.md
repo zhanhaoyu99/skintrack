@@ -1,4 +1,4 @@
-<!-- Last updated: 2026-03-10 -->
+<!-- Last updated: 2026-03-12 -->
 # 皮肤管理App (SkinTrack) 架构决策记录 (ADR)
 
 <!-- 格式：
@@ -34,23 +34,10 @@
 
 ## ADR-002: 后端选择 Supabase (BaaS) 而非 Spring Boot
 - **日期**: 2026-03-10
-- **状态**: 已采纳
+- **状态**: ~~已采纳~~ → 已废弃，被 ADR-009 取代
 - **上下文**: MVP阶段需要快速搭建后端，一个人开发无需复杂架构
 - **决策**: 使用 Supabase 作为后端服务（认证 + PostgreSQL数据库 + 对象存储）
-- **理由**:
-  - 认证+数据库+存储 一站式，无需自建服务器
-  - 免费层足够MVP使用（50K MAU + 500MB DB + 1GB Storage）
-  - 有 Kotlin SDK (supabase-kt)
-  - 无需服务器运维，按用量计费
-  - 对比Spring Boot: 省去部署/运维/安全配置的大量工作
-- **后果**:
-  - (+) 极大减少后端开发工作量
-  - (+) 无需Docker/服务器部署
-  - (-) 受限于Supabase提供的功能
-  - (-) 复杂业务逻辑可能需要Edge Functions
-- **约束**:
-  - 数据模型受PostgreSQL + Supabase API约束
-  - AI分析逻辑在客户端Ktor直调LLM API，不走Supabase
+- **废弃原因**: Supabase 仅有海外节点，App 面向国内用户，延迟和合规性不满足需求
 
 ## ADR-003: 项目结构 — 单composeApp模块
 - **日期**: 2026-03-10
@@ -150,3 +137,36 @@
   - (-) 开发成本比用现成图表库高
 - **约束**:
   - 需要自己实现：折线图(TrendChart)、雷达图(RadarChart)、前后对比卡片(CompareCard)
+
+## ADR-009: 后端迁移 — 自建 Ktor Server + 国内云
+- **日期**: 2026-03-12
+- **状态**: 已采纳（取代 ADR-002）
+- **上下文**: Supabase 仅有海外节点，App 面向国内用户，延迟和合规性不满足需求
+- **决策**: 自建 Ktor Server 后端，部署在腾讯云/阿里云国内节点
+- **理由**:
+  - 技术栈一致：项目已用 Ktor Client，服务端用 Ktor Server 是 Kotlin 全栈
+  - 部署自由：国内云任意节点，延迟低、合规
+  - 成本可控：轻量云服务器（2C4G ~50元/月）+ 云 PostgreSQL
+  - AI 分析可在服务端调用 LLM API，避免客户端暴露 API Key
+  - 替换简单：已抽取 RemoteSyncService 接口，只需新增 KtorSyncService 实现
+- **架构**:
+  - Client: KMP App → Ktor Client → JSON/HTTPS → Ktor Server
+  - Server: Ktor Server + Exposed/ktorm (PostgreSQL ORM) + 阿里云 OSS (图片)
+  - Auth: JWT + 邮箱/手机号注册（未来可扩展微信登录）
+  - 本地 Room 作为离线缓存，SyncManager 协调推拉
+- **后果**:
+  - (+) 国内用户低延迟，合规无忧
+  - (+) 服务端可承载 AI 分析、推送通知等复杂逻辑
+  - (+) 未来可加 Web 端、管理后台
+  - (-) 需要自建服务器和运维
+  - (-) 需要开发 API + 鉴权逻辑
+- **约束**:
+  - 客户端通过 RemoteSyncService 接口解耦，不直接依赖后端实现
+  - DTO 格式保持 snake_case JSON，前后端序列化统一
+  - 图片存储：阿里云 OSS / 腾讯云 COS（非自建存储）
+- **迁移路径**:
+  1. ✅ 抽取 RemoteSyncService 接口（已完成）
+  2. 创建 server/ 模块（Ktor Server + Exposed）
+  3. 实现 KtorSyncService（客户端）替换 SupabaseSyncService
+  4. 实现 KtorAuthRepository 替换 SupabaseAuthRepository
+  5. 部署到国内云 → 联调 → 移除 Supabase SDK 依赖

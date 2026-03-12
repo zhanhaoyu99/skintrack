@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.skintrack.app.domain.model.ProductAttribution
 import com.skintrack.app.domain.model.SkinRecord
 import com.skintrack.app.domain.model.SkincareProduct
+import com.skintrack.app.domain.repository.AuthRepository
 import com.skintrack.app.domain.repository.ProductRepository
 import com.skintrack.app.domain.repository.SkinRecordRepository
 import com.skintrack.app.domain.usecase.CheckFeatureAccess
@@ -19,6 +20,7 @@ class AttributionReportViewModel(
     private val skinRecordRepository: SkinRecordRepository,
     private val productRepository: ProductRepository,
     private val checkFeatureAccess: CheckFeatureAccess,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AttributionUiState>(AttributionUiState.Loading)
@@ -30,7 +32,8 @@ class AttributionReportViewModel(
 
     private fun loadReport() {
         viewModelScope.launch {
-            val records = skinRecordRepository.getRecordsByUser("local-user").first()
+            val userId = authRepository.currentUser()?.userId ?: "local-user"
+            val records = skinRecordRepository.getRecordsByUser(userId).first()
             val scoredRecords = records
                 .filter { it.overallScore != null }
                 .sortedBy { it.recordedAt }
@@ -44,7 +47,7 @@ class AttributionReportViewModel(
             val startDate = scoredRecords.first().recordedAt.toLocalDateTime(tz).date
             val endDate = scoredRecords.last().recordedAt.toLocalDateTime(tz).date
 
-            val usages = productRepository.getUsageBetween("local-user", startDate, endDate).first()
+            val usages = productRepository.getUsageBetween(userId, startDate, endDate).first()
             val allProducts = productRepository.getAllProducts().first()
             val productMap = allProducts.associateBy { it.id }
 

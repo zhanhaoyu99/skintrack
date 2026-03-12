@@ -2,11 +2,11 @@
 # SkinTrack 开发进度
 
 ## 当前状态（新session必读5行）
-- **阶段**: Pre-M3（UI 商业级质感 + 离线同步完成）
-- **当前里程碑**: M2.5 接近完成（90%），M3 准备启动
-- **当前工作**: RadarChart/ScoreRing 组件完成，SyncManager 离线同步架构就绪，全量 userId 修复
-- **阻塞问题**: 无（Supabase 项目未创建，代码已支持 Mock/Real 自动切换）
-- **下一步**: 创建 Supabase 项目 → 端到端联调 → M3 内测
+- **阶段**: Pre-M3（Ktor Server 后端 + 客户端集成完成）
+- **当前里程碑**: M2.5 完成（100%），Ktor Server + 客户端 KtorSyncService/KtorAuthRepository 就绪
+- **当前工作**: Ktor Server 后端模块完成，客户端 Ktor 集成完成，DI 支持三模式切换
+- **阻塞问题**: 无（需部署服务器到国内云进行联调）
+- **下一步**: 部署 Ktor Server → 端到端联调 → M3 内测
 
 ## 技术栈
 - **客户端**: Compose Multiplatform (KMP) — composeApp(commonMain/androidMain/iosMain)
@@ -90,7 +90,7 @@
 - [x] ProfileScreen 打卡提醒菜单 — MenuSection 加"打卡提醒"MenuItem
 - [x] BUILD SUCCESSFUL ✅ 零错误
 
-### M2.5: Supabase 后端集成 [■■■■■■■■■□] 90%
+### M2.5: 后端集成 [■■■■■■■■■■] 100%
 - [x] Supabase DB schema — 6 表 + RLS + Storage bucket + auto-profile trigger
 - [x] SupabaseAuthRepository — 邮箱注册/登录/登出 + 中文错误映射
 - [x] SupabaseProvider — BuildConfig 读取 credentials + isConfigured 自动切换
@@ -100,7 +100,7 @@
 - [x] CameraViewModel — 真实 userId + Storage 图片上传 + 后端同步
 - [x] AppModule DI — Supabase client + SyncService + 条件绑定 Auth/Sync
 - [x] AiAnalysisService — 4 级皮肤状态档位 Mock（EXCELLENT/GOOD/MODERATE/CONCERN）
-- [x] Roborazzi 快照测试基础设施 — SnapshotTestBase + 20 个测试用例
+- [x] Roborazzi 快照测试基础设施 — SnapshotTestBase + 24 个测试用例
 - [x] SyncManager — push/pull 协调，登录和启动时自动全量同步
 - [x] SkincareProductEntity userId 字段修复
 - [x] 全量 ViewModel userId 修复（Timeline/Profile/Product 使用真实 userId）
@@ -109,8 +109,17 @@
 - [x] RecordDetailScreen 商业级重构 — ScoreRing + RadarChart + ScoreBar 三级展示
 - [x] TimelineScreen 质感提升 — 迷你 ScoreRing 替代纯文本分数
 - [x] AuthScreen 暗色模式修复 — Surface 包裹
-- [ ] 创建 Supabase 项目 + 填入 credentials
-- [ ] 端到端联调测试
+- [x] 全量 userId 硬编码消除 — CheckFeatureAccess/UpdateCheckInStreak 内部解析 userId
+- [x] ShareCardViewModel/AttributionReportViewModel 注入 AuthRepository
+- [x] ProductScreen 质感提升 — SectionHeader + 打卡卡片背景高亮 + 品牌/分类信息
+- [x] CameraScreen Saved 状态 — ScoreRing 替代纯文本评分
+- [x] ProductScreen + AttributionReportScreen 快照测试
+- [x] RemoteSyncService 接口抽取 — 后端无关抽象（ADR-009）
+- [x] CameraViewModel 解耦 — 图片上传移入 SkinRecordRepository
+- [x] 创建 Ktor Server 后端（替代 Supabase）— Exposed + PostgreSQL + JWT + BCrypt
+- [x] 实现 KtorSyncService + KtorAuthRepository — 客户端 Ktor 后端集成
+- [x] DI 三模式切换 — KtorServer > Supabase > Mock 自动降级
+- [ ] 部署到国内云 → 端到端联调
 
 ### M3: 测试上线 [□□□□□□□□□□] 0%
 - [ ] 内测 20-30人
@@ -140,6 +149,8 @@
 | RecordDetailSnapshotTest | 4 | ✅ 通过（RadarChart+ScoreRing） |
 | TimelineSnapshotTest | 2 | ✅ 通过（迷你ScoreRing） |
 | ProfileSnapshotTest | 2 | ✅ 通过 |
+| ProductScreenSnapshotTest | 2 | ✅ 通过（打卡高亮+产品库） |
+| AttributionReportSnapshotTest | 2 | ✅ 通过（影响排行+标签色） |
 
 ## 自绘/共享组件
 | 组件 | 位置 | 用途 | 状态 |
@@ -167,16 +178,27 @@
 | ShareManager | Mock(log) | — | Mock完成 |
 | NotificationManager | Mock(log) | — | Mock完成 |
 
-## Supabase 后端
+## 后端
 | 组件 | 文件 | 状态 |
 |------|------|------|
-| DB Schema | supabase/migrations/001_initial_schema.sql | ✅ 就绪 |
-| SupabaseProvider | data/remote/SupabaseProvider.kt | ✅ BuildConfig + 自动切换 |
-| SupabaseAuthRepository | data/repository/SupabaseAuthRepository.kt | ✅ 就绪 |
-| SupabaseSyncService | data/remote/SupabaseSyncService.kt | ✅ 就绪 |
-| DTO | data/remote/dto/SupabaseDto.kt | ✅ 6 个 DTO |
-| Storage | skin-photos bucket + RLS | ✅ schema 就绪 |
+| **Ktor Server** | server/ 模块 | ✅ 完整 API |
+| Server — Auth | server/routes/AuthRoutes.kt | ✅ 注册/登录 + JWT |
+| Server — CRUD | server/routes/*.kt | ✅ 6 实体全覆盖 |
+| Server — DB | server/database/ | ✅ Exposed + PostgreSQL |
+| Server — Image | server/service/ImageService.kt | ✅ 文件系统存储 |
+| **客户端 Ktor** | | |
+| KtorServerConfig | data/remote/KtorServerConfig.kt | ✅ BuildConfig 配置 |
+| KtorSyncService | data/remote/KtorSyncService.kt | ✅ RemoteSyncService 实现 |
+| KtorAuthRepository | data/repository/KtorAuthRepository.kt | ✅ JWT Bearer Auth |
+| KtorDto | data/remote/dto/KtorDto.kt | ✅ ApiResponse + Auth DTO |
+| **Supabase (legacy)** | | |
+| SupabaseProvider | data/remote/SupabaseProvider.kt | ✅ 保留兼容 |
+| SupabaseAuthRepository | data/repository/SupabaseAuthRepository.kt | ✅ 保留兼容 |
+| SupabaseSyncService | data/remote/SupabaseSyncService.kt | ✅ 保留兼容 |
+| **通用** | | |
+| RemoteSyncService | data/remote/RemoteSyncService.kt | ✅ 后端无关接口 |
 | SyncManager | data/remote/SyncManager.kt | ✅ push/pull 协调 |
+| DI 模式切换 | di/AppModule.kt | ✅ Ktor > Supabase > Mock |
 
 ## 商业模型
 | 功能 | 免费版（试用期后） | 付费版 / 试用期内 |

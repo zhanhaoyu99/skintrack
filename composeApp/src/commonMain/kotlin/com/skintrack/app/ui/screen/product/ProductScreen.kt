@@ -5,18 +5,19 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -33,11 +34,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.skintrack.app.domain.model.SkincareProduct
 import com.skintrack.app.domain.model.displayName
 import com.skintrack.app.ui.component.EmptyContent
+import com.skintrack.app.ui.component.SectionHeader
 import com.skintrack.app.ui.component.animateListItem
 import com.skintrack.app.ui.component.LoadingContent
 import com.skintrack.app.ui.theme.spacing
@@ -137,34 +140,34 @@ private fun ProductContent(
     onToggleUsage: (SkincareProduct) -> Unit,
     onLongClickProduct: (SkincareProduct) -> Unit,
 ) {
+    val spacing = MaterialTheme.spacing
+    val checkedCount = products.count { it.id in todayUsedProductIds }
+
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(horizontal = MaterialTheme.spacing.lg),
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(
+            horizontal = spacing.md,
+            vertical = spacing.sm,
+        ),
+        verticalArrangement = Arrangement.spacedBy(spacing.sm),
     ) {
-        item {
-            Text(
-                text = "今日护肤",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(vertical = MaterialTheme.spacing.sm),
-            )
+        item(key = "checkin_header") {
+            SectionHeader("今日护肤 ($checkedCount/${products.size})")
         }
 
-        items(products, key = { "check_${it.id}" }) { product ->
+        itemsIndexed(products, key = { _, it -> "check_${it.id}" }) { index, product ->
             CheckInRow(
                 product = product,
                 checked = product.id in todayUsedProductIds,
                 onToggle = { onToggleUsage(product) },
+                modifier = Modifier.animateListItem(index),
             )
         }
 
-        item {
-            Text(
-                text = "产品库",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(
-                    top = MaterialTheme.spacing.lg,
-                    bottom = MaterialTheme.spacing.sm,
-                ),
+        item(key = "product_header") {
+            SectionHeader(
+                title = "产品库",
+                modifier = Modifier.padding(top = spacing.sm),
             )
         }
 
@@ -183,16 +186,50 @@ private fun CheckInRow(
     product: SkincareProduct,
     checked: Boolean,
     onToggle: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
+    Card(
+        onClick = onToggle,
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = if (checked) {
+                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+            } else {
+                MaterialTheme.colorScheme.surfaceContainerLow
+            },
+        ),
     ) {
-        Checkbox(checked = checked, onCheckedChange = { onToggle() })
-        Text(
-            text = product.name,
-            style = MaterialTheme.typography.bodyLarge,
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = MaterialTheme.spacing.xs,
+                    end = MaterialTheme.spacing.md,
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs),
+        ) {
+            Checkbox(checked = checked, onCheckedChange = { onToggle() })
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = product.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = if (checked) FontWeight.Medium else FontWeight.Normal,
+                )
+                product.brand?.let { brand ->
+                    Text(
+                        text = brand,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+            Text(
+                text = product.category.displayName,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 

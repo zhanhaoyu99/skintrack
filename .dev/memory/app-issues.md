@@ -36,4 +36,4 @@
 | D5 | iOS expect/actual 全部为空占位 (Camera/ImageCompressor/ImageStorage) | Platform | 中 | 2026-03-10 | M3 iOS 适配时处理 |
 | D6 | ~~AuthScreen 暗色模式背景未生效（缺 Surface 包裹）~~ | UI | 低 | 2026-03-12 | ✅ 已修复 |
 | D7 | ~~离线同步策略未实现~~ | Backend | 中 | 2026-03-12 | ✅ SyncManager 已实现 |
-| D8 | ShareCardViewModel/AttributionReportViewModel 仍用 hardcoded "local-user" | Backend | 低 | 2026-03-12 | 功能可用，待统一 |
+| D8 | ~~ShareCardViewModel/AttributionReportViewModel/CheckFeatureAccess/UpdateCheckInStreak hardcoded "local-user"~~ | Backend | 低 | 2026-03-12 | ✅ 已修复：use case 内部解析 userId |

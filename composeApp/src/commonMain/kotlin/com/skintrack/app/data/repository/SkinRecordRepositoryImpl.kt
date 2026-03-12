@@ -2,7 +2,7 @@ package com.skintrack.app.data.repository
 
 import com.skintrack.app.data.local.dao.SkinRecordDao
 import com.skintrack.app.data.local.entity.SkinRecordEntity
-import com.skintrack.app.data.remote.SupabaseSyncService
+import com.skintrack.app.data.remote.RemoteSyncService
 import com.skintrack.app.domain.model.SkinRecord
 import com.skintrack.app.domain.model.SkinType
 import com.skintrack.app.domain.repository.SkinRecordRepository
@@ -12,7 +12,7 @@ import kotlinx.datetime.Instant
 
 class SkinRecordRepositoryImpl(
     private val skinRecordDao: SkinRecordDao,
-    private val syncService: SupabaseSyncService? = null,
+    private val syncService: RemoteSyncService? = null,
 ) : SkinRecordRepository {
 
     override fun getRecordsByUser(userId: String): Flow<List<SkinRecord>> =
@@ -47,6 +47,15 @@ class SkinRecordRepositoryImpl(
             unsynced.forEach { skinRecordDao.markSynced(it.id) }
         } catch (_: Exception) {
             // Sync failure is non-fatal; will retry next time
+        }
+    }
+
+    override suspend fun uploadImage(userId: String, fileName: String, imageBytes: ByteArray): String? {
+        val service = syncService ?: return null
+        return try {
+            service.uploadImage(userId, fileName, imageBytes)
+        } catch (_: Exception) {
+            null
         }
     }
 

@@ -4,7 +4,7 @@ import com.skintrack.app.data.local.dao.DailyProductUsageDao
 import com.skintrack.app.data.local.dao.SkincareProductDao
 import com.skintrack.app.data.local.entity.DailyProductUsageEntity
 import com.skintrack.app.data.local.entity.SkincareProductEntity
-import com.skintrack.app.data.remote.SupabaseSyncService
+import com.skintrack.app.data.remote.RemoteSyncService
 import com.skintrack.app.domain.model.DailyProductUsage
 import com.skintrack.app.domain.model.ProductCategory
 import com.skintrack.app.domain.model.SkincareProduct
@@ -20,7 +20,7 @@ import kotlinx.datetime.toLocalDateTime
 class ProductRepositoryImpl(
     private val productDao: SkincareProductDao,
     private val usageDao: DailyProductUsageDao,
-    private val syncService: SupabaseSyncService? = null,
+    private val syncService: RemoteSyncService? = null,
 ) : ProductRepository {
 
     override fun getAllProducts(): Flow<List<SkincareProduct>> =

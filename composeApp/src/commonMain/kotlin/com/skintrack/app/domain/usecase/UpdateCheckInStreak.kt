@@ -1,6 +1,7 @@
 package com.skintrack.app.domain.usecase
 
 import com.skintrack.app.domain.model.CheckInStreak
+import com.skintrack.app.domain.repository.AuthRepository
 import com.skintrack.app.domain.repository.SubscriptionRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Clock
@@ -12,8 +13,13 @@ import kotlin.math.max
 
 class UpdateCheckInStreak(
     private val subscriptionRepository: SubscriptionRepository,
+    private val authRepository: AuthRepository,
 ) {
-    suspend fun onNewRecord(userId: String = "local-user"): String? {
+    private suspend fun resolveUserId(): String =
+        authRepository.currentUser()?.userId ?: "local-user"
+
+    suspend fun onNewRecord(): String? {
+        val userId = resolveUserId()
         val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
         val existing = subscriptionRepository.getStreak(userId)
 
@@ -38,7 +44,7 @@ class UpdateCheckInStreak(
         return getMilestoneMessage(newCurrent)
     }
 
-    fun observeStreak(userId: String = "local-user"): Flow<CheckInStreak?> =
+    fun observeStreak(userId: String): Flow<CheckInStreak?> =
         subscriptionRepository.observeStreak(userId)
 
     private fun getMilestoneMessage(streak: Int): String? = when (streak) {

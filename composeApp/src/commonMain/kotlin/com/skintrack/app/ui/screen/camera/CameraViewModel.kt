@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.skintrack.app.data.remote.AiAnalysisService
 import com.skintrack.app.data.remote.SkinAnalysisResult
-import com.skintrack.app.data.remote.SupabaseSyncService
 import com.skintrack.app.data.remote.SyncManager
 import com.skintrack.app.domain.model.FeatureGate
 import com.skintrack.app.domain.model.SkinRecord
@@ -38,7 +37,6 @@ class CameraViewModel(
     private val checkFeatureAccess: CheckFeatureAccess,
     private val updateCheckInStreak: UpdateCheckInStreak,
     private val authRepository: AuthRepository,
-    private val syncService: SupabaseSyncService? = null,
     private val syncManager: SyncManager,
 ) : ViewModel() {
 
@@ -96,10 +94,8 @@ class CameraViewModel(
                 val localPath = imageStorage.saveImage(compressed, fileName)
                 val now = Clock.System.now()
 
-                // Upload to Supabase Storage (non-blocking fallback)
-                val imageUrl = try {
-                    syncService?.uploadImage(userId, fileName, compressed)
-                } catch (_: Exception) { null }
+                // Upload to remote storage (non-blocking fallback)
+                val imageUrl = skinRecordRepository.uploadImage(userId, fileName, compressed)
 
                 val record = SkinRecord(
                     id = id,

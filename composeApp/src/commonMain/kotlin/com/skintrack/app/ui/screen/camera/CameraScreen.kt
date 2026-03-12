@@ -39,6 +39,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.skintrack.app.ui.component.ErrorContent
 import com.skintrack.app.ui.component.LoadingContent
 import com.skintrack.app.ui.component.LockedFeatureCard
+import com.skintrack.app.ui.component.ScoreRing
 import com.skintrack.app.ui.screen.paywall.PaywallScreen
 import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.extendedColors
@@ -131,28 +132,28 @@ private fun CameraContent(viewModel: CameraViewModel) {
                     Alignment.CenterVertically,
                 ),
             ) {
-                Icon(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = null,
-                    modifier = Modifier.size(MaterialTheme.spacing.section),
-                    tint = MaterialTheme.extendedColors.functional.success,
-                )
-                Text(
-                    text = "保存成功",
-                    style = MaterialTheme.typography.headlineSmall,
-                )
                 if (state.analysisResult != null) {
-                    Text(
-                        text = "综合评分: ${state.analysisResult.overallScore}",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary,
+                    ScoreRing(
+                        score = state.analysisResult.overallScore,
+                        label = "综合评分",
                     )
                     Text(
                         text = state.analysisResult.summary,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = MaterialTheme.spacing.xl),
                     )
                 } else {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        modifier = Modifier.size(MaterialTheme.spacing.section),
+                        tint = MaterialTheme.extendedColors.functional.success,
+                    )
+                    Text(
+                        text = "保存成功",
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
                     Text(
                         text = "照片已保存到本地记录",
                         style = MaterialTheme.typography.bodyMedium,

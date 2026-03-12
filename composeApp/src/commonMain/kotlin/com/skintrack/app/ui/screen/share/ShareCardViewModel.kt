@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.skintrack.app.domain.model.FeatureGate
 import com.skintrack.app.domain.model.SkinRecord
+import com.skintrack.app.domain.repository.AuthRepository
 import com.skintrack.app.domain.repository.SkinRecordRepository
 import com.skintrack.app.domain.usecase.CheckFeatureAccess
 import com.skintrack.app.platform.ShareManager
@@ -17,6 +18,7 @@ class ShareCardViewModel(
     private val skinRecordRepository: SkinRecordRepository,
     private val checkFeatureAccess: CheckFeatureAccess,
     private val shareManager: ShareManager,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ShareCardUiState>(ShareCardUiState.Loading)
@@ -44,7 +46,8 @@ class ShareCardViewModel(
 
     fun loadLatestCompare() {
         viewModelScope.launch {
-            val records = skinRecordRepository.getRecordsByUser("local-user").first()
+            val userId = authRepository.currentUser()?.userId ?: "local-user"
+            val records = skinRecordRepository.getRecordsByUser(userId).first()
             val scored = records.filter { it.overallScore != null }.sortedBy { it.recordedAt }
 
             if (scored.size < 2) {
