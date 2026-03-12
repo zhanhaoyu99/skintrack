@@ -2,6 +2,7 @@ package com.skintrack.app.data.repository
 
 import com.skintrack.app.data.local.dao.SkinRecordDao
 import com.skintrack.app.data.local.entity.SkinRecordEntity
+import com.skintrack.app.data.remote.SupabaseSyncService
 import com.skintrack.app.domain.model.SkinRecord
 import com.skintrack.app.domain.model.SkinType
 import com.skintrack.app.domain.repository.SkinRecordRepository
@@ -11,6 +12,7 @@ import kotlinx.datetime.Instant
 
 class SkinRecordRepositoryImpl(
     private val skinRecordDao: SkinRecordDao,
+    private val syncService: SupabaseSyncService? = null,
 ) : SkinRecordRepository {
 
     override fun getRecordsByUser(userId: String): Flow<List<SkinRecord>> =
@@ -37,9 +39,25 @@ class SkinRecordRepositoryImpl(
     }
 
     override suspend fun syncToRemote() {
-        // TODO: Get unsynced records and push to Supabase
+        val service = syncService ?: return
         val unsynced = skinRecordDao.getUnsynced()
-        // Upload each to Supabase, then mark synced
+        if (unsynced.isEmpty()) return
+        try {
+            service.uploadSkinRecords(unsynced)
+            unsynced.forEach { skinRecordDao.markSynced(it.id) }
+        } catch (_: Exception) {
+            // Sync failure is non-fatal; will retry next time
+        }
+    }
+
+    suspend fun pullFromRemote(userId: String) {
+        val service = syncService ?: return
+        try {
+            val remote = service.loadSkinRecords(userId)
+            skinRecordDao.insertAll(remote)
+        } catch (_: Exception) {
+            // Pull failure is non-fatal
+        }
     }
 }
 

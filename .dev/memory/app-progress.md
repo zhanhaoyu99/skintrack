@@ -2,17 +2,18 @@
 # SkinTrack 开发进度
 
 ## 当前状态（新session必读5行）
-- **阶段**: MVP Phase 2
-- **当前里程碑**: M2 - 变现功能（完成）
-- **当前工作**: M2 订阅+门控+分享+打卡 全部完成 — Mock 支付，DB v3，功能门控
-- **阻塞问题**: 无（支付全 Mock，后续接入真实 SDK）
-- **下一步**: M3 测试上线 或 Supabase 接入（替换 Mock 为真实后端）
+- **阶段**: MVP Phase 2 → Pre-M3
+- **当前里程碑**: Supabase 后端集成（进行中）
+- **当前工作**: Supabase Auth/Sync/Storage 客户端集成完成，DB schema 就绪，Roborazzi 快照测试基础设施就绪
+- **阻塞问题**: 无（Supabase 项目未创建，代码已支持 Mock/Real 自动切换）
+- **下一步**: 创建 Supabase 项目 → 填入 credentials → 端到端测试 → M3 内测
 
 ## 技术栈
 - **客户端**: Compose Multiplatform (KMP) — composeApp(commonMain/androidMain/iosMain)
 - **后端**: Supabase (BaaS — Auth + PostgreSQL + Storage)
 - **AI**: 多模态LLM API (GPT-4o/Gemini/Claude) via Ktor
-- **代码仓库**: H:\projects\skintrack
+- **测试**: Roborazzi + Robolectric (快照测试)
+- **代码仓库**: /Users/zane/Projects/skintrack
 
 ## 里程碑规划
 ### M0.5: 设计系统 [■■■■■■■■■■] 100%
@@ -30,7 +31,7 @@
 - [x] 全量硬编码 dp 替换为 dimens token（Auth/Camera/Profile/Compare/TrendChart/Timeline/ScoreBar）
 - [x] 渐变激活（primary→AuthScreen按钮, warm→CompareCard, surface→ProfileScreen用户卡片）
 
-### M0: 项目搭建 [■■■■■■■■■■] 95%
+### M0: 项目搭建 [■■■■■■■■■■] 100%
 - [x] KMP项目初始化 (Gradle + libs.versions.toml)
 - [x] 配置 Room + Ktor + Supabase + Koin
 - [x] 基础架构搭建 (domain/data/ui/platform分层)
@@ -40,7 +41,7 @@
 - [x] expect/actual 占位 (CameraController, ImageCompressor)
 - [x] Gradle构建验证 ✅ BUILD SUCCESSFUL
 - [x] 修复 ImageCompressor expect class 缺少默认构造函数
-- [ ] Supabase项目创建 + 数据库表初始化
+- [x] Supabase DB schema (supabase/migrations/001_initial_schema.sql)
 
 ### M1: 核心功能 [■■■■■■■■■■] 100%
 - [x] 相机页 + 人脸引导框 (expect/actual)
@@ -48,7 +49,7 @@
 - [x] 拍照保存流程 (CameraViewModel: compress → saveImage → SkinRecord → Room)
 - [x] 时间线页 (TimelineScreen + TimelineViewModel + formatters)
 - [x] 护肤品记录页 (ProductScreen + ProductViewModel + AddProductSheet + 每日打卡)
-- [x] AI图像分析接口 (Mock实现, 1.5s延迟 + 随机评分, 预留httpClient供真实API)
+- [x] AI图像分析接口 (Mock实现, 4级皮肤状态档位, 预留httpClient供真实API)
 - [x] 分析结果本地存储 (Room — record.copy() + save, REPLACE策略)
 - [x] 时间线趋势图 (TrendChart — Canvas折线图, overallScore, 升序, >=2点显示)
 - [x] 前后对比图 (CompareCard — 自动首尾对比, overallScore 变化, 文本箭头指示)
@@ -89,6 +90,22 @@
 - [x] ProfileScreen 打卡提醒菜单 — MenuSection 加"打卡提醒"MenuItem
 - [x] BUILD SUCCESSFUL ✅ 零错误
 
+### M2.5: Supabase 后端集成 [■■■■■■□□□□] 60%
+- [x] Supabase DB schema — 6 表 + RLS + Storage bucket + auto-profile trigger
+- [x] SupabaseAuthRepository — 邮箱注册/登录/登出 + 中文错误映射
+- [x] SupabaseProvider — BuildConfig 读取 credentials + isConfigured 自动切换
+- [x] SupabaseSyncService — uploadSkinRecords/loadSkinRecords/uploadProducts/uploadImage
+- [x] SkinRecordRepositoryImpl — syncToRemote() + pullFromRemote() 实现
+- [x] ProductRepositoryImpl — syncToRemote() 实现
+- [x] CameraViewModel — 真实 userId + Storage 图片上传 + 后端同步
+- [x] AppModule DI — Supabase client + SyncService + 条件绑定 Auth/Sync
+- [x] AiAnalysisService — 4 级皮肤状态档位 Mock（EXCELLENT/GOOD/MODERATE/CONCERN）
+- [x] Roborazzi 快照测试基础设施 — SnapshotTestBase + 12 个测试用例
+- [ ] 创建 Supabase 项目 + 填入 credentials
+- [ ] 端到端联调测试
+- [ ] 离线同步策略（WorkManager 定期上传）
+- [ ] 用户资料同步（ProfileScreen ↔ Supabase profiles）
+
 ### M3: 测试上线 [□□□□□□□□□□] 0%
 - [ ] 内测 20-30人
 - [ ] Bug修复 + 优化
@@ -98,15 +115,22 @@
 ## 页面完成度
 | # | 页面 | CMP(common) | expect/actual | Supabase | 状态 |
 |---|------|-------------|---------------|----------|------|
-| 1 | 拍照页 CameraScreen | ✅ | 相机+存储 | 图片上传 | M2门控完成 |
+| 1 | 拍照页 CameraScreen | ✅ | 相机+存储 | 图片上传✅ | Supabase 同步就绪 |
 | 2 | 时间线 TimelineScreen | ✅ | — | 查询数据 | 分享入口完成 |
-| 3 | 护肤品记录 ProductScreen | ✅ | — | CRUD | 基础完成 |
+| 3 | 护肤品记录 ProductScreen | ✅ | — | CRUD✅ | Supabase 同步就绪 |
 | 4 | 记录详情 RecordDetailScreen | ✅ | — | — | M2门控+分享完成 |
 | 5 | 归因报告 AttributionReportScreen | ✅ | — | 查询+LLM | M2门控完成 |
 | 6 | 个人中心 ProfileScreen | ✅ | — | 用户信息 | M2打卡+会员入口完成 |
-| 7 | 登录/注册 AuthScreen | ✅ | — | Supabase Auth | Mock 完成 |
+| 7 | 登录/注册 AuthScreen | ✅ | — | Auth✅ | Supabase Auth 就绪 |
 | 8 | 会员订阅 PaywallScreen | ✅ | PaymentManager | — | Mock 完成 |
 | 9 | 分享卡片 ShareCardScreen | ✅ | ShareManager | — | Mock 完成 |
+
+## 快照测试
+| 测试文件 | 用例数 | 状态 |
+|---------|--------|------|
+| ComponentSnapshotTest | 6 | ✅ 通过 |
+| AuthScreenSnapshotTest | 3 | ✅ 通过 |
+| PaywallScreenSnapshotTest | 3 | ✅ 通过 |
 
 ## 自绘/共享组件
 | 组件 | 位置 | 用途 | 状态 |
@@ -132,6 +156,16 @@
 | PaymentManager | Mock(delay) | — | Mock完成 |
 | ShareManager | Mock(log) | — | Mock完成 |
 | NotificationManager | Mock(log) | — | Mock完成 |
+
+## Supabase 后端
+| 组件 | 文件 | 状态 |
+|------|------|------|
+| DB Schema | supabase/migrations/001_initial_schema.sql | ✅ 就绪 |
+| SupabaseProvider | data/remote/SupabaseProvider.kt | ✅ BuildConfig + 自动切换 |
+| SupabaseAuthRepository | data/repository/SupabaseAuthRepository.kt | ✅ 就绪 |
+| SupabaseSyncService | data/remote/SupabaseSyncService.kt | ✅ 就绪 |
+| DTO | data/remote/dto/SupabaseDto.kt | ✅ 6 个 DTO |
+| Storage | skin-photos bucket + RLS | ✅ schema 就绪 |
 
 ## 商业模型
 | 功能 | 免费版（试用期后） | 付费版 / 试用期内 |

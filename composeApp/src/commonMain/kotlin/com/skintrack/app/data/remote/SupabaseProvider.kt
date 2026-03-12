@@ -7,14 +7,32 @@ import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
 
 object SupabaseProvider {
-    // TODO: Replace with actual Supabase project credentials
-    private const val SUPABASE_URL = "https://YOUR_PROJECT.supabase.co"
-    private const val SUPABASE_ANON_KEY = "YOUR_ANON_KEY"
+
+    // Credentials loaded from BuildConfig (set via local.properties or CI env)
+    // Fallback to placeholder values for development builds
+    private val supabaseUrl: String
+        get() = try {
+            Class.forName("com.skintrack.app.BuildConfig")
+                .getField("SUPABASE_URL").get(null) as String
+        } catch (_: Exception) {
+            "https://YOUR_PROJECT.supabase.co"
+        }
+
+    private val supabaseAnonKey: String
+        get() = try {
+            Class.forName("com.skintrack.app.BuildConfig")
+                .getField("SUPABASE_ANON_KEY").get(null) as String
+        } catch (_: Exception) {
+            "YOUR_ANON_KEY"
+        }
+
+    val isConfigured: Boolean
+        get() = !supabaseUrl.contains("YOUR_PROJECT")
 
     val client: SupabaseClient by lazy {
         createSupabaseClient(
-            supabaseUrl = SUPABASE_URL,
-            supabaseKey = SUPABASE_ANON_KEY,
+            supabaseUrl = supabaseUrl,
+            supabaseKey = supabaseAnonKey,
         ) {
             install(Auth)
             install(Postgrest)

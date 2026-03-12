@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.skintrack.app.data.remote.AiAnalysisService
 import com.skintrack.app.data.remote.SkinAnalysisResult
+import com.skintrack.app.data.remote.SupabaseSyncService
 import com.skintrack.app.domain.model.FeatureGate
 import com.skintrack.app.domain.model.SkinRecord
 import com.skintrack.app.domain.model.SkinType
 import com.skintrack.app.domain.model.lockedMessage
+import com.skintrack.app.domain.repository.AuthRepository
 import com.skintrack.app.domain.repository.SkinRecordRepository
 import com.skintrack.app.domain.usecase.CheckFeatureAccess
 import com.skintrack.app.domain.usecase.UpdateCheckInStreak
@@ -34,6 +36,8 @@ class CameraViewModel(
     private val aiAnalysisService: AiAnalysisService,
     private val checkFeatureAccess: CheckFeatureAccess,
     private val updateCheckInStreak: UpdateCheckInStreak,
+    private val authRepository: AuthRepository,
+    private val syncService: SupabaseSyncService? = null,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<CameraUiState>(CameraUiState.Previewing)
@@ -81,17 +85,26 @@ class CameraViewModel(
                     )
                     return@launch
                 }
+                val user = authRepository.currentUser()
+                val userId = user?.userId ?: "local-user"
+
                 val compressed = imageCompressor.compress(state.photoBytes)
                 val id = Uuid.random().toString()
                 val fileName = "skin_$id.jpg"
                 val localPath = imageStorage.saveImage(compressed, fileName)
                 val now = Clock.System.now()
 
+                // Upload to Supabase Storage (non-blocking fallback)
+                val imageUrl = try {
+                    syncService?.uploadImage(userId, fileName, compressed)
+                } catch (_: Exception) { null }
+
                 val record = SkinRecord(
                     id = id,
-                    userId = "local-user",
+                    userId = userId,
                     skinType = SkinType.UNKNOWN,
                     localImagePath = localPath,
+                    imageUrl = imageUrl,
                     recordedAt = now,
                     createdAt = now,
                 )
@@ -113,6 +126,8 @@ class CameraViewModel(
                         analysisJson = result.toJson(),
                     )
                     skinRecordRepository.save(updatedRecord)
+                    // Background sync to Supabase
+                    skinRecordRepository.syncToRemote()
                     val milestoneMessage = updateCheckInStreak.onNewRecord()
                     _uiState.value = CameraUiState.Saved(result, milestoneMessage)
                 } catch (e: Exception) {

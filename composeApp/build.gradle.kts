@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -8,6 +9,7 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
+    alias(libs.plugins.roborazzi)
 }
 
 kotlin {
@@ -90,6 +92,17 @@ kotlin {
         // iosMain.dependencies {
         //     implementation(libs.ktor.client.darwin)
         // }
+
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(libs.junit)
+                implementation(libs.robolectric)
+                implementation(libs.roborazzi)
+                implementation(libs.roborazzi.compose)
+                implementation(libs.roborazzi.junit.rule)
+                implementation(libs.compose.ui.test.junit4)
+            }
+        }
     }
 }
 
@@ -103,6 +116,16 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0.0"
+
+        // Supabase credentials from local.properties
+        val localProperties = rootProject.file("local.properties")
+        val properties = Properties()
+        if (localProperties.exists()) properties.load(localProperties.inputStream().reader())
+
+        buildConfigField("String", "SUPABASE_URL",
+            "\"${properties.getProperty("supabase.url", "https://YOUR_PROJECT.supabase.co")}\"")
+        buildConfigField("String", "SUPABASE_ANON_KEY",
+            "\"${properties.getProperty("supabase.anon.key", "YOUR_ANON_KEY")}\"")
     }
 
     buildFeatures {
@@ -118,6 +141,15 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            all {
+                it.systemProperty("robolectric.graphicsMode", "NATIVE")
+            }
         }
     }
 }

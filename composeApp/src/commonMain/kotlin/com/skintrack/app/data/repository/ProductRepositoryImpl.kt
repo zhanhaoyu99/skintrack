@@ -4,20 +4,23 @@ import com.skintrack.app.data.local.dao.DailyProductUsageDao
 import com.skintrack.app.data.local.dao.SkincareProductDao
 import com.skintrack.app.data.local.entity.DailyProductUsageEntity
 import com.skintrack.app.data.local.entity.SkincareProductEntity
+import com.skintrack.app.data.remote.SupabaseSyncService
 import com.skintrack.app.domain.model.DailyProductUsage
 import com.skintrack.app.domain.model.ProductCategory
 import com.skintrack.app.domain.model.SkincareProduct
 import com.skintrack.app.domain.repository.ProductRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
 
 class ProductRepositoryImpl(
     private val productDao: SkincareProductDao,
     private val usageDao: DailyProductUsageDao,
+    private val syncService: SupabaseSyncService? = null,
 ) : ProductRepository {
 
     override fun getAllProducts(): Flow<List<SkincareProduct>> =
@@ -51,7 +54,7 @@ class ProductRepositoryImpl(
         return usageDao.getUsageBetween(userId, startMs, endMs).map { entities ->
             entities.map { entity ->
                 val epochMs = entity.usedDate
-                val instant = kotlinx.datetime.Instant.fromEpochMilliseconds(epochMs)
+                val instant = Instant.fromEpochMilliseconds(epochMs)
                 val date = instant.toLocalDateTime(TimeZone.currentSystemDefault()).date
                 entity.toDomain(date)
             }
@@ -68,7 +71,23 @@ class ProductRepositoryImpl(
     }
 
     override suspend fun syncToRemote() {
-        // TODO: Sync unsynced products and usage to Supabase
+        val service = syncService ?: return
+        try {
+            val unsyncedProducts = productDao.getUnsynced()
+            if (unsyncedProducts.isNotEmpty()) {
+                val userId = unsyncedProducts.first().id // Products don't have userId in entity
+                service.uploadProducts(unsyncedProducts, userId)
+                unsyncedProducts.forEach { productDao.markSynced(it.id) }
+            }
+
+            val unsyncedUsage = usageDao.getUnsynced()
+            if (unsyncedUsage.isNotEmpty()) {
+                service.uploadUsage(unsyncedUsage)
+                unsyncedUsage.forEach { usageDao.markSynced(it.id) }
+            }
+        } catch (_: Exception) {
+            // Sync failure is non-fatal
+        }
     }
 }
 

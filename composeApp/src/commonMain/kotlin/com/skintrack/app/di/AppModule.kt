@@ -3,9 +3,12 @@ package com.skintrack.app.di
 import com.skintrack.app.data.local.AppDatabase
 import com.skintrack.app.data.local.getDatabaseBuilder
 import com.skintrack.app.data.remote.AiAnalysisService
+import com.skintrack.app.data.remote.SupabaseProvider
+import com.skintrack.app.data.remote.SupabaseSyncService
 import com.skintrack.app.data.repository.MockAuthRepository
 import com.skintrack.app.data.repository.ProductRepositoryImpl
 import com.skintrack.app.data.repository.SkinRecordRepositoryImpl
+import com.skintrack.app.data.repository.SupabaseAuthRepository
 import com.skintrack.app.data.repository.SubscriptionRepositoryImpl
 import com.skintrack.app.domain.repository.AuthRepository
 import com.skintrack.app.domain.repository.ProductRepository
@@ -66,13 +69,27 @@ val appModule = module {
         }
     }
 
+    // Supabase
+    single { SupabaseProvider.client }
+
+    // Sync service (null when Supabase not configured)
+    single<SupabaseSyncService?> {
+        if (SupabaseProvider.isConfigured) SupabaseSyncService(get()) else null
+    }
+
     // Services
     single { AiAnalysisService(get()) }
 
     // Repositories
-    single<AuthRepository> { MockAuthRepository(get()) }
-    single<SkinRecordRepository> { SkinRecordRepositoryImpl(get()) }
-    single<ProductRepository> { ProductRepositoryImpl(get(), get()) }
+    single<AuthRepository> {
+        if (SupabaseProvider.isConfigured) {
+            SupabaseAuthRepository(get(), get())
+        } else {
+            MockAuthRepository(get())
+        }
+    }
+    single<SkinRecordRepository> { SkinRecordRepositoryImpl(get(), getOrNull()) }
+    single<ProductRepository> { ProductRepositoryImpl(get(), get(), getOrNull()) }
     single<SubscriptionRepository> { SubscriptionRepositoryImpl(get(), get(), get(), get()) }
 
     // Use Cases
