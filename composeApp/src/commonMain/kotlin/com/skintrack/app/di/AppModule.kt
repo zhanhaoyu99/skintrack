@@ -5,6 +5,7 @@ import com.skintrack.app.data.local.getDatabaseBuilder
 import com.skintrack.app.data.remote.AiAnalysisService
 import com.skintrack.app.data.remote.SupabaseProvider
 import com.skintrack.app.data.remote.SupabaseSyncService
+import com.skintrack.app.data.remote.SyncManager
 import com.skintrack.app.data.repository.MockAuthRepository
 import com.skintrack.app.data.repository.ProductRepositoryImpl
 import com.skintrack.app.data.repository.SkinRecordRepositoryImpl
@@ -91,6 +92,9 @@ val appModule = module {
     single<SkinRecordRepository> { SkinRecordRepositoryImpl(get(), getOrNull()) }
     single<ProductRepository> { ProductRepositoryImpl(get(), get(), getOrNull()) }
     single<SubscriptionRepository> { SubscriptionRepositoryImpl(get(), get(), get(), get()) }
+
+    // Sync
+    single { SyncManager(get(), get(), get()) }
 
     // Use Cases
     single { CheckFeatureAccess(get()) }

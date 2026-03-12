@@ -2,6 +2,7 @@ package com.skintrack.app.domain.model
 
 data class SkincareProduct(
     val id: String,
+    val userId: String = "",
     val name: String,
     val brand: String? = null,
     val category: ProductCategory,

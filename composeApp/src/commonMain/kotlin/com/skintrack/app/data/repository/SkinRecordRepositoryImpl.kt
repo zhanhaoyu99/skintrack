@@ -50,7 +50,7 @@ class SkinRecordRepositoryImpl(
         }
     }
 
-    suspend fun pullFromRemote(userId: String) {
+    override suspend fun pullFromRemote(userId: String) {
         val service = syncService ?: return
         try {
             val remote = service.loadSkinRecords(userId)

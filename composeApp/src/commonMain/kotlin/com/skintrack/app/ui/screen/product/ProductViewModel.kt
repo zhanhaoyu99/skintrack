@@ -5,13 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.skintrack.app.domain.model.DailyProductUsage
 import com.skintrack.app.domain.model.ProductCategory
 import com.skintrack.app.domain.model.SkincareProduct
+import com.skintrack.app.domain.repository.AuthRepository
 import com.skintrack.app.domain.repository.ProductRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -21,21 +20,30 @@ import kotlin.uuid.Uuid
 
 class ProductViewModel(
     private val productRepository: ProductRepository,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    private val userId = "local-user"
+    private var userId = "local-user"
 
-    val uiState: StateFlow<ProductUiState> = combine(
-        productRepository.getAllProducts(),
-        productRepository.getUsageByDate(userId, today),
-    ) { products, usages ->
-        if (products.isEmpty()) ProductUiState.Empty
-        else ProductUiState.Content(
-            products = products,
-            todayUsedProductIds = usages.map { it.productId }.toSet(),
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ProductUiState.Loading)
+    private val _uiState = MutableStateFlow<ProductUiState>(ProductUiState.Loading)
+    val uiState: StateFlow<ProductUiState> = _uiState.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            userId = authRepository.currentUser()?.userId ?: "local-user"
+            combine(
+                productRepository.getAllProducts(),
+                productRepository.getUsageByDate(userId, today),
+            ) { products, usages ->
+                if (products.isEmpty()) ProductUiState.Empty
+                else ProductUiState.Content(
+                    products = products,
+                    todayUsedProductIds = usages.map { it.productId }.toSet(),
+                )
+            }.collect { _uiState.value = it }
+        }
+    }
 
     private val _showAddSheet = MutableStateFlow(false)
     val showAddSheet: StateFlow<Boolean> = _showAddSheet.asStateFlow()
@@ -74,6 +82,7 @@ class ProductViewModel(
         viewModelScope.launch {
             val product = SkincareProduct(
                 id = Uuid.random().toString(),
+                userId = userId,
                 name = name,
                 brand = brand?.takeIf { it.isNotBlank() },
                 category = category,

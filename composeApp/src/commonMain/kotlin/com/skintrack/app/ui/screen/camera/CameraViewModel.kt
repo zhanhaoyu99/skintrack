@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.skintrack.app.data.remote.AiAnalysisService
 import com.skintrack.app.data.remote.SkinAnalysisResult
 import com.skintrack.app.data.remote.SupabaseSyncService
+import com.skintrack.app.data.remote.SyncManager
 import com.skintrack.app.domain.model.FeatureGate
 import com.skintrack.app.domain.model.SkinRecord
 import com.skintrack.app.domain.model.SkinType
@@ -38,6 +39,7 @@ class CameraViewModel(
     private val updateCheckInStreak: UpdateCheckInStreak,
     private val authRepository: AuthRepository,
     private val syncService: SupabaseSyncService? = null,
+    private val syncManager: SyncManager,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<CameraUiState>(CameraUiState.Previewing)
@@ -127,7 +129,7 @@ class CameraViewModel(
                     )
                     skinRecordRepository.save(updatedRecord)
                     // Background sync to Supabase
-                    skinRecordRepository.syncToRemote()
+                    syncManager.pushChanges()
                     val milestoneMessage = updateCheckInStreak.onNewRecord()
                     _uiState.value = CameraUiState.Saved(result, milestoneMessage)
                 } catch (e: Exception) {

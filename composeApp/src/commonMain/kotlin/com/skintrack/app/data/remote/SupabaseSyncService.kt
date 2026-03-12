@@ -112,6 +112,7 @@ private fun SkincareProductEntity.toDto(userId: String) = SkincareProductDto(
 
 private fun SkincareProductDto.toEntity() = SkincareProductEntity(
     id = id,
+    userId = userId,
     name = name,
     brand = brand,
     category = category,

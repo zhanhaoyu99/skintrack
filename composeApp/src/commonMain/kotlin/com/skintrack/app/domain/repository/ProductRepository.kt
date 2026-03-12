@@ -15,4 +15,5 @@ interface ProductRepository {
     suspend fun logUsage(usage: DailyProductUsage)
     suspend fun removeUsage(userId: String, productId: String, date: LocalDate)
     suspend fun syncToRemote()
+    suspend fun pullFromRemote(userId: String)
 }

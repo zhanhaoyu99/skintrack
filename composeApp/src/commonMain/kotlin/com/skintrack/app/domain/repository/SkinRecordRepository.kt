@@ -11,4 +11,5 @@ interface SkinRecordRepository {
     suspend fun save(record: SkinRecord)
     suspend fun delete(record: SkinRecord)
     suspend fun syncToRemote()
+    suspend fun pullFromRemote(userId: String)
 }

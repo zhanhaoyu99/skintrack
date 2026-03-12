@@ -2,6 +2,7 @@ package com.skintrack.app.ui.screen.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.skintrack.app.data.remote.SyncManager
 import com.skintrack.app.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,6 +11,7 @@ import kotlinx.coroutines.launch
 
 class AuthViewModel(
     private val authRepository: AuthRepository,
+    private val syncManager: SyncManager,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
@@ -48,6 +50,7 @@ class AuthViewModel(
             result.fold(
                 onSuccess = {
                     _uiState.update { it.copy(isSubmitting = false) }
+                    syncManager.syncAll()
                     onSuccess()
                 },
                 onFailure = { error ->

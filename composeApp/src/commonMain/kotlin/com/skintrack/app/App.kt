@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
+import com.skintrack.app.data.remote.SyncManager
 import com.skintrack.app.domain.repository.AuthRepository
 import com.skintrack.app.ui.screen.HomeScreen
 import com.skintrack.app.ui.screen.auth.AuthScreen
@@ -19,11 +20,17 @@ import org.koin.compose.koinInject
 fun App() {
     SkinTrackTheme {
         val authRepository: AuthRepository = koinInject()
+        val syncManager: SyncManager = koinInject()
         var startScreen by remember { mutableStateOf<Screen?>(null) }
 
         LaunchedEffect(Unit) {
             val user = authRepository.currentUser()
-            startScreen = if (user != null) HomeScreen() else AuthScreen()
+            if (user != null) {
+                syncManager.syncAll()
+                startScreen = HomeScreen()
+            } else {
+                startScreen = AuthScreen()
+            }
         }
 
         startScreen?.let { screen ->

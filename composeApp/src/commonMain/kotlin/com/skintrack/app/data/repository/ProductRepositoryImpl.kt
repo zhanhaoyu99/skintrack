@@ -75,7 +75,7 @@ class ProductRepositoryImpl(
         try {
             val unsyncedProducts = productDao.getUnsynced()
             if (unsyncedProducts.isNotEmpty()) {
-                val userId = unsyncedProducts.first().id // Products don't have userId in entity
+                val userId = unsyncedProducts.first().userId
                 service.uploadProducts(unsyncedProducts, userId)
                 unsyncedProducts.forEach { productDao.markSynced(it.id) }
             }
@@ -89,10 +89,21 @@ class ProductRepositoryImpl(
             // Sync failure is non-fatal
         }
     }
+
+    override suspend fun pullFromRemote(userId: String) {
+        val service = syncService ?: return
+        try {
+            val remote = service.loadProducts(userId)
+            remote.forEach { productDao.insert(it) }
+        } catch (_: Exception) {
+            // Pull failure is non-fatal
+        }
+    }
 }
 
 private fun SkincareProductEntity.toDomain() = SkincareProduct(
     id = id,
+    userId = userId,
     name = name,
     brand = brand,
     category = runCatching { ProductCategory.valueOf(category) }.getOrDefault(ProductCategory.OTHER),
@@ -103,6 +114,7 @@ private fun SkincareProductEntity.toDomain() = SkincareProduct(
 
 private fun SkincareProduct.toEntity() = SkincareProductEntity(
     id = id,
+    userId = userId,
     name = name,
     brand = brand,
     category = category.name,
