@@ -3,38 +3,48 @@ package com.skintrack.app.ui.screen.timeline
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.skintrack.app.domain.model.SkinRecord
+import com.skintrack.app.domain.repository.AuthRepository
 import com.skintrack.app.domain.repository.SkinRecordRepository
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class TimelineViewModel(
-    skinRecordRepository: SkinRecordRepository,
+    private val skinRecordRepository: SkinRecordRepository,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
-    val uiState: StateFlow<TimelineUiState> = skinRecordRepository
-        .getRecordsByUser("local-user")
-        .map { records ->
-            if (records.isEmpty()) TimelineUiState.Empty
-            else {
-                val scoredRecords = records
-                    .filter { it.overallScore != null }
-                    .sortedBy { it.recordedAt }
+    private val _uiState = MutableStateFlow<TimelineUiState>(TimelineUiState.Loading)
+    val uiState: StateFlow<TimelineUiState> = _uiState.asStateFlow()
 
-                val compareData = if (scoredRecords.size >= 2)
-                    CompareData(before = scoredRecords.first(), after = scoredRecords.last())
-                else null
+    init {
+        viewModelScope.launch {
+            val userId = authRepository.currentUser()?.userId ?: "local-user"
+            skinRecordRepository.getRecordsByUser(userId)
+                .map { records ->
+                    if (records.isEmpty()) TimelineUiState.Empty
+                    else {
+                        val scoredRecords = records
+                            .filter { it.overallScore != null }
+                            .sortedBy { it.recordedAt }
 
-                TimelineUiState.Content(
-                    records = records,
-                    chartPoints = scoredRecords
-                        .map { ChartRecord(date = it.recordedAt, overallScore = it.overallScore!!) },
-                    compareData = compareData,
-                )
-            }
+                        val compareData = if (scoredRecords.size >= 2)
+                            CompareData(before = scoredRecords.first(), after = scoredRecords.last())
+                        else null
+
+                        TimelineUiState.Content(
+                            records = records,
+                            chartPoints = scoredRecords
+                                .map { ChartRecord(date = it.recordedAt, overallScore = it.overallScore!!) },
+                            compareData = compareData,
+                        )
+                    }
+                }
+                .collect { _uiState.value = it }
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TimelineUiState.Loading)
+    }
 }
 
 sealed interface TimelineUiState {
