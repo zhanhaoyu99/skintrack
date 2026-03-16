@@ -11,6 +11,8 @@ interface SkinRecordRepository {
     suspend fun save(record: SkinRecord)
     suspend fun delete(record: SkinRecord)
     suspend fun syncToRemote()
-    suspend fun pullFromRemote(userId: String)
+    suspend fun pullFromRemote(userId: String, since: String? = null)
     suspend fun uploadImage(userId: String, fileName: String, imageBytes: ByteArray): String?
+    suspend fun getRecordsPaged(userId: String, limit: Int, offset: Int): List<SkinRecord>
+    suspend fun getPendingAnalysis(userId: String): List<SkinRecord>
 }

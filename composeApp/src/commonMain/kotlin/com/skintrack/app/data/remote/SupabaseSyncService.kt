@@ -25,7 +25,7 @@ class SupabaseSyncService(
         postgrest.from("skin_records").upsert(dtos)
     }
 
-    override suspend fun loadSkinRecords(userId: String): List<SkinRecordEntity> {
+    override suspend fun loadSkinRecords(userId: String, since: String?): List<SkinRecordEntity> {
         val dtos = postgrest.from("skin_records")
             .select { filter { eq("user_id", userId) } }
             .decodeList<SkinRecordDto>()
@@ -39,7 +39,7 @@ class SupabaseSyncService(
         postgrest.from("skincare_products").upsert(dtos)
     }
 
-    override suspend fun loadProducts(userId: String): List<SkincareProductEntity> {
+    override suspend fun loadProducts(userId: String, since: String?): List<SkincareProductEntity> {
         val dtos = postgrest.from("skincare_products")
             .select { filter { eq("user_id", userId) } }
             .decodeList<SkincareProductDto>()

@@ -27,4 +27,13 @@ interface SkincareProductDao {
 
     @Query("UPDATE skincare_products SET synced = 1 WHERE id = :id")
     suspend fun markSynced(id: String)
+
+    @Query("SELECT * FROM skincare_products WHERE userId = :userId ORDER BY name ASC LIMIT :limit OFFSET :offset")
+    suspend fun getProductsPaged(userId: String, limit: Int, offset: Int): List<SkincareProductEntity>
+
+    @Query("SELECT COUNT(*) FROM skincare_products WHERE userId = :userId")
+    suspend fun countByUser(userId: String): Int
+
+    @Query("SELECT * FROM skincare_products WHERE userId = :userId AND (name LIKE '%' || :query || '%' OR brand LIKE '%' || :query || '%') ORDER BY name ASC")
+    suspend fun searchProducts(userId: String, query: String): List<SkincareProductEntity>
 }

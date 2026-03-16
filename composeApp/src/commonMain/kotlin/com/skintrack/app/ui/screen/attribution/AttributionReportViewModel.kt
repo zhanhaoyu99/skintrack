@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.daysUntil
 import kotlinx.datetime.toLocalDateTime
 
 class AttributionReportViewModel(
@@ -66,6 +67,11 @@ class AttributionReportViewModel(
 
             val isPremium = checkFeatureAccess.isPremium()
 
+            val analysisDays = startDate.daysUntil(endDate).coerceAtLeast(1)
+            val productsUsed = attributions.size
+
+            val suggestions = buildSuggestions(attributions, overallTrend)
+
             _uiState.value = AttributionUiState.Content(
                 totalRecords = scoredRecords.size,
                 dateRange = dateRange,
@@ -73,6 +79,9 @@ class AttributionReportViewModel(
                 trendDelta = trendDelta,
                 attributions = attributions,
                 isPremium = isPremium,
+                productsUsed = productsUsed,
+                analysisDays = analysisDays,
+                suggestions = suggestions,
             )
         }
     }
@@ -114,6 +123,34 @@ class AttributionReportViewModel(
         }.sortedByDescending { it.impact }
     }
 
+    private fun buildSuggestions(
+        attributions: List<ProductAttribution>,
+        overallTrend: String,
+    ): List<String> {
+        val suggestions = mutableListOf<String>()
+
+        // Suggestion based on best product
+        val bestProduct = attributions.firstOrNull { it.impact > 0 }
+        if (bestProduct != null) {
+            suggestions.add("继续使用「${bestProduct.product.name}」，它对你的肤质有明显的正面影响")
+        }
+
+        // Suggestion based on worst product
+        val worstProduct = attributions.lastOrNull { it.impact < 0 }
+        if (worstProduct != null) {
+            suggestions.add("考虑减少或停用「${worstProduct.product.name}」，数据显示它可能对你的皮肤状态有负面影响")
+        }
+
+        // General suggestion based on trend
+        when (overallTrend) {
+            "上升" -> suggestions.add("你的皮肤状态正在改善，保持当前护肤习惯并坚持记录")
+            "下降" -> suggestions.add("建议检查近期的作息和饮食习惯，同时简化护肤步骤观察变化")
+            else -> suggestions.add("保持规律的拍照记录，更多数据有助于发现护肤产品的真实效果")
+        }
+
+        return suggestions.take(3)
+    }
+
     private fun formatDate(date: kotlinx.datetime.LocalDate): String {
         val year = date.year
         val month = date.monthNumber.toString().padStart(2, '0')
@@ -132,5 +169,8 @@ sealed interface AttributionUiState {
         val trendDelta: Int,
         val attributions: List<ProductAttribution>,
         val isPremium: Boolean = true,
+        val productsUsed: Int = 0,
+        val analysisDays: Int = 14,
+        val suggestions: List<String> = emptyList(),
     ) : AttributionUiState
 }

@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.skintrack.app.ui.theme.Motion
 import com.skintrack.app.ui.theme.spacing
 
 @Composable
@@ -29,6 +31,7 @@ fun LoadingContent(
             text = message,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.animateFadeIn(Motion.SHORT),
         )
     }
 }
@@ -65,6 +68,8 @@ fun EmptyContent(
     message: String = "暂无数据",
     modifier: Modifier = Modifier,
     icon: @Composable (() -> Unit)? = null,
+    actionLabel: String? = null,
+    onAction: (() -> Unit)? = null,
 ) {
     Column(
         modifier = modifier,
@@ -74,11 +79,26 @@ fun EmptyContent(
             Alignment.CenterVertically,
         ),
     ) {
-        icon?.invoke()
+        if (icon != null) {
+            androidx.compose.foundation.layout.Box(
+                modifier = Modifier.animateFadeIn(0),
+            ) {
+                icon()
+            }
+        }
         Text(
             text = message,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.animateFadeIn(100),
         )
+        if (actionLabel != null && onAction != null) {
+            FilledTonalButton(
+                onClick = onAction,
+                modifier = Modifier.animateFadeIn(200),
+            ) {
+                Text(actionLabel)
+            }
+        }
     }
 }

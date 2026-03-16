@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SkinTrack Design System</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #F8FAFB; color: #111827; -webkit-font-smoothing: antialiased; }
+.header { background: linear-gradient(145deg, #1A7A63 0%, #2D9F7F 35%, #3DBFA0 70%, #58CAA5 100%); color: white; padding: 48px 40px 40px; }
+.header h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.8px; margin-bottom: 8px; }
+.header p { font-size: 15px; opacity: 0.8; font-weight: 500; }
+.header .stats { display: flex; gap: 32px; margin-top: 24px; }
+.header .stat { text-align: center; }
+.header .stat .num { font-size: 28px; font-weight: 800; }
+.header .stat .label { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+.container { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+.section-title { font-size: 13px; font-weight: 700; color: #6B7280; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.section-title::before { content: ''; width: 3px; height: 14px; border-radius: 2px; background: #2D9F7F; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 40px; }
+.card { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: white; border-radius: 14px; text-decoration: none; color: #111827; box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.04); transition: all 0.2s; border: 0.5px solid rgba(0,0,0,0.04); }
+.card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-1px); }
+.card .icon { width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; }
+.card .info .name { font-size: 14px; font-weight: 700; letter-spacing: -0.1px; }
+.card .info .desc { font-size: 11px; color: #6B7280; margin-top: 1px; font-weight: 500; }
+.badge { display: inline-flex; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; margin-left: 6px; }
+.badge-new { background: #ECFDF5; color: #059669; }
+.footer { text-align: center; padding: 24px; font-size: 12px; color: #9CA3AF; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>SkinTrack Design System</h1>
+  <p>AI 驱动的肌肤管理助手 · 设计稿 v3</p>
+  <div class="stats">
+    <div class="stat"><div class="num">20</div><div class="label">设计文件</div></div>
+    <div class="stat"><div class="num">50+</div><div class="label">屏幕状态</div></div>
+    <div class="stat"><div class="num">2</div><div class="label">主题模式</div></div>
+  </div>
+</div>
+<div class="container">
+  <div class="section-title">核心流程</div>
+  <div class="grid">
+    <a class="card" href="01-onboarding.html"><div class="icon" style="background:linear-gradient(135deg,#E8F7F3,#D1F0E4)">🌱</div><div class="info"><div class="name">引导页</div><div class="desc">4 屏引导 + 肤质选择</div></div></a>
+    <a class="card" href="02-auth.html"><div class="icon" style="background:linear-gradient(135deg,#EDE9FE,#DDD6FE)">🔐</div><div class="info"><div class="name">登录/注册</div><div class="desc">3 屏 含密码强度</div></div></a>
+    <a class="card" href="03-dashboard.html"><div class="icon" style="background:linear-gradient(135deg,#FFF1F2,#FFE4E6)">🏠</div><div class="info"><div class="name">首页仪表盘</div><div class="desc">内容态 + 空状态</div></div></a>
+    <a class="card" href="04-timeline.html"><div class="icon" style="background:linear-gradient(135deg,#FFF4EA,#FFE4C8)">📊</div><div class="info"><div class="name">肌肤记录</div><div class="desc">列表 + 趋势 + 空状态</div></div></a>
+  </div>
+
+  <div class="section-title">功能页面</div>
+  <div class="grid">
+    <a class="card" href="05-camera.html"><div class="icon" style="background:linear-gradient(135deg,#111,#222)">📸</div><div class="info"><div class="name">拍照页</div><div class="desc">取景器 + 结果 + 权限</div></div></a>
+    <a class="card" href="06-record-detail.html"><div class="icon" style="background:linear-gradient(135deg,#E8F7F3,#D1F0E4)">📋</div><div class="info"><div class="name">记录详情</div><div class="desc">雷达图 + AI 分析</div></div></a>
+    <a class="card" href="07-profile.html"><div class="icon" style="background:linear-gradient(135deg,#FFF1F2,#FFE4E6)">👤</div><div class="info"><div class="name">个人中心</div><div class="desc">渐变头部 + VIP</div></div></a>
+    <a class="card" href="08-product.html"><div class="icon" style="background:linear-gradient(135deg,#FFF4EA,#FFE4C8)">💊</div><div class="info"><div class="name">护肤品管理</div><div class="desc">产品列表 + 添加弹窗</div></div></a>
+    <a class="card" href="09-attribution.html"><div class="icon" style="background:linear-gradient(135deg,#EDE9FE,#DDD6FE)">🔬</div><div class="info"><div class="name">归因分析</div><div class="desc">产品排行 + AI 洞察</div></div></a>
+    <a class="card" href="10-paywall.html"><div class="icon" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A)">⭐</div><div class="info"><div class="name">会员订阅</div><div class="desc">订阅方案 + 社会证明</div></div></a>
+    <a class="card" href="11-settings.html"><div class="icon" style="background:linear-gradient(135deg,#F3F4F6,#E5E7EB)">⚙️</div><div class="info"><div class="name">设置</div><div class="desc">设置 + 删除账号弹窗</div></div></a>
+    <a class="card" href="12-share.html"><div class="icon" style="background:linear-gradient(135deg,#DBEAFE,#BFDBFE)">📤</div><div class="info"><div class="name">分享卡片</div><div class="desc">对比卡 + 模板选择</div></div></a>
+  </div>
+
+  <div class="section-title">状态变体</div>
+  <div class="grid">
+    <a class="card" href="13-locked-states.html"><div class="icon" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A)">🔒</div><div class="info"><div class="name">VIP 锁定态</div><div class="desc">4 屏门控设计</div></div></a>
+    <a class="card" href="18-loading-states.html"><div class="icon" style="background:linear-gradient(135deg,#F3F4F6,#E5E7EB)">⏳</div><div class="info"><div class="name">加载骨架屏</div><div class="desc">3 屏骨架loading</div></div></a>
+    <a class="card" href="19-toast-states.html"><div class="icon" style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5)">💬</div><div class="info"><div class="name">通知状态<span class="badge badge-new">NEW</span></div><div class="desc">Toast + 错误 + 空状态</div></div></a>
+    <a class="card" href="20-edit-profile.html"><div class="icon" style="background:linear-gradient(135deg,#FFF1F2,#FFE4E6)">✏️</div><div class="info"><div class="name">编辑资料<span class="badge badge-new">NEW</span></div><div class="desc">资料编辑 + 改密码</div></div></a>
+  </div>
+
+  <div class="section-title">暗色模式</div>
+  <div class="grid">
+    <a class="card" href="14-dark-core.html"><div class="icon" style="background:#1C1E20;color:white">🌙</div><div class="info"><div class="name">暗色核心页</div><div class="desc">Dashboard + Timeline + Profile</div></div></a>
+    <a class="card" href="15-dark-screens.html"><div class="icon" style="background:#1C1E20;color:white">🌑</div><div class="info"><div class="name">暗色功能页</div><div class="desc">Auth + Detail + Product + Attribution</div></div></a>
+    <a class="card" href="16-dark-utility.html"><div class="icon" style="background:#1C1E20;color:white">🌒</div><div class="info"><div class="name">暗色辅助页</div><div class="desc">Onboarding + Paywall + Settings + Share</div></div></a>
+    <a class="card" href="17-dark-locked.html"><div class="icon" style="background:#1C1E20;color:white">🌘</div><div class="info"><div class="name">暗色锁定态</div><div class="desc">详情锁定 + 拍照限额</div></div></a>
+  </div>
+</div>
+<div class="footer">SkinTrack Design System v3 · 2026 · 共 20 个文件 · 50+ 屏幕状态</div>
+</body>
+</html>

@@ -1,12 +1,13 @@
-<!-- Last updated: 2026-03-12 -->
+<!-- Last updated: 2026-03-16 -->
 # SkinTrack 开发进度
 
 ## 当前状态（新session必读5行）
-- **阶段**: Pre-M3（Ktor Server 后端 + 客户端集成完成）
-- **当前里程碑**: M2.5 完成（100%），Ktor Server + 客户端 KtorSyncService/KtorAuthRepository 就绪
-- **当前工作**: Ktor Server 后端模块完成，客户端 Ktor 集成完成，DI 支持三模式切换
-- **阻塞问题**: 无（需部署服务器到国内云进行联调）
-- **下一步**: 部署 Ktor Server → 端到端联调 → M3 内测
+- **阶段**: M3 测试上线 95% 进行中
+- **当前里程碑**: M3 视觉还原完成（6组并行agent逐页pixel-perfect对齐HTML设计稿）
+- **当前工作**: 全部16页视觉还原 + 42个快照测试通过 + Release APK 构建通过
+- **阻塞问题**: 部署服务器到国内云（需要云服务器），真实支付/FCM为V2范围
+- **下一步**: 部署到国内云 → 服务端联调 → 内测20-30人 → Bug修复 → 发布
+- **产品文档**: `.dev/product/README.md`（索引）— 含全部 16 页设计规格
 
 ## 技术栈
 - **客户端**: Compose Multiplatform (KMP) — composeApp(commonMain/androidMain/iosMain)
@@ -27,7 +28,9 @@
 - [x] 改造 FaceGuideOverlay / CameraScreen / LoadingContent 使用设计 token
 - [x] DESIGN_SYSTEM.md 文档
 - [x] Dimens.kt — 组件尺寸 token (buttonHeight/avatarLarge/captureButton/thumbnail/chart/scoreBar)
-- [x] Motion.kt — 动画规格 (SHORT/MEDIUM/LONG + EmphasizedDecelerate/Standard)
+- [x] Motion.kt — 动画规格 (SHORT/MEDIUM/LONG/EXTRA_LONG + EmphasizedDecelerate/EmphasizedAccelerate/Standard + BouncySpring/GentleSpring)
+- [x] Animation.kt — 可复用动画 Modifier (animateListItem/animateCardEntrance/animateFadeIn/animatePulse)
+- [x] 动画效果全面提升 — AuthScreen(入场+AnimatedContent)/ProfileScreen(卡片入场+计数动画)/HomeScreen(FAB+Tab滑动)/FaceGuideOverlay(呼吸脉冲)/TrendChart(线条绘制)/PaywallScreen(入场+选中过渡)/CameraScreen(Saved弹性)/DashboardScreen(Empty淡入)/RecordDetailScreen(列表入场)/ShareCardScreen(卡片入场)/AttributionReportScreen(卡片入场)/ProductScreen(颜色过渡)/CompareCard(卡片入场)/EmptyContent+LoadingContent(淡入)
 - [x] 全量硬编码 dp 替换为 dimens token（Auth/Camera/Profile/Compare/TrendChart/Timeline/ScoreBar）
 - [x] 渐变激活（primary→AuthScreen按钮, warm→CompareCard, surface→ProfileScreen用户卡片）
 
@@ -100,6 +103,10 @@
 - [x] CameraViewModel — 真实 userId + Storage 图片上传 + 后端同步
 - [x] AppModule DI — Supabase client + SyncService + 条件绑定 Auth/Sync
 - [x] AiAnalysisService — 4 级皮肤状态档位 Mock（EXCELLENT/GOOD/MODERATE/CONCERN）
+- [x] AiAnalysisService — LLM 归因分析 Mock（generateAttributionReport + prompt 模板）
+- [x] AttributionReport 数据模型 — AI 摘要 + 趋势 + 产品排行 + 建议
+- [x] AttributionReportViewModel — 注入 AiAnalysisService，先显示本地统计再异步 AI 分析，24h 缓存
+- [x] AttributionReportScreen — AI 洞察卡片（加载/错误/结果三态），AI 产品评估行
 - [x] Roborazzi 快照测试基础设施 — SnapshotTestBase + 24 个测试用例
 - [x] SyncManager — push/pull 协调，登录和启动时自动全量同步
 - [x] SkincareProductEntity userId 字段修复
@@ -119,26 +126,198 @@
 - [x] 创建 Ktor Server 后端（替代 Supabase）— Exposed + PostgreSQL + JWT + BCrypt
 - [x] 实现 KtorSyncService + KtorAuthRepository — 客户端 Ktor 后端集成
 - [x] DI 三模式切换 — KtorServer > Supabase > Mock 自动降级
+- [x] 增量同步 — lastSyncTimestamp + since 参数，服务端按 updatedAt 过滤
+- [x] 冲突解决 — Last-Write-Wins 策略（比较 updatedAt），Entity 添加 updatedAt 字段
+- [x] 离线队列 — SyncQueueEntity + SyncQueueDao 持久化待同步操作
+- [x] 同步状态展示 — SyncState(Idle/Syncing/Success/Error) + Dashboard 状态指示器
+- [x] 网络状态监听 — NetworkMonitor expect/actual + 网络恢复自动同步
+- [x] AI 分析重试机制 — 指数退避 (1s→2s→4s, 最多 3 次)，失败不阻塞保存
+- [x] 待分析记录后台重试 — SyncManager.retryPendingAnalysis()，syncAll() 时自动触发
+- [x] Timeline/Product 分页加载 — DAO 分页查询 + ViewModel loadMore + LazyColumn 滚动触发
+- [x] Room 数据库索引优化 — SkinRecordEntity(userId+recordedAt) + SkincareProductEntity(userId)
+- [x] 产品搜索筛选 — SearchBar + CategoryFilter chips + DAO searchProducts + ViewModel 实时过滤
+- [x] 产品未记录提醒 — ProductScreen 顶部 warning 卡片（今日还有 N 个产品未记录）
+- [x] 推送通知基础 — UsersTable fcm_token + POST /api/user/device-token + NotificationManager.registerDeviceToken
+- [x] Dashboard 未记录提醒 — 今日未拍照时显示 secondaryContainer 卡片 + 拍照按钮
 - [ ] 部署到国内云 → 端到端联调
 
-### M3: 测试上线 [□□□□□□□□□□] 0%
+### M2.7: UI 商业级重构 [■■■■■■■■■■] 100%
+- [x] 阶段1: 导航架构重构 — HomeScreen Tab 改为首页/记录/我的 + FAB 拍照入口
+- [x] 阶段1: DashboardScreen 新建 — Hero 卡片(ScoreRing+渐变) + 快捷操作 + 打卡 + 趋势图
+- [x] 阶段1: CameraScreen 改为全屏 Voyager Screen + TopAppBar 返回按钮
+- [x] 阶段2: TimelineScreen — TopAppBar + 空状态 CTA + Scaffold 统一结构
+- [x] 阶段2: EmptyContent 增强 — actionLabel + onAction 按钮
+- [x] 阶段3: ProfileScreen — 渐变用户卡 + 统计数据加粗 + VerticalDivider
+- [x] 阶段3: MenuItem 升级 — leading icon + subtitle + 默认 → 箭头
+- [x] 阶段4: CameraScreen 权限页增强 — 说明文案 + 大号按钮
+- [x] 阶段4: CameraScreen Saved 状态 — ScoreRing + 双按钮(继续拍照/查看详情)
+- [x] 阶段4: FaceGuideOverlay 增加 "将面部置于框内" 提示文字
+- [x] 阶段5: SectionHeader trailing action + Dashboard animateListItem
+- [x] 快照测试 42 个全部通过 (light+dark × 所有页面状态)
+
+### M2.9: 设计稿对齐 [■■■■■■■■■■] 100%
+> 产品文档: `.dev/product/` | 设计稿: `.figma-mockups/`
+
+#### Phase 1: 导航架构 ✅
+- [x] HomeScreen 3 Tab → 5 Tab (首页/记录/拍照FAB/分析/我的)
+- [x] AttributionReportScreen 提升为 Tab 4 (AttributionReportContent composable)
+- [x] FAB 圆形居中拍照按钮 + "拍照" 标签
+- [x] Tab 图标: Home/List/Star/Person + AutoMirrored
+
+#### Phase 2: 引导+认证 ✅
+- [x] OnboardingScreen 3页→4页 — 新增肤质选择页 (油性/干性/混合/敏感/中性)
+- [x] 肤质数据模型 + UserPreferencesEntity.skinType 持久化
+- [x] AuthScreen — Segmented Control pill 样式切换
+- [x] AuthScreen 注册 — 昵称字段 + 确认密码 + 服务条款
+- [x] AuthScreen 登录 — 微信/Apple/手机 社交登录占位 + 分隔线
+- [x] AuthScreen — 信任标记 (隐私保护/100k+用户/4.8评分)
+- [x] Brand Logo 64dp 圆角方块 + 品牌色
+
+#### Phase 3: 首页对齐 ✅
+- [x] Dashboard Header — 问候+通知铃铛(带红点)+用户头像
+- [x] Dashboard — Hero Card (ScoreRing 96dp + 渐变背景 + 趋势 pill)
+- [x] Dashboard — 迷你指标行 (5 卡片 + mini-bar 样式)
+- [x] Dashboard — 拍照提醒卡 Apricot 色系渐变
+- [x] Dashboard — 2x2 快捷操作网格 (卡片样式 + 副标题)
+- [x] Dashboard — 护肤贴士卡 (Lavender 色系 mock)
+- [x] Dashboard — 打卡里程碑徽章 (渐变条 + 文案)
+- [x] Dashboard — 趋势图周期选择 Chips (7天/30天/90天)
+- [x] Dashboard 空状态 — 3步引导 + 社会证明 + CTA
+
+#### Phase 4: 记录页对齐 ✅
+- [x] Timeline CompareCard — VS 圆形徽章 + 三色渐变背景
+- [x] Timeline 记录卡片 — 变化标签 badge (↑+N/→0/↓-N)
+- [x] TrendChart — 指标选择 chips (总评分/痘痘/毛孔/均匀度)
+- [x] RecordDetail — 全宽照片预览区 (260dp) + 悬浮 TopBar
+- [x] RecordDetail — 悬浮评分卡片 (-40dp 浮层)
+- [x] RecordDetail — 底部评分标签 (模糊背景 "82分·良好")
+- [x] RecordDetail — 指标条形图渐变色 + 变化值列
+- [x] RecordDetail — 当日产品 FlowRow Chips
+
+#### Phase 5: 个人中心+产品 ✅
+- [x] Profile 统计行 — 3项→4项 (新增最新评分)
+- [x] Profile — 肌肤目标标签区 (FlowRow pills + 添加)
+- [x] Profile 菜单 — 图标圆角底色 + 全部副标题
+- [x] ProductScreen — AM/PM 早晚分组
+- [x] ProductScreen — UsagePeriod 数据模型 (Entity/DTO/Mapper 全栈)
+- [x] ProductScreen — 品类标签色 (洁面蓝/精华紫/面霜绿/防晒橙)
+- [x] ProductScreen — 产品图标彩色圆角底色
+- [x] AddProductSheet — 使用时段选择器 (AM/PM/Both)
+
+#### Phase 6: 归因+付费墙+分享 ✅
+- [x] Attribution — 概览迷你趋势图 + 3统计卡片 (评分变化/使用产品/分析天数)
+- [x] Attribution — 排名徽章色 (金银铜)
+- [x] Attribution — 产品排行添加使用天数
+- [x] Attribution — 改善建议区块 (动态生成 AI 建议)
+- [x] Paywall — 皇冠图标 + 试用提示 pill
+- [x] Paywall — 年度方案省钱标签 + 原价删除线
+- [x] ShareCard — 品牌头 (Logo + 渐变) + VS 徽章
+- [x] ShareCard — 模板选择器 (3 种样式, V1 首选)
+- [x] ShareCard — 分享目标 (微信/微博/小红书/更多)
+- [x] ShareCard — 保存图片 + 分享按钮
+
+#### Phase 7: 门控升级 ✅
+- [x] LockedFeatureCard — 添加标签 pills + 试用提示
+- [x] LockedFeatureCard — Apricot 渐变升级按钮
+- [x] 拍照限额门控 — 改为进步展示页面 (RecordLimitShowcase)
+- [x] RecordDetail 门控 — tags: AI深度分析/雷达图/趋势预测
+- [x] Attribution 门控 — tags: AI洞察/排行榜/改善建议
+
+#### Phase 8: 设置页 ✅
+- [x] Settings — 周报通知开关 (weeklyReportEnabled)
+- [x] Settings — 菜单图标圆角底色 + 副标题
+- [x] Settings — 隐私政策/服务条款链接占位
+- [x] Settings — 编辑资料页面实现 (EditProfileScreen + EditProfileViewModel)
+- [x] Settings — 修改密码页面实现 (ChangePasswordScreen + ChangePasswordViewModel)
+- [x] Settings — 导出数据功能实现 (GDPR, exportUserData + 确认弹窗)
+- [x] Settings — 退出登录按钮 + 注销账户链接 + DeleteAccountDialog 接入
+- [x] Settings — 分组标题 3dp primary 竖条装饰
+- [x] Settings — AI 分析通知开关
+- [x] Settings — 会员管理菜单项 → PaywallScreen
+- [x] Settings — 数据同步菜单项
+
+### M3: 测试上线 [■■■■■■■■■□] 90%
+- [x] 接入真实 LLM API（服务端多 Provider: OpenAI/Gemini/Claude + 客户端自动降级）
+- [x] 服务端 AI 路由 (POST /api/ai/analyze-skin, /api/ai/attribution-report + JWT + 限流)
+- [x] 服务端 Profile 更新 (PUT /api/user/profile + displayName + skinType)
+- [x] Docker 部署配置 (Dockerfile + docker-compose + Nginx + .env.example + deploy.sh)
+- [x] 服务端健康检查端点 (GET /health)
+- [x] App.kt 生产认证流程 (Onboarding → Auth → Home, 退出登录 → Auth)
+- [x] 注册时保存 displayName + 服务端同步 (offline-first)
+- [x] Release 构建配置 (R8/ProGuard + 签名配置占位)
+- [x] 设置页快照测试 (SettingsSnapshotTest light/dark)
+- [x] 密码相关 API 全栈对齐验证 (change/reset/verify-reset)
+- [x] 设计 token 对齐 (buttonHeight 52dp, inputHeight 50dp, shapes.medium 14dp)
+- [x] 骨架屏加载态 (Dashboard/Timeline/RecordDetail shimmer skeleton)
+- [x] 暗色模式修复 (Rose/Lavender 色系集中定义, Dashboard/Onboarding/Paywall 暗色适配)
+- [x] .env.example 补充 AI_PROVIDER/AI_MODEL 变量
+- [x] 真机 E2E 验证 (Dashboard/Timeline/Analysis/Profile/Camera/Paywall 全部正常)
+- [x] 快照测试 42 个全部通过 (token 变更后重新录制)
+- [x] 设计稿视觉对齐二轮 — Profile渐变Header+浮层统计卡+肌肤目标+方角图标+Footer / Dashboard周历打卡+Hero日期+趋势图Tooltip / Auth装饰性背景+Logo光晕 / Paywall社会证明+皇冠光晕
+- [x] 设计稿视觉对齐三轮 — 底部导航栏(去指示器pill+灰色inactive+FAB突出52dp) / Dashboard Header(分行问候+大字名+Bell圆形容器+红点+首字母头像) / Dashboard空状态(装饰性渐变背景+渐变插画+横排彩色步骤+社会证明高亮)
+- [x] Release APK 构建验证 (12MB, R8+资源缩减通过, debug签名 fallback)
+- [x] App 图标升级 (品牌矢量 adaptive icon: Mint背景+叶子前景)
+- [x] docker-compose AI 环境变量补全 (AI_PROVIDER/AI_API_KEY/AI_MODEL/AI_MAX_DAILY_ANALYSES)
+- [x] 真机 E2E 二次验证 (Dashboard/Timeline/Analysis/Profile/Camera/Settings 6页面全部正常)
+- [x] ProGuard 规则补全 (OkHttp/Napier/CameraX keep rules)
+- [x] 服务端安全加固 (AppConfig 敏感字段 toString 脱敏)
+- [x] Dockerfile JVM 调优 (G1GC + Xmx512m + StringDeduplication)
+- [x] SyncManager lastSyncTimestamp 持久化 (UserPreferences 存储，重启不丢失)
+- [x] 全面代码审查+安全加固 — SyncManager Mutex 并发保护 / AuthViewModel 确认密码校验 / 服务端 AI 限流 ConcurrentHashMap+AtomicInteger / 密码重置码日志脱敏+时间安全比较 / ProductRepository Last-Write-Wins
+- [x] 部署配置 P1 修复 — Nginx 安全头 location 块覆盖+server_tokens off / deploy.sh 回滚机制+pre-flight+.env加载 / 版本号 gradle.properties 统一管理 / docker-compose 内存限制 768M
+- [x] CameraScreen 结果页增强 — "继续拍照"/"查看详情" 双按钮 + 5 维迷你指标行 + 打卡里程碑 pill
+- [x] TimelineScreen 时间筛选 — 全部/本周/本月/3个月 FilterChip + ViewModel 按时间过滤
+- [x] ProfileScreen 动态肤质标签 — 从 UserPreferences 读取 skinType 显示 (油性/干性/混合/敏感/中性)
+- [x] ProductScreen AM/PM 分组 — 早间/晚间护肤分组 + 品类彩色标签 + 打卡进度条 + 未记录提醒
+- [x] RecordDetailScreen 照片预览 — 280dp 全宽照片区 + 悬浮评分卡片(-40dp交叠) + 底部评分标签
+- [x] CameraViewModel println→Napier 日志规范化
+- [x] ProfileScreen 菜单图标修复 — 瓶子/图表/云 emoji 替代通用Star + 图标tint彩色化
+- [x] ForgotPasswordScreen "返回登录" 导航修复 — clearFocus → navigator.pop()
+- [x] 真机 E2E 三次验证 (Dashboard/Timeline/Analysis/Profile/Camera/Settings 全部正常, 菜单图标对齐设计稿)
+- [x] 统一 Toast/Snackbar 组件 — AppSnackbar(图标圆+类型色) + AppSnackbarHost + showTyped 扩展
+- [x] CameraScreen Toast 反馈 — 拍照成功/AI分析完成 SnackbarMessage
+- [x] ProductScreen Toast 反馈 — 产品添加/删除成功 SnackbarMessage
+- [x] ProductScreen 搜索栏 + 分类筛选 — SearchBar 实时过滤 + CategoryFilter chips (全部/洁面/精华/面霜/防晒/化妆水/面膜/其他)
+- [x] TrendChart 指标选择 chips — 总评分/痘痘/毛孔/均匀度/水润 多维度切换
+- [x] RecordDetail 评分变化 pill — "↑ +N 较上次" 成功/错误色 pill 浮层卡片
+- [x] Auth 密码校验 >=8 → >=6 对齐产品规格 (AuthScreen + ForgotPasswordScreen)
+- [x] Profile 用户卡片点击 → EditProfileScreen 导航
+- [x] 快照测试 42 个全部通过 + Release APK 构建通过
+- [x] 视觉还原大修 — 6组并行agent逐页对齐HTML设计稿:
+  - Dashboard: Hero Card 28dp圆角+decorative circles / ScoreRing 84dp / 迷你指标行重排(值在前) / 护肤贴士卡水平布局 / 打卡周历+里程碑徽章
+  - Auth+Onboarding: Logo 72dp+hero渐变 / 社交登录矩形卡片 / 信任标记内联 / 引导页260dp多层插画+渐变按钮 / 肤质选择44dp圆角方块
+  - Timeline+RecordDetail: 趋势卡片内嵌metric chips / 记录卡56dp缩略图+变化badge / 空状态3步引导 / 详情页浮层卡片Row布局+评分pill / 渐变指标条 / AI卡片gradient bg / FlowRow产品chips
+  - Profile+Settings: VIP pill形状 / 统计卡extraLarge圆角 / 目标pill颜色准确 / 菜单图标RoundedCorner(10dp) / Settings副标题(缓存大小/同步时间) / EditProfile Rose头像+相机覆盖
+  - Product+Camera: 搜索栏pill形 / 进度卡Mint50 / AM/PM图标头 / 打卡指示器圆环 / 权限页3利益点+渐变按钮 / 打卡徽章Apricot渐变
+  - Attribution+Paywall+Share+Locked: 金银铜排名徽章 / 80dp金色皇冠圆 / 社会证明头像 / 省钱浮动badge / 56dp Apricot锁图标 / 品牌头Row布局
+- [ ] 真实支付集成 (微信支付 + StoreKit 2)
+- [ ] Firebase FCM 推送
+- [ ] 部署 Ktor Server 到国内云
+- [ ] 端到端联调
 - [ ] 内测 20-30人
 - [ ] Bug修复 + 优化
 - [ ] Android发布
 - [ ] iOS提交App Store审核
 
-## 页面完成度
-| # | 页面 | CMP(common) | expect/actual | Supabase | 状态 |
-|---|------|-------------|---------------|----------|------|
-| 1 | 拍照页 CameraScreen | ✅ | 相机+存储 | 图片上传✅ | Supabase 同步就绪 |
-| 2 | 时间线 TimelineScreen | ✅ | — | 查询数据 | 分享入口完成 |
-| 3 | 护肤品记录 ProductScreen | ✅ | — | CRUD✅ | Supabase 同步就绪 |
-| 4 | 记录详情 RecordDetailScreen | ✅ | — | — | M2门控+分享完成 |
-| 5 | 归因报告 AttributionReportScreen | ✅ | — | 查询+LLM | M2门控完成 |
-| 6 | 个人中心 ProfileScreen | ✅ | — | 用户信息 | M2打卡+会员入口完成 |
-| 7 | 登录/注册 AuthScreen | ✅ | — | Auth✅ | Supabase Auth 就绪 |
-| 8 | 会员订阅 PaywallScreen | ✅ | PaymentManager | — | Mock 完成 |
-| 9 | 分享卡片 ShareCardScreen | ✅ | ShareManager | — | Mock 完成 |
+## 页面完成度（功能 + 设计对齐）
+| # | 页面 | 功能 | 设计对齐 | 产品文档 |
+|---|------|------|---------|---------|
+| 1 | HomeScreen 导航 | ✅ 5Tab+FAB | ✅ 对齐 | navigation.md |
+| 2 | OnboardingScreen | ✅ 4页+肤质选择 | ✅ 对齐 | screen-onboarding.md |
+| 3 | AuthScreen | ✅ Segmented+昵称+社交 | ✅ 对齐 | screen-auth.md |
+| 4 | DashboardScreen | ✅ 全功能 | ✅ 对齐 | screen-dashboard.md |
+| 5 | TimelineScreen | ✅ VS徽章+变化badge | ✅ 对齐 | screen-timeline.md |
+| 6 | CameraScreen | ✅ 进步展示门控 | ✅ 对齐 | screen-camera.md |
+| 7 | RecordDetailScreen | ✅ 浮层+渐变+Chips | ✅ 对齐 | screen-record-detail.md |
+| 8 | ProfileScreen | ✅ 4统计+目标+图标色 | ✅ 对齐 | screen-profile.md |
+| 9 | ProductScreen | ✅ AM/PM+品类色 | ✅ 对齐 | screen-product.md |
+| 10 | AttributionReportScreen | ✅ 概览+徽章+建议 | ✅ 对齐 | screen-attribution.md |
+| 11 | PaywallScreen | ✅ 皇冠+试用+省钱标签 | ✅ 对齐 | screen-paywall.md |
+| 12 | ShareCardScreen | ✅ 模板+分享目标 | ✅ 对齐 | screen-share.md |
+| 13 | SettingsScreen | ✅ 全功能(退出/注销/导出/同步) | ✅ 对齐 | screen-settings.md |
+| 14 | LockedFeatureCard | ✅ tags+渐变按钮+试用 | ✅ 对齐 | feature-gating.md |
+| 15 | EditProfileScreen | ✅ 头像+昵称+肤质选择 | ✅ 对齐 | screen-settings.md |
+| 16 | ChangePasswordScreen | ✅ 三密码+校验+成功提示 | ✅ 对齐 | screen-settings.md |
 
 ## 快照测试
 | 测试文件 | 用例数 | 状态 |
@@ -147,10 +326,13 @@
 | AuthScreenSnapshotTest | 3 | ✅ 通过（暗色修复） |
 | PaywallScreenSnapshotTest | 3 | ✅ 通过 |
 | RecordDetailSnapshotTest | 4 | ✅ 通过（RadarChart+ScoreRing） |
-| TimelineSnapshotTest | 2 | ✅ 通过（迷你ScoreRing） |
-| ProfileSnapshotTest | 2 | ✅ 通过 |
+| TimelineSnapshotTest | 6 | ✅ 通过（content/empty × light/dark） |
+| ProfileSnapshotTest | 2 | ✅ 通过（渐变卡+统计+菜单图标） |
 | ProductScreenSnapshotTest | 2 | ✅ 通过（打卡高亮+产品库） |
 | AttributionReportSnapshotTest | 2 | ✅ 通过（影响排行+标签色） |
+| DashboardSnapshotTest | 4 | ✅ 通过（content/empty × light/dark） |
+| HomeScreenSnapshotTest | 2 | ✅ 通过（导航栏+FAB） |
+| CameraSnapshotTest | 8 | ✅ 通过（权限请求/拒绝/保存+分析/保存无分析 × light/dark） |
 
 ## 自绘/共享组件
 | 组件 | 位置 | 用途 | 状态 |
@@ -167,6 +349,7 @@
 | ShareCardContent | screen/share | 分享对比卡片内容 | ✅ 完成 |
 | RadarChart | component | 六边形雷达图（多维度皮肤评分） | ✅ 完成 |
 | ScoreRing | component | 环形进度评分（sweepGradient） | ✅ 完成 |
+| DeleteAccountDialog | component | 账户注销确认对话框（密码验证） | ✅ 完成 |
 
 ## expect/actual 模块
 | 模块 | Android | iOS | 状态 |
@@ -185,7 +368,18 @@
 | Server — Auth | server/routes/AuthRoutes.kt | ✅ 注册/登录 + JWT |
 | Server — CRUD | server/routes/*.kt | ✅ 6 实体全覆盖 |
 | Server — DB | server/database/ | ✅ Exposed + PostgreSQL |
-| Server — Image | server/service/ImageService.kt | ✅ 文件系统存储 |
+| Server — Image | server/service/ImageService.kt | ✅ 文件系统存储 + 类型/大小验证 |
+| Server — Security | Application.kt + StatusPages.kt | ✅ CORS白名单/Rate Limit/安全头/异常脱敏 |
+| Server — Refresh Token | AuthRoutes.kt + UserService.kt | ✅ POST /api/auth/token/refresh |
+| Server — GDPR | AuthRoutes.kt + UserService.kt | ✅ DELETE /api/auth/user + GET /api/user/export |
+| Server — AI Analysis | server/service/AiAnalysisService.kt | ✅ 多 Provider (OpenAI/Gemini/Claude) + 重试 + 限流 |
+| Server — AI Routes | server/routes/AiRoutes.kt | ✅ POST /api/ai/analyze-skin + /api/ai/attribution-report |
+| Server — Health | Application.kt | ✅ GET /health |
+| **部署** | | |
+| Dockerfile | server/Dockerfile | ✅ 多阶段构建 + non-root + 健康检查 |
+| Docker Compose | docker-compose.yml | ✅ app + db + nginx + certbot |
+| Nginx | deploy/nginx/nginx.conf | ✅ 反向代理 + 限流 + 安全头 + SSL |
+| Deploy Script | deploy/deploy.sh | ✅ 拉取+构建+重启+健康检查 |
 | **客户端 Ktor** | | |
 | KtorServerConfig | data/remote/KtorServerConfig.kt | ✅ BuildConfig 配置 |
 | KtorSyncService | data/remote/KtorSyncService.kt | ✅ RemoteSyncService 实现 |
@@ -197,7 +391,10 @@
 | SupabaseSyncService | data/remote/SupabaseSyncService.kt | ✅ 保留兼容 |
 | **通用** | | |
 | RemoteSyncService | data/remote/RemoteSyncService.kt | ✅ 后端无关接口 |
-| SyncManager | data/remote/SyncManager.kt | ✅ push/pull 协调 |
+| SyncManager | data/remote/SyncManager.kt | ✅ 增量同步+离线队列+网络监听+待分析重试 |
+| NetworkMonitor | data/remote/NetworkMonitor.kt | ✅ expect/actual 网络状态监听 |
+| SyncQueueEntity | data/local/entity/SyncQueueEntity.kt | ✅ 离线队列持久化 |
+| SyncQueueDao | data/local/dao/SyncQueueDao.kt | ✅ 队列 CRUD |
 | DI 模式切换 | di/AppModule.kt | ✅ Ktor > Supabase > Mock |
 
 ## 商业模型

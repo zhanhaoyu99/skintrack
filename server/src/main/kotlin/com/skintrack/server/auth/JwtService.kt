@@ -17,6 +17,19 @@ class JwtService(private val config: JwtConfig) {
             .withAudience(config.audience)
             .withSubject(userId)
             .withClaim("email", email)
+            .withClaim("type", "access")
             .withExpiresAt(Date(System.currentTimeMillis() + config.expireMinutes * 60 * 1000))
             .sign(algorithm)
+
+    fun generateRefreshToken(userId: String, email: String): String =
+        JWT.create()
+            .withIssuer(config.issuer)
+            .withAudience(config.audience)
+            .withSubject(userId)
+            .withClaim("email", email)
+            .withClaim("type", "refresh")
+            .withExpiresAt(Date(System.currentTimeMillis() + config.refreshExpireMinutes * 60 * 1000))
+            .sign(algorithm)
+
+    private val refreshExpireMinutes: Long get() = config.refreshExpireMinutes
 }

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=390">
+<link rel="stylesheet" href="base.css">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content: center; }
+.phone-frame { flex-shrink: 0; }
+
+/* Section label */
+.slb {
+  font-size: 13px; font-weight: 700; color: var(--on-surface-variant);
+  padding: 20px 20px 8px; letter-spacing: 0.3px;
+  display: flex; align-items: center; gap: 8px;
+}
+.slb::before {
+  content: ''; width: 3px; height: 14px; border-radius: 2px;
+  background: var(--primary); flex-shrink: 0;
+}
+
+/* Settings section card */
+.ssec {
+  background: var(--surface); border-radius: var(--r-lg);
+  padding: 2px 16px; margin: 0 16px 4px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Toggle switch */
+.toggle {
+  width: 51px; height: 31px; border-radius: 15.5px;
+  background: var(--primary); position: relative; flex-shrink: 0;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
+  transition: background 0.2s;
+}
+.toggle .knob {
+  width: 27px; height: 27px; border-radius: 50%;
+  background: white; position: absolute; top: 2px; right: 2px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15), 0 0 1px rgba(0,0,0,0.1);
+}
+.toggle.off { background: #D1D5DB; }
+.toggle.off .knob { right: auto; left: 2px; }
+
+/* Logout button */
+.btn-logout {
+  width: 100%; height: var(--button-height);
+  border-radius: var(--r-full); border: 1.5px solid var(--outline-variant);
+  background: var(--surface); color: var(--on-surface);
+  font-size: 16px; font-weight: 600; font-family: var(--font);
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; box-shadow: var(--shadow-xs);
+}
+.btn-logout svg { width: 18px; height: 18px; color: var(--on-surface-variant); }
+
+/* Delete account link */
+.delete-link {
+  font-size: 13px; color: var(--error); font-weight: 500;
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+}
+.delete-link svg { width: 14px; height: 14px; }
+
+/* Version footer */
+.settings-footer {
+  text-align: center; padding: 24px 16px 8px;
+}
+.settings-footer .logo-sm {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--grad-primary); margin-bottom: 6px;
+}
+.settings-footer .logo-sm svg { width: 16px; height: 16px; stroke: white; stroke-width: 2.5; }
+.settings-footer .fname { font-size: 12px; font-weight: 700; color: var(--on-surface-variant); letter-spacing: 0.6px; }
+.settings-footer .fver { font-size: 11px; color: var(--outline); margin-top: 2px; font-weight: 500; }
+.settings-footer .fcopy { font-size: 10px; color: var(--outline); margin-top: 4px; }
+
+/* ===== Dialog ===== */
+.dialog-ov {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100; padding: 28px;
+}
+.dialog {
+  background: var(--surface); border-radius: var(--r-xl);
+  padding: 28px 24px 24px; width: 100%;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.08);
+}
+.dialog-icon {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, #FEF2F2, #FEE2E2);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+}
+.dialog-icon svg {
+  width: 28px; height: 28px; color: var(--error);
+  stroke-width: 2;
+}
+.dialog h3 {
+  font-size: 20px; font-weight: 800; color: var(--on-surface);
+  text-align: center; margin-bottom: 8px; letter-spacing: -0.3px;
+}
+.dialog p {
+  font-size: 14px; color: var(--on-surface-variant);
+  line-height: 1.65; text-align: center; margin-bottom: 20px;
+}
+.dialog .warning-box {
+  background: #FEF2F2; border-radius: var(--r-md);
+  padding: 12px 14px; margin-bottom: 20px;
+  display: flex; align-items: flex-start; gap: 10px;
+  border: 1px solid #FECACA;
+}
+.dialog .warning-box svg { width: 18px; height: 18px; color: var(--error); flex-shrink: 0; margin-top: 1px; }
+.dialog .warning-box span { font-size: 13px; color: #991B1B; line-height: 1.5; font-weight: 500; }
+.dialog .acts {
+  display: flex; gap: 10px;
+}
+.dialog .acts button {
+  flex: 1; height: 48px; font-size: 15px;
+  border: none; border-radius: var(--r-full);
+  font-weight: 700; font-family: var(--font);
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-cancel { background: var(--surface-variant); color: var(--on-surface-variant); }
+.btn-danger { background: var(--error); color: white; box-shadow: 0 4px 14px rgba(239,68,68,0.3); }
+</style>
+</head>
+<body>
+<!-- ===== Settings Screen ===== -->
+<div class="phone-frame">
+  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="#111827" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="#111827" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#111827" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="#111827"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="#111827" opacity="0.4" stroke="none"/></svg></div></div>
+  <div class="top-app-bar">
+    <div class="nav-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
+    <div class="title">设置</div>
+  </div>
+  <div class="content-no-padding" style="overflow-y:auto">
+
+    <!-- Account Section -->
+    <div class="slb">账户</div>
+    <div class="ssec">
+      <div class="menu-item"><div class="icon-wrap" style="background:linear-gradient(135deg,var(--mint-50),#D1F0E4)"><svg viewBox="0 0 24 24" style="color:var(--primary)"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="text"><div class="primary-text">编辑资料</div><div class="secondary-text">头像、昵称、肤质</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:linear-gradient(135deg,#EDE9FE,#DDD6FE)"><svg viewBox="0 0 24 24" style="color:#7C3AED"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1.5" stroke-width="1.5"/></svg></div><div class="text"><div class="primary-text">修改密码</div><div class="secondary-text">上次修改：30 天前</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A)"><svg viewBox="0 0 24 24" style="color:#D97706"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" fill="#D97706" stroke="none"/></svg></div><div class="text"><div class="primary-text">会员管理</div><div class="secondary-text">Pro 会员 · 2026.12.14 到期</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+    </div>
+
+    <!-- Notifications Section -->
+    <div class="slb">通知</div>
+    <div class="ssec">
+      <div class="menu-item"><div class="icon-wrap" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A)"><svg viewBox="0 0 24 24" style="color:#D97706"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div class="text"><div class="primary-text">打卡提醒</div><div class="secondary-text">每天 20:00</div></div><div class="toggle"><div class="knob"></div></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:linear-gradient(135deg,#DBEAFE,#BFDBFE)"><svg viewBox="0 0 24 24" style="color:#3B82F6"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 4 5-8"/></svg></div><div class="text"><div class="primary-text">周报通知</div><div class="secondary-text">每周日发送肌肤周报</div></div><div class="toggle off"><div class="knob"></div></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:linear-gradient(135deg,var(--rose-50),var(--rose-100))"><svg viewBox="0 0 24 24" style="color:var(--rose-400)"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div><div class="text"><div class="primary-text">AI 分析完成通知</div><div class="secondary-text">分析完成后推送提醒</div></div><div class="toggle"><div class="knob"></div></div></div>
+    </div>
+
+    <!-- Data & Privacy Section -->
+    <div class="slb">数据与隐私</div>
+    <div class="ssec">
+      <div class="menu-item"><div class="icon-wrap" style="background:linear-gradient(135deg,var(--mint-50),#D1F0E4)"><svg viewBox="0 0 24 24" style="color:var(--primary)"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="text"><div class="primary-text">数据同步</div><div class="secondary-text">最后同步：今天 09:30</div></div><div class="trailing" style="display:flex;align-items:center;gap:6px"><span class="badge badge-success">已同步</span><svg viewBox="0 0 24 24" width="18" height="18"><path d="M9 18l6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:var(--surface-variant)"><svg viewBox="0 0 24 24" style="color:var(--on-surface-variant)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div><div class="text"><div class="primary-text">导出数据</div><div class="secondary-text">导出为 JSON / CSV</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:linear-gradient(135deg,#FEF2F2,#FEE2E2)"><svg viewBox="0 0 24 24" style="color:var(--error)"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></div><div class="text"><div class="primary-text">清除缓存</div><div class="secondary-text">当前缓存 23.4 MB</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+    </div>
+
+    <!-- About Section -->
+    <div class="slb">关于</div>
+    <div class="ssec">
+      <div class="menu-item"><div class="icon-wrap" style="background:var(--surface-variant)"><svg viewBox="0 0 24 24" style="color:var(--on-surface-variant)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="text"><div class="primary-text">版本信息</div><div class="secondary-text">v1.0.0 (Build 42)</div></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:var(--surface-variant)"><svg viewBox="0 0 24 24" style="color:var(--on-surface-variant)"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="text"><div class="primary-text">隐私政策</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:var(--surface-variant)"><svg viewBox="0 0 24 24" style="color:var(--on-surface-variant)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><div class="text"><div class="primary-text">用户协议</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+    </div>
+
+    <!-- Logout + Delete -->
+    <div style="padding:24px 16px 12px">
+      <button class="btn-logout"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>退出登录</button>
+    </div>
+    <div style="text-align:center; padding-bottom:8px">
+      <div class="delete-link"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>注销账户</div>
+    </div>
+
+    <!-- Footer -->
+    <div class="settings-footer">
+      <div class="logo-sm"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+      <div class="fname">SKINTRACK</div>
+      <div class="fver">v1.0.0 (Build 42)</div>
+      <div class="fcopy">&copy; 2026 SkinTrack. All rights reserved.</div>
+    </div>
+    <div style="height:24px"></div>
+  </div>
+</div>
+
+<!-- ===== Delete Account Dialog ===== -->
+<div class="phone-frame" style="position:relative">
+  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="#111827" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="#111827" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#111827" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="#111827"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="#111827" opacity="0.4" stroke="none"/></svg></div></div>
+  <div style="opacity:0.3;padding:16px"><div class="top-app-bar"><div class="title">设置</div></div></div>
+  <div class="dialog-ov">
+    <div class="dialog">
+      <div class="dialog-icon">
+        <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <h3>注销账户</h3>
+      <p>此操作不可撤销，请谨慎操作。</p>
+      <div class="warning-box">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>你的所有数据（包括肌肤记录、分析报告、护肤品信息）将被永久删除，且无法恢复。</span>
+      </div>
+      <div class="text-field"><label>请输入密码以确认</label><input type="password" placeholder="输入你的密码"></div>
+      <div class="acts"><button class="btn-cancel">取消</button><button class="btn-danger">确认注销</button></div>
+    </div>
+  </div>
+</div>
+</body></html>

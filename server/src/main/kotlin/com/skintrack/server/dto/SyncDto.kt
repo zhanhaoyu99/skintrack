@@ -21,6 +21,7 @@ data class SkinRecordDto(
     @SerialName("analysis_json") val analysisJson: String? = null,
     @SerialName("recorded_at") val recordedAt: String,
     @SerialName("created_at") val createdAt: String? = null,
+    @SerialName("updated_at") val updatedAt: String? = null,
 )
 
 @Serializable
@@ -33,6 +34,7 @@ data class SkincareProductDto(
     @SerialName("image_url") val imageUrl: String? = null,
     val barcode: String? = null,
     @SerialName("created_at") val createdAt: String? = null,
+    @SerialName("updated_at") val updatedAt: String? = null,
 )
 
 @Serializable

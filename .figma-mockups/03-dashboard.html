@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=390">
+<link rel="stylesheet" href="base.css">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content: center; }
+.phone-frame { flex-shrink: 0; }
+
+/* Dashboard Header */
+.dh { padding: 4px 20px 14px; display: flex; justify-content: space-between; align-items: center; }
+.dh-left .greeting { font-size: 14px; color: var(--on-surface-variant); font-weight: 500; letter-spacing: 0.1px; }
+.dh-left .name { font-size: 26px; font-weight: 800; color: var(--on-surface); letter-spacing: -0.6px; margin-top: 2px; }
+.dh-right { display: flex; gap: 8px; align-items: center; }
+.dh-right .bell { width: 44px; height: 44px; border-radius: 50%; background: var(--surface); display: flex; align-items: center; justify-content: center; position: relative; box-shadow: var(--shadow-xs); border: 0.5px solid var(--outline-variant); }
+.dh-right .bell svg { width: 20px; height: 20px; color: var(--on-surface-variant); }
+.dh-right .bell .dot { position: absolute; top: 9px; right: 10px; width: 8px; height: 8px; border-radius: 50%; background: var(--error); border: 2px solid var(--background); }
+.dh-right .av { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-weight: 700; box-shadow: 0 3px 12px rgba(251,113,133,0.3); }
+
+/* Hero Card — Premium with mesh gradient + glass elements */
+.hero { border-radius: var(--r-xl); padding: 18px 20px; margin: 0 16px 12px; color: white; position: relative; overflow: hidden;
+  background: linear-gradient(145deg, #1A7A63 0%, #2D9F7F 30%, #3DBFA0 65%, #4ECDC4 100%);
+  box-shadow: 0 8px 32px rgba(30,120,96,0.35), 0 2px 8px rgba(30,120,96,0.15);
+}
+.hero::before { content: ''; position: absolute; top: -50px; right: -30px; width: 160px; height: 160px; border-radius: 50%; background: rgba(255,255,255,0.08); }
+.hero::after { content: ''; position: absolute; bottom: -60px; left: -30px; width: 140px; height: 140px; border-radius: 50%; background: rgba(255,255,255,0.05); }
+.hero .dec1 { position: absolute; top: 15px; right: 50px; width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.04); }
+.hero .dec2 { position: absolute; bottom: 10px; right: 15px; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.03); }
+
+.hero-top { display: flex; align-items: center; gap: 18px; position: relative; z-index: 1; }
+.hr { width: 84px; height: 84px; position: relative; flex-shrink: 0; }
+.hr svg { transform: rotate(-90deg); }
+.hr .v { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+.hr .v .n { font-size: 34px; font-weight: 800; display: block; letter-spacing: -1px; line-height: 1; }
+.hr .v .l { font-size: 10px; opacity: 0.65; font-weight: 500; letter-spacing: 0.5px; margin-top: 2px; display: block; }
+.hi { z-index: 1; flex: 1; }
+.hi h2 { font-size: 19px; font-weight: 700; margin-bottom: 5px; letter-spacing: -0.3px; }
+.hi p { font-size: 13px; opacity: 0.72; line-height: 1.4; }
+
+.hero-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; position: relative; z-index: 1; }
+.ht { display: inline-flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.15); backdrop-filter: blur(8px); padding: 6px 14px; border-radius: var(--r-full); font-size: 13px; font-weight: 600; }
+.ht svg { width: 14px; height: 14px; }
+.hero-date { font-size: 12px; opacity: 0.55; font-weight: 500; }
+
+/* Mini Metrics — Pill cards with mini bars */
+.metrics { display: flex; gap: 6px; padding: 0 16px; margin: 0 0 12px; }
+.metric { flex: 1; background: var(--surface); border-radius: var(--r-md); padding: 8px 6px 6px; text-align: center; box-shadow: var(--shadow-xs); border: 0.5px solid rgba(0,0,0,0.03); }
+.metric .val { font-size: 16px; font-weight: 800; line-height: 1; }
+.metric .lbl { font-size: 10px; color: var(--on-surface-variant); font-weight: 600; margin-top: 4px; }
+.metric .mini-bar { width: 100%; height: 3px; background: var(--surface-variant); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+.metric .mini-bar .fill { height: 100%; border-radius: 2px; }
+
+/* Reminder Card — Warmer, more inviting */
+.rm { border-radius: var(--r-lg); padding: 12px 16px; margin: 0 16px 12px; display: flex; align-items: center; gap: 14px; position: relative; overflow: hidden; }
+.rm .ic { width: 44px; height: 44px; border-radius: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.rm .ic svg { width: 22px; height: 22px; }
+.rm .tx { flex: 1; }
+.rm .tx .t { font-size: 15px; font-weight: 700; color: var(--on-surface); }
+.rm .tx .s { font-size: 12px; color: var(--on-surface-variant); margin-top: 2px; }
+.rm .ab { padding: 8px 20px; border-radius: var(--r-full); color: white; font-size: 13px; font-weight: 700; border: none; font-family: var(--font); flex-shrink: 0; }
+
+/* Quick Actions — 2x2 Bento Grid */
+.acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 16px; margin-bottom: 12px; }
+.ai { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--surface); border-radius: var(--r-lg); box-shadow: var(--shadow-xs); border: 0.5px solid rgba(0,0,0,0.03); }
+.ai .ic { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ai .ic svg { width: 20px; height: 20px; }
+.ai .ai-text { display: flex; flex-direction: column; }
+.ai .ai-text .ai-title { font-size: 14px; font-weight: 700; color: var(--on-surface); }
+.ai .ai-text .ai-sub { font-size: 11px; color: var(--on-surface-variant); margin-top: 1px; }
+
+/* Skin Tip Card */
+.tip-card { border-radius: var(--r-lg); padding: 12px 16px; margin: 0 16px 12px; display: flex; align-items: center; gap: 14px; border: 0.5px solid rgba(0,0,0,0.03); }
+.tip-card .ic { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.tip-card .ic svg { width: 20px; height: 20px; }
+.tip-card .tx { flex: 1; }
+.tip-card .tx .t { font-size: 14px; font-weight: 700; color: var(--on-surface); }
+.tip-card .tx .s { font-size: 12px; color: var(--on-surface-variant); margin-top: 2px; line-height: 1.4; }
+
+/* Check-in Card */
+.ck { background: var(--surface); border-radius: var(--r-lg); padding: 14px; margin: 0 16px 12px; box-shadow: var(--shadow-sm); border: 0.5px solid rgba(0,0,0,0.03); }
+.ck-h { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.ck-h .t { font-size: 17px; font-weight: 700; color: var(--on-surface); }
+.ck-s { display: flex; align-items: center; gap: 5px; font-weight: 700; font-size: 14px; }
+.ck-s svg { width: 16px; height: 16px; }
+.wk { display: flex; justify-content: space-between; }
+.dy { text-align: center; flex: 1; }
+.dy .dl { font-size: 11px; color: var(--on-surface-variant); margin-bottom: 6px; font-weight: 600; }
+.dy .dc { width: 34px; height: 34px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+.dy .dc.done { background: var(--primary); color: white; box-shadow: 0 2px 8px rgba(45,159,127,0.25); }
+.dy .dc.today { border: 2.5px solid var(--primary); color: var(--primary); background: var(--mint-50); font-weight: 800; }
+
+/* Trend Card */
+.ts { background: var(--surface); border-radius: var(--r-lg); padding: 14px; margin: 0 16px 12px; box-shadow: var(--shadow-sm); border: 0.5px solid rgba(0,0,0,0.03); }
+
+/* Milestone Badge */
+.milestone { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: linear-gradient(135deg, var(--mint-50), var(--apricot-50)); border-radius: var(--r-md); margin-top: 12px; }
+.milestone svg { width: 18px; height: 18px; flex-shrink: 0; }
+.milestone span { font-size: 12px; font-weight: 600; color: var(--on-surface); }
+</style>
+</head>
+<body>
+<!-- Dashboard Content -->
+<div class="phone-frame">
+  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="#111827" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="#111827" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#111827" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="#111827"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="#111827" opacity="0.4" stroke="none"/></svg></div></div>
+
+  <div class="dh">
+    <div class="dh-left"><div class="greeting">上午好 ☀️</div><div class="name">Lisa</div></div>
+    <div class="dh-right">
+      <div class="bell"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="dot"></div></div>
+      <div class="av" style="background:linear-gradient(135deg,var(--rose-300),var(--rose-400))">L</div>
+    </div>
+  </div>
+
+  <div class="content-no-padding" style="padding-bottom:84px">
+    <!-- Hero Card -->
+    <div class="hero">
+      <div class="dec1"></div>
+      <div class="dec2"></div>
+      <div class="hero-top">
+        <div class="hr">
+          <svg width="84" height="84" viewBox="0 0 84 84">
+            <circle cx="42" cy="42" r="35" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="6.5"/>
+            <circle cx="42" cy="42" r="35" fill="none" stroke="rgba(255,255,255,0.95)" stroke-width="6.5" stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="39.6"/>
+          </svg>
+          <div class="v"><span class="n">82</span><span class="l">总评分</span></div>
+        </div>
+        <div class="hi">
+          <h2>皮肤状态不错哦</h2>
+          <p>各项指标都在稳步改善中，继续保持~</p>
+        </div>
+      </div>
+      <div class="hero-bottom">
+        <div class="ht"><svg viewBox="0 0 16 16" stroke="white" stroke-width="2.5"><path d="M8 12V4M4.5 7L8 3.5 11.5 7"/></svg> 较上周 +3.2</div>
+        <div class="hero-date">2026.03.14 记录</div>
+      </div>
+    </div>
+
+    <!-- Mini Metrics -->
+    <div class="metrics">
+      <div class="metric"><div class="val" style="color:var(--acne)">85</div><div class="lbl">痘痘</div><div class="mini-bar"><div class="fill" style="width:85%;background:var(--acne)"></div></div></div>
+      <div class="metric"><div class="val" style="color:var(--pore)">78</div><div class="lbl">毛孔</div><div class="mini-bar"><div class="fill" style="width:78%;background:var(--pore)"></div></div></div>
+      <div class="metric"><div class="val" style="color:var(--evenness)">82</div><div class="lbl">均匀</div><div class="mini-bar"><div class="fill" style="width:82%;background:var(--evenness)"></div></div></div>
+      <div class="metric"><div class="val" style="color:var(--redness)">75</div><div class="lbl">泛红</div><div class="mini-bar"><div class="fill" style="width:75%;background:var(--redness)"></div></div></div>
+      <div class="metric"><div class="val" style="color:var(--hydration)">80</div><div class="lbl">水润</div><div class="mini-bar"><div class="fill" style="width:80%;background:var(--hydration)"></div></div></div>
+    </div>
+
+    <!-- Photo Reminder -->
+    <div class="rm" style="background:linear-gradient(135deg,var(--rose-50),#FFF5F6);border:1px solid rgba(251,113,133,0.1)">
+      <div class="ic" style="background:linear-gradient(135deg,var(--rose-100),var(--rose-50))"><svg viewBox="0 0 24 24" style="color:var(--rose-400)"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+      <div class="tx"><div class="t">今天还没拍照哦~</div><div class="s">坚持记录，看见皮肤的变化</div></div>
+      <button class="ab" style="background:var(--rose-400);box-shadow:0 3px 12px rgba(251,113,133,0.3)">去拍照</button>
+    </div>
+
+    <!-- Quick Actions — 2x2 Bento -->
+    <div class="acts">
+      <div class="ai">
+        <div class="ic" style="background:linear-gradient(135deg,var(--mint-50),#D1F0E4)"><svg viewBox="0 0 24 24" style="color:var(--primary)"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 4 5-8"/></svg></div>
+        <div class="ai-text"><span class="ai-title">肌肤趋势</span><span class="ai-sub">7 天变化</span></div>
+      </div>
+      <div class="ai">
+        <div class="ic" style="background:linear-gradient(135deg,var(--apricot-50),#FFE4C8)"><svg viewBox="0 0 24 24" style="color:var(--apricot-400)"><path d="M8 2h8l2 4H6l2-4z"/><rect x="6" y="6" width="12" height="14" rx="2"/><line x1="12" y1="10" x2="12" y2="16"/></svg></div>
+        <div class="ai-text"><span class="ai-title">护肤品</span><span class="ai-sub">6 个在用</span></div>
+      </div>
+      <div class="ai">
+        <div class="ic" style="background:linear-gradient(135deg,var(--lavender-50),var(--lavender-100))"><svg viewBox="0 0 24 24" style="color:var(--lavender-400)"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg></div>
+        <div class="ai-text"><span class="ai-title">归因分析</span><span class="ai-sub">AI 洞察</span></div>
+      </div>
+      <div class="ai">
+        <div class="ic" style="background:linear-gradient(135deg,var(--rose-50),var(--rose-100))"><svg viewBox="0 0 24 24" style="color:var(--rose-400)"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div>
+        <div class="ai-text"><span class="ai-title">分享对比</span><span class="ai-sub">记录蜕变</span></div>
+      </div>
+    </div>
+
+    <!-- Skin Tip -->
+    <div class="tip-card" style="background:linear-gradient(135deg,var(--lavender-50),var(--rose-50));border-color:rgba(196,181,253,0.1)">
+      <div class="ic" style="background:linear-gradient(135deg,var(--lavender-100),var(--lavender-50))"><svg viewBox="0 0 24 24" style="color:var(--lavender-400)"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/><circle cx="12" cy="12" r="5"/></svg></div>
+      <div class="tx"><div class="t">今日紫外线偏强</div><div class="s">记得涂防晒哦~ 出门前 15 分钟使用效果最佳</div></div>
+    </div>
+
+    <!-- Check-in -->
+    <div class="ck">
+      <div class="ck-h">
+        <div class="t">每日打卡</div>
+        <div class="ck-s" style="color:var(--rose-400)"><svg viewBox="0 0 16 16" fill="var(--rose-400)" stroke="none"><path d="M8 2C6.5 4 5 6.5 5 8.5 5 11 6.3 12 8 12s3-1 3-3.5C11 6.5 9.5 4 8 2z"/></svg> 连续 7 天</div>
+      </div>
+      <div class="wk">
+        <div class="dy"><div class="dl">一</div><div class="dc done"><svg viewBox="0 0 14 14" width="12" height="12" stroke="white" stroke-width="2.5"><path d="M3 7l2.5 2.5L11 4.5"/></svg></div></div>
+        <div class="dy"><div class="dl">二</div><div class="dc done"><svg viewBox="0 0 14 14" width="12" height="12" stroke="white" stroke-width="2.5"><path d="M3 7l2.5 2.5L11 4.5"/></svg></div></div>
+        <div class="dy"><div class="dl">三</div><div class="dc done"><svg viewBox="0 0 14 14" width="12" height="12" stroke="white" stroke-width="2.5"><path d="M3 7l2.5 2.5L11 4.5"/></svg></div></div>
+        <div class="dy"><div class="dl">四</div><div class="dc done"><svg viewBox="0 0 14 14" width="12" height="12" stroke="white" stroke-width="2.5"><path d="M3 7l2.5 2.5L11 4.5"/></svg></div></div>
+        <div class="dy"><div class="dl">五</div><div class="dc done"><svg viewBox="0 0 14 14" width="12" height="12" stroke="white" stroke-width="2.5"><path d="M3 7l2.5 2.5L11 4.5"/></svg></div></div>
+        <div class="dy"><div class="dl">六</div><div class="dc done"><svg viewBox="0 0 14 14" width="12" height="12" stroke="white" stroke-width="2.5"><path d="M3 7l2.5 2.5L11 4.5"/></svg></div></div>
+        <div class="dy"><div class="dl">日</div><div class="dc today">7</div></div>
+      </div>
+      <div class="milestone">
+        <svg viewBox="0 0 24 24" width="18" height="18" style="color:var(--secondary)" stroke="none" fill="var(--secondary)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <span>太棒了! 连续打卡 7 天，达成一周成就</span>
+      </div>
+    </div>
+
+    <!-- Trend Chart -->
+    <div class="ts">
+      <div class="section-header"><div class="title">肌肤趋势</div><div class="action">查看全部</div></div>
+      <!-- Period selector chips -->
+      <div style="display:flex;gap:6px;margin-bottom:12px">
+        <div style="padding:5px 14px;border-radius:var(--r-full);background:var(--primary);color:white;font-size:12px;font-weight:600">7 天</div>
+        <div style="padding:5px 14px;border-radius:var(--r-full);background:var(--surface-variant);color:var(--on-surface-variant);font-size:12px;font-weight:600">30 天</div>
+        <div style="padding:5px 14px;border-radius:var(--r-full);background:var(--surface-variant);color:var(--on-surface-variant);font-size:12px;font-weight:600">90 天</div>
+      </div>
+      <div style="height:100px;position:relative">
+        <svg viewBox="0 0 340 100" style="width:100%;height:100%;stroke:none">
+          <defs>
+            <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--mint-400)" stop-opacity="0.18"/><stop offset="100%" stop-color="var(--mint-400)" stop-opacity="0.01"/></linearGradient>
+            <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <!-- Y-axis labels -->
+          <text x="4" y="12" font-size="9" fill="var(--on-surface-variant)" font-family="var(--font)" font-weight="500" stroke="none" opacity="0.5">90</text>
+          <text x="4" y="45" font-size="9" fill="var(--on-surface-variant)" font-family="var(--font)" font-weight="500" stroke="none" opacity="0.5">75</text>
+          <text x="4" y="78" font-size="9" fill="var(--on-surface-variant)" font-family="var(--font)" font-weight="500" stroke="none" opacity="0.5">60</text>
+          <!-- Grid lines -->
+          <line x1="22" y1="8" x2="340" y2="8" stroke="var(--outline-variant)" stroke-width="0.5" stroke-dasharray="3,4"/>
+          <line x1="22" y1="42" x2="340" y2="42" stroke="var(--outline-variant)" stroke-width="0.5" stroke-dasharray="3,4"/>
+          <line x1="22" y1="75" x2="340" y2="75" stroke="var(--outline-variant)" stroke-width="0.5" stroke-dasharray="3,4"/>
+          <!-- Area fill -->
+          <path d="M30,74 C78,70 126,60 174,46 C222,32 270,22 318,17 L318,92 L30,92 Z" fill="url(#tg)"/>
+          <!-- Trend line -->
+          <path d="M30,74 C78,70 126,60 174,46 C222,32 270,22 318,17" fill="none" stroke="var(--mint-400)" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Data points -->
+          <circle cx="30" cy="74" r="3" fill="var(--mint-400)"/>
+          <circle cx="78" cy="67" r="3" fill="var(--mint-400)"/>
+          <circle cx="126" cy="55" r="3" fill="var(--mint-400)"/>
+          <circle cx="174" cy="42" r="3" fill="var(--mint-400)"/>
+          <circle cx="222" cy="30" r="3" fill="var(--mint-400)"/>
+          <circle cx="270" cy="21" r="3" fill="var(--mint-400)"/>
+          <!-- Current point with glow -->
+          <circle cx="318" cy="17" r="7" fill="white" stroke="var(--mint-400)" stroke-width="2.5" filter="url(#glow)"/>
+          <!-- Current value tooltip -->
+          <rect x="296" y="0" width="44" height="16" rx="5" fill="var(--primary)" stroke="none"/>
+          <text x="318" y="11" text-anchor="middle" font-size="10" fill="white" font-family="var(--font)" font-weight="700" stroke="none">82 分</text>
+        </svg>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--on-surface-variant);margin-top:6px;font-weight:500;padding:0 8px"><span>3/8</span><span>3/9</span><span>3/10</span><span>3/11</span><span>3/12</span><span>3/13</span><span style="color:var(--primary);font-weight:700">今天</span></div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="ni active"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="var(--primary)" stroke="var(--primary)" stroke-width="1.5"/><polyline points="9 22 9 12 15 12 15 22" stroke="white" stroke-width="1.5" fill="none"/></svg><div class="label">首页</div></div>
+    <div class="ni"><svg viewBox="0 0 24 24" width="24" height="24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><div class="label">记录</div></div>
+    <div class="ni-fab"><div class="fab"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div class="label">拍照</div></div>
+    <div class="ni"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 4 5-8"/></svg><div class="label">分析</div></div>
+    <div class="ni"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="label">我的</div></div>
+  </div>
+</div>
+
+<!-- Dashboard Empty -->
+<div class="phone-frame">
+  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="#111827" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="#111827" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#111827" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="#111827"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="#111827" opacity="0.4" stroke="none"/></svg></div></div>
+
+  <div class="dh">
+    <div class="dh-left"><div class="greeting">上午好</div><div class="name">Zane</div></div>
+    <div class="dh-right">
+      <div class="bell"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+      <div class="av" style="background:linear-gradient(135deg,var(--mint-300),var(--primary))">Z</div>
+    </div>
+  </div>
+
+  <div class="content-no-padding" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 36px 84px;position:relative">
+    <!-- Decorative background elements -->
+    <div style="position:absolute;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,var(--mint-50) 0%,transparent 70%);top:12%;left:-40px;opacity:0.5"></div>
+    <div style="position:absolute;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,var(--rose-50) 0%,transparent 70%);bottom:20%;right:-30px;opacity:0.4"></div>
+    <div style="position:absolute;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,var(--lavender-50) 0%,transparent 70%);top:30%;right:10px;opacity:0.3"></div>
+
+    <!-- Hero illustration -->
+    <div style="width:160px;height:160px;position:relative;margin-bottom:32px;z-index:1">
+      <!-- Main circle -->
+      <div style="width:140px;height:140px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--mint-100),var(--mint-50) 70%,var(--surface));position:absolute;top:10px;left:10px;box-shadow:0 12px 40px rgba(45,159,127,0.12)"></div>
+      <!-- Floating accent circles -->
+      <div style="position:absolute;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--rose-100),var(--rose-50));top:0;right:0;opacity:0.6"></div>
+      <div style="position:absolute;width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--lavender-100),var(--lavender-50));bottom:5px;left:0;opacity:0.5"></div>
+      <div style="position:absolute;width:14px;height:14px;border-radius:50%;background:var(--apricot-100);top:20px;left:5px;opacity:0.4"></div>
+      <!-- Icon -->
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2">
+        <svg viewBox="0 0 64 64" width="70" height="70" style="color:var(--mint-400);stroke-width:1.2" fill="none">
+          <!-- Feminine face silhouette -->
+          <path d="M20 48c-1.5-6-2-14 0-22 2.5-9 10-16 12-16s9.5 7 12 16c2 8 1.5 16 0 22"/>
+          <ellipse cx="32" cy="32" rx="12" ry="15"/>
+          <circle cx="27" cy="30" r="1.5" fill="var(--mint-400)" stroke="none"/>
+          <circle cx="37" cy="30" r="1.5" fill="var(--mint-400)" stroke="none"/>
+          <path d="M28 37c2 2 6 2 8 0" stroke-width="1"/>
+          <!-- Camera -->
+          <rect x="42" y="12" width="14" height="11" rx="3"/>
+          <circle cx="49" cy="17.5" r="3"/>
+          <!-- Sparkle -->
+          <path d="M52 8l1 3 3 1-3 1-1 3-1-3-3-1 3-1z" fill="var(--apricot-300)" stroke="none" opacity="0.7"/>
+          <path d="M14 20l0.7 2.1 2.1 0.7-2.1 0.7-0.7 2.1-0.7-2.1-2.1-0.7 2.1-0.7z" fill="var(--rose-300)" stroke="none" opacity="0.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <h2 style="font-size:24px;font-weight:800;color:var(--on-surface);margin-bottom:10px;letter-spacing:-0.5px;position:relative;z-index:1">开启你的变美日记</h2>
+    <p style="font-size:15px;color:var(--on-surface-variant);margin-bottom:12px;line-height:1.6;position:relative;z-index:1">拍一张自拍，AI 帮你分析肌肤状态<br>见证皮肤一天天变好~</p>
+
+    <!-- 3-step intro -->
+    <div style="display:flex;gap:24px;margin-bottom:32px;position:relative;z-index:1">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--mint-50);border:1.5px solid var(--mint-200);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 20 20" width="18" height="18" style="color:var(--primary)"><path d="M17 15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3l1.5-2h5L16 5h1a2 2 0 0 1 2 2v8z"/><circle cx="10" cy="10.5" r="3"/></svg></div>
+        <span style="font-size:11px;color:var(--on-surface-variant);font-weight:600">拍照</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--lavender-50);border:1.5px solid var(--lavender-200);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 20 20" width="18" height="18" style="color:var(--lavender-400)"><circle cx="10" cy="10" r="7"/><path d="M10 6v4l3 2"/></svg></div>
+        <span style="font-size:11px;color:var(--on-surface-variant);font-weight:600">AI 分析</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--rose-50);border:1.5px solid var(--rose-200);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 20 20" width="18" height="18" style="color:var(--rose-400)"><path d="M3 3v14h14"/><path d="M6 13l3-5 3 3 4-6"/></svg></div>
+        <span style="font-size:11px;color:var(--on-surface-variant);font-weight:600">追踪</span>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" style="width:auto;padding:0 44px;position:relative;z-index:1;font-size:16px">拍第一张自拍</button>
+    <div style="font-size:12px;color:var(--on-surface-variant);margin-top:16px;position:relative;z-index:1;opacity:0.7">已有 <span style="font-weight:700;color:var(--primary)">12,580</span> 位用户在使用</div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="ni active"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="var(--primary)" stroke="var(--primary)" stroke-width="1.5"/><polyline points="9 22 9 12 15 12 15 22" stroke="white" stroke-width="1.5" fill="none"/></svg><div class="label">首页</div></div>
+    <div class="ni"><svg viewBox="0 0 24 24" width="24" height="24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><div class="label">记录</div></div>
+    <div class="ni-fab"><div class="fab"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div class="label">拍照</div></div>
+    <div class="ni"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 4 5-8"/></svg><div class="label">分析</div></div>
+    <div class="ni"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="label">我的</div></div>
+  </div>
+</div>
+</body></html>

@@ -2,16 +2,26 @@ package com.skintrack.server.service
 
 import com.skintrack.server.database.tables.SkinRecordsTable
 import com.skintrack.server.dto.SkinRecordDto
+import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.upsert
 
 class SkinRecordService {
 
-    fun loadByUser(userId: String): List<SkinRecordDto> = transaction {
+    fun loadByUser(userId: String, since: String? = null): List<SkinRecordDto> = transaction {
         SkinRecordsTable.selectAll()
-            .where { SkinRecordsTable.userId eq userId }
+            .where {
+                if (since != null) {
+                    (SkinRecordsTable.userId eq userId) and
+                        (SkinRecordsTable.updatedAt.isNotNull()) and
+                        (SkinRecordsTable.updatedAt greater since)
+                } else {
+                    SkinRecordsTable.userId eq userId
+                }
+            }
             .map { row ->
                 SkinRecordDto(
                     id = row[SkinRecordsTable.id],
@@ -28,15 +38,17 @@ class SkinRecordService {
                     analysisJson = row[SkinRecordsTable.analysisJson],
                     recordedAt = row[SkinRecordsTable.recordedAt],
                     createdAt = row[SkinRecordsTable.createdAt],
+                    updatedAt = row[SkinRecordsTable.updatedAt],
                 )
             }
     }
 
     fun upsert(dtos: List<SkinRecordDto>, userId: String) = transaction {
-        dtos.filter { it.userId == userId }.forEach { dto ->
+        val now = Clock.System.now().toString()
+        dtos.forEach { dto ->
             SkinRecordsTable.upsert {
                 it[id] = dto.id
-                it[SkinRecordsTable.userId] = dto.userId
+                it[SkinRecordsTable.userId] = userId // Force JWT userId
                 it[skinType] = dto.skinType
                 it[overallScore] = dto.overallScore
                 it[acneCount] = dto.acneCount
@@ -49,6 +61,7 @@ class SkinRecordService {
                 it[analysisJson] = dto.analysisJson
                 it[recordedAt] = dto.recordedAt
                 it[createdAt] = dto.createdAt
+                it[updatedAt] = now
             }
         }
     }

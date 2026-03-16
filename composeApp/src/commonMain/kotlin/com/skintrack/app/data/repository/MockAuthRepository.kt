@@ -28,6 +28,65 @@ class MockAuthRepository(
         authSessionDao.clearSession()
     }
 
+    override suspend fun requestPasswordReset(email: String): Result<Unit> {
+        // Mock: always succeed
+        return Result.success(Unit)
+    }
+
+    override suspend fun resetPassword(email: String, code: String, newPassword: String): Result<Unit> {
+        // Mock: accept code "123456"
+        return if (code == "123456") {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception("验证码无效或已过期"))
+        }
+    }
+
+    override suspend fun changePassword(oldPassword: String, newPassword: String): Result<Unit> {
+        // Mock: always succeed
+        return Result.success(Unit)
+    }
+
+    override suspend fun refreshAccessToken(): Result<Unit> {
+        // Mock: always succeed
+        return Result.success(Unit)
+    }
+
+    override suspend fun deleteAccount(password: String): Result<Unit> {
+        // Mock: accept any non-empty password
+        if (password.isBlank()) {
+            return Result.failure(Exception("密码不能为空"))
+        }
+        authSessionDao.clearSession()
+        return Result.success(Unit)
+    }
+
+    override suspend fun updateDisplayName(displayName: String): Result<Unit> {
+        return try {
+            authSessionDao.updateDisplayName(displayName)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(Exception("更新昵称失败"))
+        }
+    }
+
+    override suspend fun exportUserData(): Result<String> {
+        // Mock: return sample JSON
+        val sampleJson = """
+            {
+              "success": true,
+              "data": {
+                "profile": { "email": "test@example.com", "display_name": null, "created_at": "2026-01-01T00:00:00Z" },
+                "skin_records": [],
+                "products": [],
+                "usage": [],
+                "subscription": null
+              }
+            }
+        """.trimIndent()
+        return Result.success(sampleJson)
+    }
+
     private suspend fun authenticate(email: String, password: String): Result<AuthUser> {
         if (!email.contains("@")) {
             return Result.failure(IllegalArgumentException("请输入有效的邮箱地址"))

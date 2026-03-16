@@ -11,6 +11,15 @@ actual class ImageStorage {
         file.writeBytes(imageBytes)
         return file.absolutePath
     }
+
+    actual suspend fun loadImage(localPath: String): ByteArray? {
+        return try {
+            val file = File(localPath)
+            if (file.exists()) file.readBytes() else null
+        } catch (_: Exception) {
+            null
+        }
+    }
 }
 
 actual fun pathToImageModel(localImagePath: String): Any = File(localImagePath)

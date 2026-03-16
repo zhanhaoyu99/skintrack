@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=390">
+<link rel="stylesheet" href="base.css">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+body { display: flex; gap: 32px; padding: 32px; justify-content: center; }
+.phone-frame { flex-shrink: 0; }
+
+/* ===== Profile Header with gradient extending behind status bar ===== */
+.profile-header {
+  background: var(--grad-hero);
+  padding: 0 0 52px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: -36px;
+}
+.profile-header::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+}
+.profile-header::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: -20px;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+}
+.profile-header .status-bar .time { color: #fff; }
+.profile-header .status-bar svg { fill: #fff !important; }
+.profile-header .top-app-bar .title { color: #fff; }
+.profile-header .top-app-bar .action svg { color: rgba(255,255,255,0.8) !important; }
+
+/* User card inside header */
+.user-card {
+  display: flex; align-items: center; gap: 16px;
+  padding: 0 20px; position: relative; z-index: 2;
+}
+.user-avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: linear-gradient(135deg, #FDA4AF, #FB7185);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 800; color: white;
+  flex-shrink: 0;
+  border: 3px solid rgba(255,255,255,0.35);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+.user-info { flex: 1; color: white; z-index: 1; }
+.user-name {
+  font-size: 22px; font-weight: 800; letter-spacing: -0.4px;
+  display: flex; align-items: center; gap: 8px;
+}
+.vip-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 10px; border-radius: var(--r-full);
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  font-size: 11px; font-weight: 800; color: #7B4C00;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 8px rgba(255,165,0,0.35);
+}
+.vip-badge svg { width: 12px; height: 12px; fill: #7B4C00; stroke: none; }
+.user-email { font-size: 13px; opacity: 0.75; margin-top: 3px; }
+.user-tags {
+  display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;
+}
+.user-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 12px; border-radius: var(--r-full);
+  background: rgba(255,255,255,0.18); backdrop-filter: blur(4px);
+  font-size: 12px; font-weight: 600; color: white;
+}
+.user-arrow {
+  z-index: 1; opacity: 0.6;
+}
+.user-arrow svg { width: 20px; height: 20px; color: white; }
+
+/* ===== Frosted glass stats card ===== */
+.stats-glass {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-radius: var(--r-xl);
+  padding: 18px 12px;
+  margin: 0 16px 16px;
+  display: flex; text-align: center;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
+  border: 0.5px solid rgba(255,255,255,0.6);
+  position: relative; z-index: 5;
+}
+.stat-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.stat-icon {
+  width: 32px; height: 32px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 2px;
+}
+.stat-icon svg { width: 16px; height: 16px; }
+.stat-value {
+  font-size: 24px; font-weight: 800; color: var(--on-surface); letter-spacing: -0.5px;
+}
+.stat-value.mint { color: var(--primary); }
+.stat-value.orange { color: var(--apricot-400); }
+.stat-label {
+  font-size: 11px; color: var(--on-surface-variant); font-weight: 600;
+}
+.stat-divider {
+  width: 0.5px; background: var(--outline-variant); margin: 8px 0;
+}
+/* Mini score ring */
+.stat-ring { width: 34px; height: 34px; position: relative; margin-bottom: 2px; }
+.stat-ring svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+.stat-ring .ring-val {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  font-size: 11px; font-weight: 800; color: var(--on-surface);
+}
+
+/* ===== Skin Goals ===== */
+.goals-card {
+  background: var(--surface); border-radius: var(--r-lg);
+  padding: 14px 16px; margin: 0 16px 12px;
+  box-shadow: var(--shadow-sm);
+}
+.goals-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+}
+.goals-header .t { font-size: 15px; font-weight: 700; color: var(--on-surface); }
+.goals-header .a { font-size: 13px; color: var(--primary); font-weight: 600; }
+.goal-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.goal-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 14px; border-radius: var(--r-full);
+  font-size: 13px; font-weight: 600;
+}
+
+/* ===== Menu Sections ===== */
+.msec {
+  background: var(--surface); border-radius: var(--r-lg);
+  padding: 2px 16px; margin: 0 16px 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ===== App version footer ===== */
+.app-footer {
+  text-align: center; padding: 20px 16px 100px;
+}
+.app-footer .logo-mark {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--grad-primary); margin-bottom: 8px;
+}
+.app-footer .logo-mark svg { width: 18px; height: 18px; stroke: white; stroke-width: 2.5; }
+.app-footer .app-name {
+  font-size: 13px; font-weight: 700; color: var(--on-surface-variant); letter-spacing: 0.5px;
+}
+.app-footer .app-ver {
+  font-size: 12px; color: var(--outline); margin-top: 2px; font-weight: 500;
+}
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <!-- Profile Header with gradient behind status bar -->
+  <div class="profile-header">
+    <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="white" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="white" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="white" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="white"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="white" opacity="0.4" stroke="none"/></svg></div></div>
+    <div class="top-app-bar">
+      <div class="title">我的</div>
+      <div class="action"><svg viewBox="0 0 24 24" width="24" height="24" style="color:rgba(255,255,255,0.8)"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></div>
+    </div>
+    <!-- User info -->
+    <div class="user-card">
+      <div class="user-avatar">L</div>
+      <div class="user-info">
+        <div class="user-name">Lisa <span class="vip-badge"><svg viewBox="0 0 14 14"><path d="M7 1l1.8 3.7L13 5.4l-3 2.9.7 4L7 10.3 3.3 12.3l.7-4-3-2.9 4.2-.7z"/></svg>VIP</span></div>
+        <div class="user-email">lisa@example.com</div>
+        <div class="user-tags">
+          <div class="user-tag"><svg viewBox="0 0 14 14" width="13" height="13" style="fill:none;stroke:#FFD700;stroke-width:1.5"><polygon points="7 1 8.8 4.7 13 5.4 10 8.3 10.7 12.3 7 10.3 3.3 12.3 4 8.3 1 5.4 5.2 4.7"/></svg> Pro 会员</div>
+          <div class="user-tag">混合肌</div>
+        </div>
+      </div>
+      <div class="user-arrow"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="white"/></svg></div>
+    </div>
+  </div>
+
+  <div class="content-no-padding" style="overflow-y:auto;padding-bottom:84px">
+    <!-- Frosted glass stats card, overlapping header -->
+    <div class="stats-glass">
+      <div class="stat-item">
+        <div class="stat-icon" style="background:linear-gradient(135deg,var(--mint-50),#D1F0E4)"><svg viewBox="0 0 24 24" style="color:var(--primary)"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg></div>
+        <div class="stat-value">42</div>
+        <div class="stat-label">总记录</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-icon" style="background:linear-gradient(135deg,var(--apricot-50),#FFE8D0)"><svg viewBox="0 0 24 24" style="color:var(--apricot-400)"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+        <div class="stat-value orange">7</div>
+        <div class="stat-label">连续打卡</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-icon" style="background:linear-gradient(135deg,#EDE9FE,#DDD6FE)"><svg viewBox="0 0 24 24" style="color:var(--lavender-400)"><path d="M8 2h8l2 4H6l2-4z"/><rect x="6" y="6" width="12" height="14" rx="2"/><line x1="12" y1="10" x2="12" y2="16"/></svg></div>
+        <div class="stat-value">8</div>
+        <div class="stat-label">护肤品</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-ring">
+          <svg viewBox="0 0 36 36">
+            <circle cx="18" cy="18" r="15" fill="none" stroke="var(--outline-variant)" stroke-width="3"/>
+            <circle cx="18" cy="18" r="15" fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round" stroke-dasharray="77" stroke-dashoffset="14"/>
+          </svg>
+          <div class="ring-val">82</div>
+        </div>
+        <div class="stat-label">最新评分</div>
+      </div>
+    </div>
+
+    <!-- Skin goals -->
+    <div class="goals-card">
+      <div class="goals-header"><div class="t">我的护肤目标</div><div class="a">编辑</div></div>
+      <div class="goal-tags">
+        <div class="goal-tag" style="background:linear-gradient(135deg,var(--rose-50),var(--rose-100));color:var(--rose-500)"><svg viewBox="0 0 14 14" width="14" height="14" style="color:var(--rose-400)"><circle cx="7" cy="7" r="5"/><circle cx="7" cy="7" r="2" fill="var(--rose-300)" stroke="none"/></svg>祛痘</div>
+        <div class="goal-tag" style="background:linear-gradient(135deg,var(--mint-50),#D1F0E4);color:var(--primary)"><svg viewBox="0 0 14 14" width="14" height="14" style="color:var(--primary)"><circle cx="7" cy="7" r="5"/><path d="M5 7l1.5 1.5L9 6"/></svg>收毛孔</div>
+        <div class="goal-tag" style="background:linear-gradient(135deg,var(--lavender-50),var(--lavender-100));color:var(--lavender-400)"><svg viewBox="0 0 14 14" width="14" height="14" style="color:var(--lavender-400)"><path d="M7 1v12M1 7h12"/></svg>提亮</div>
+        <div class="goal-tag" style="background:var(--surface-variant);color:var(--on-surface-variant)"><svg viewBox="0 0 14 14" width="14" height="14"><path d="M7 3v8M3 7h8"/></svg>添加</div>
+      </div>
+    </div>
+
+    <!-- Menu: Features -->
+    <div class="msec">
+      <div class="menu-item"><div class="icon-wrap" style="background:linear-gradient(135deg,var(--apricot-50),#FFE8D0)"><svg viewBox="0 0 24 24" style="color:var(--apricot-400)"><path d="M8 2h8l2 4H6l2-4z"/><rect x="6" y="6" width="12" height="14" rx="2"/><line x1="12" y1="10" x2="12" y2="16"/></svg></div><div class="text"><div class="primary-text">护肤品管理</div><div class="secondary-text">管理你的护肤品清单</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:linear-gradient(135deg,#EDE9FE,#DDD6FE)"><svg viewBox="0 0 24 24" style="color:#7C3AED"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 4 5-8"/></svg></div><div class="text"><div class="primary-text">归因分析报告</div><div class="secondary-text">查看护肤品效果分析</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A)"><svg viewBox="0 0 24 24" style="color:#D97706"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" fill="#D97706" stroke="none"/></svg></div><div class="text"><div class="primary-text">会员中心</div><div class="secondary-text">Pro 会员 · 2026.12.14 到期</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+    </div>
+
+    <!-- Menu: Settings -->
+    <div class="msec">
+      <div class="menu-item"><div class="icon-wrap" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A)"><svg viewBox="0 0 24 24" style="color:#D97706"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div class="text"><div class="primary-text">打卡提醒</div><div class="secondary-text">每天 20:00 提醒</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:linear-gradient(135deg,#DBEAFE,#BFDBFE)"><svg viewBox="0 0 24 24" style="color:#3B82F6"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div><div class="text"><div class="primary-text">数据同步</div><div class="secondary-text">已同步</div></div><div class="trailing" style="display:flex;align-items:center;gap:6px"><span class="badge badge-success">已同步</span><svg viewBox="0 0 24 24" width="18" height="18"><path d="M9 18l6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:var(--surface-variant)"><svg viewBox="0 0 24 24" style="color:var(--on-surface-variant)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="text"><div class="primary-text">关于 SkinTrack</div><div class="secondary-text">版本 1.0.0</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+    </div>
+
+    <!-- App footer with version -->
+    <div class="app-footer">
+      <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+      <div class="app-name">SKINTRACK</div>
+      <div class="app-ver">v1.0.0 (Build 42)</div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="ni"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="label">首页</div></div>
+    <div class="ni"><svg viewBox="0 0 24 24" width="24" height="24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><div class="label">记录</div></div>
+    <div class="ni-fab"><div class="fab"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div class="label">拍照</div></div>
+    <div class="ni"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 4 5-8"/></svg><div class="label">分析</div></div>
+    <div class="ni active"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" fill="var(--primary)" stroke="var(--primary)"/><circle cx="12" cy="7" r="4" fill="var(--primary)" stroke="var(--primary)"/></svg><div class="label">我的</div></div>
+  </div>
+</div>
+</body></html>

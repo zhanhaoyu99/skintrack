@@ -13,4 +13,6 @@ data class SkincareProductEntity(
     val imageUrl: String? = null,
     val barcode: String? = null,
     val synced: Boolean = false,
+    val usagePeriod: String = "both",
+    val updatedAt: Long = kotlinx.datetime.Clock.System.now().toEpochMilliseconds(),
 )

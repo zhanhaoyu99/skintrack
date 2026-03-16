@@ -19,6 +19,8 @@ dependencies {
     implementation(libs.ktor.server.status.pages)
     implementation(libs.ktor.server.call.logging)
     implementation(libs.ktor.server.cors)
+    implementation(libs.ktor.server.rate.limit)
+    implementation(libs.ktor.server.default.headers)
 
     // Database
     implementation(libs.exposed.core)
@@ -29,6 +31,11 @@ dependencies {
 
     // Auth
     implementation(libs.bcrypt)
+
+    // Ktor Client (for outgoing LLM API calls)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.content.negotiation)
 
     // Serialization
     implementation(libs.kotlinx.serialization.json)

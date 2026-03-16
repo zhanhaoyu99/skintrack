@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- SkinTrack brand primary color (Mint500) for launcher icon background -->
+    <color name="ic_launcher_background">#5BB89A</color>
+</resources>

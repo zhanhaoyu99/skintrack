@@ -8,6 +8,7 @@ import com.skintrack.app.data.remote.RemoteSyncService
 import com.skintrack.app.domain.model.DailyProductUsage
 import com.skintrack.app.domain.model.ProductCategory
 import com.skintrack.app.domain.model.SkincareProduct
+import com.skintrack.app.domain.model.UsagePeriod
 import com.skintrack.app.domain.repository.ProductRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -90,15 +91,29 @@ class ProductRepositoryImpl(
         }
     }
 
-    override suspend fun pullFromRemote(userId: String) {
+    override suspend fun pullFromRemote(userId: String, since: String?) {
         val service = syncService ?: return
         try {
             val remote = service.loadProducts(userId)
-            remote.forEach { productDao.insert(it) }
+            // Last-Write-Wins: only overwrite local if remote is newer
+            remote.forEach { remoteEntity ->
+                val local = productDao.getById(remoteEntity.id)
+                if (local == null || remoteEntity.updatedAt >= local.updatedAt) {
+                    productDao.insert(remoteEntity)
+                }
+            }
         } catch (_: Exception) {
             // Pull failure is non-fatal
         }
     }
+    override suspend fun getProductsPaged(userId: String, limit: Int, offset: Int): List<SkincareProduct> =
+        productDao.getProductsPaged(userId, limit, offset).map { it.toDomain() }
+
+    override suspend fun countByUser(userId: String): Int =
+        productDao.countByUser(userId)
+
+    override suspend fun searchProducts(userId: String, query: String): List<SkincareProduct> =
+        productDao.searchProducts(userId, "%$query%").map { it.toDomain() }
 }
 
 private fun SkincareProductEntity.toDomain() = SkincareProduct(
@@ -107,6 +122,7 @@ private fun SkincareProductEntity.toDomain() = SkincareProduct(
     name = name,
     brand = brand,
     category = runCatching { ProductCategory.valueOf(category) }.getOrDefault(ProductCategory.OTHER),
+    usagePeriod = runCatching { UsagePeriod.valueOf(usagePeriod.uppercase()) }.getOrDefault(UsagePeriod.BOTH),
     imageUrl = imageUrl,
     barcode = barcode,
     synced = synced,
@@ -118,6 +134,7 @@ private fun SkincareProduct.toEntity() = SkincareProductEntity(
     name = name,
     brand = brand,
     category = category.name,
+    usagePeriod = usagePeriod.name.lowercase(),
     imageUrl = imageUrl,
     barcode = barcode,
     synced = synced,

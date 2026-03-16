@@ -18,6 +18,9 @@ interface AuthSessionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveSession(session: AuthSessionEntity)
 
+    @Query("UPDATE auth_session SET displayName = :displayName WHERE id = 1")
+    suspend fun updateDisplayName(displayName: String)
+
     @Query("DELETE FROM auth_session")
     suspend fun clearSession()
 }

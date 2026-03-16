@@ -19,7 +19,8 @@ fun Route.productRoutes(service: ProductService) {
         route("/api/products") {
             get {
                 val userId = call.principal<JWTPrincipal>()!!.payload.subject
-                val products = service.loadProducts(userId)
+                val since = call.request.queryParameters["since"]
+                val products = service.loadProducts(userId, since)
                 call.respond(ok(products))
             }
 

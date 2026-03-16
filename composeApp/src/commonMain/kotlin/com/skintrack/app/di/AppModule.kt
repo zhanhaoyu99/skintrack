@@ -5,6 +5,7 @@ import com.skintrack.app.data.local.getDatabaseBuilder
 import com.skintrack.app.data.remote.AiAnalysisService
 import com.skintrack.app.data.remote.KtorServerConfig
 import com.skintrack.app.data.remote.KtorSyncService
+import com.skintrack.app.data.remote.NetworkMonitor
 import com.skintrack.app.data.remote.RemoteSyncService
 import com.skintrack.app.data.remote.SupabaseProvider
 import com.skintrack.app.data.remote.SupabaseSyncService
@@ -28,7 +29,13 @@ import com.skintrack.app.platform.PaymentManager
 import com.skintrack.app.platform.ShareManager
 import com.skintrack.app.ui.screen.attribution.AttributionReportViewModel
 import com.skintrack.app.ui.screen.auth.AuthViewModel
+import com.skintrack.app.ui.screen.auth.ForgotPasswordViewModel
 import com.skintrack.app.ui.screen.camera.CameraViewModel
+import com.skintrack.app.ui.screen.dashboard.DashboardViewModel
+import com.skintrack.app.ui.screen.onboarding.OnboardingViewModel
+import com.skintrack.app.ui.screen.settings.ChangePasswordViewModel
+import com.skintrack.app.ui.screen.settings.EditProfileViewModel
+import com.skintrack.app.ui.screen.settings.SettingsViewModel
 import com.skintrack.app.ui.screen.paywall.PaywallViewModel
 import com.skintrack.app.ui.screen.product.ProductViewModel
 import com.skintrack.app.ui.screen.profile.ProfileViewModel
@@ -39,9 +46,12 @@ import io.ktor.client.HttpClient
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
+import org.koin.mp.KoinPlatform
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.singleOf
@@ -60,6 +70,8 @@ val appModule = module {
     single { get<AppDatabase>().authSessionDao() }
     single { get<AppDatabase>().userSubscriptionDao() }
     single { get<AppDatabase>().checkInStreakDao() }
+    single { get<AppDatabase>().syncQueueDao() }
+    single { get<AppDatabase>().userPreferencesDao() }
 
     // JWT token holder for Ktor backend
     single { TokenHolder() }
@@ -75,14 +87,49 @@ val appModule = module {
                     prettyPrint = false
                 })
             }
+            // Production: use LogLevel.NONE to avoid leaking sensitive data
             install(Logging) {
-                level = LogLevel.BODY
+                level = LogLevel.INFO
+                logger = object : Logger {
+                    override fun log(message: String) {
+                        // Filter out Authorization headers to prevent token leakage
+                        val sanitized = message.replace(
+                            Regex("(Authorization:\\s*)\\S+", RegexOption.IGNORE_CASE),
+                            "$1[REDACTED]"
+                        )
+                        io.github.aakira.napier.Napier.d(sanitized, tag = "HttpClient")
+                    }
+                }
+            }
+            install(HttpTimeout) {
+                connectTimeoutMillis = 15_000
+                requestTimeoutMillis = 30_000
+                socketTimeoutMillis = 30_000
             }
             if (KtorServerConfig.isConfigured) {
                 install(Auth) {
                     bearer {
                         loadTokens {
                             tokenHolder.token?.let { BearerTokens(it, "") }
+                        }
+                        refreshTokens {
+                            // Attempt to refresh the access token on 401
+                            try {
+                                val authRepo = KoinPlatform.getKoin().get<AuthRepository>()
+                                val result = authRepo.refreshAccessToken()
+                                if (result.isSuccess) {
+                                    tokenHolder.token?.let { BearerTokens(it, "") }
+                                } else {
+                                    // Refresh failed, force logout
+                                    authRepo.logout()
+                                    null
+                                }
+                            } catch (_: Exception) {
+                                try {
+                                    KoinPlatform.getKoin().get<AuthRepository>().logout()
+                                } catch (_: Exception) { /* ignore */ }
+                                null
+                            }
                         }
                     }
                 }
@@ -93,13 +140,12 @@ val appModule = module {
     // Supabase
     single { SupabaseProvider.client }
 
-    // Remote sync service
-    single<RemoteSyncService?> {
-        when {
-            KtorServerConfig.isConfigured -> KtorSyncService(get(), KtorServerConfig.baseUrl)
-            SupabaseProvider.isConfigured -> SupabaseSyncService(get())
-            else -> null
-        }
+    // Remote sync service — only registered when a backend is configured.
+    // Use getOrNull<RemoteSyncService>() to safely resolve.
+    if (KtorServerConfig.isConfigured) {
+        single<RemoteSyncService> { KtorSyncService(get(), KtorServerConfig.baseUrl) }
+    } else if (SupabaseProvider.isConfigured) {
+        single<RemoteSyncService> { SupabaseSyncService(get()) }
     }
 
     // Services
@@ -122,24 +168,44 @@ val appModule = module {
     single<ProductRepository> { ProductRepositoryImpl(get(), get(), getOrNull()) }
     single<SubscriptionRepository> { SubscriptionRepositoryImpl(get(), get(), get(), get()) }
 
-    // Sync
-    single { SyncManager(get(), get(), get()) }
-
-    // Use Cases
-    single { CheckFeatureAccess(get(), get()) }
-    single { UpdateCheckInStreak(get(), get()) }
+    // Network Monitor
+    single { NetworkMonitor() }
 
     // Platform
     single { ImageCompressor() }
     single { ImageStorage() }
+
+    // Sync
+    single {
+        SyncManager(
+            authRepository = get(),
+            skinRecordRepository = get(),
+            productRepository = get(),
+            syncQueueDao = get(),
+            userPreferencesDao = get(),
+            networkMonitor = get(),
+            aiAnalysisService = get<AiAnalysisService>(),
+            imageStorage = get<ImageStorage>(),
+        )
+    }
+
+    // Use Cases
+    single { CheckFeatureAccess(get(), get()) }
+    single { UpdateCheckInStreak(get(), get()) }
     single { PaymentManager() }
     single { ShareManager() }
     single { NotificationManager() }
 
     // ViewModels
     viewModelOf(::AuthViewModel)
+    viewModelOf(::ForgotPasswordViewModel)
     viewModelOf(::AttributionReportViewModel)
     viewModelOf(::CameraViewModel)
+    viewModelOf(::DashboardViewModel)
+    viewModelOf(::OnboardingViewModel)
+    viewModelOf(::ChangePasswordViewModel)
+    viewModelOf(::EditProfileViewModel)
+    viewModelOf(::SettingsViewModel)
     viewModelOf(::PaywallViewModel)
     viewModelOf(::ProductViewModel)
     viewModelOf(::ProfileViewModel)
@@ -148,7 +214,15 @@ val appModule = module {
     viewModelOf(::TimelineViewModel)
 }
 
-/** Holds the JWT token in memory for Bearer auth. */
+/**
+ * Holds the JWT token in memory for Bearer auth.
+ *
+ * TODO: For production, migrate to platform-specific secure storage:
+ *  - Android: EncryptedSharedPreferences (androidx.security.crypto)
+ *  - iOS: Keychain via expect/actual
+ *  Current in-memory approach is acceptable for development but tokens are
+ *  lost on process death and not encrypted at rest.
+ */
 class TokenHolder {
     @Volatile
     var token: String? = null

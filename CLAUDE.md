@@ -38,6 +38,17 @@ MaterialTheme.shapes.xxx          // 圆角
 
 SectionCard / SectionHeader / TrendIndicator / MenuItem / ScoreBar / LoadingContent / EmptyContent / ErrorContent / animateListItem
 
+## 产品文档
+
+完整产品规格文档位于 `.dev/product/` 目录：
+- `.dev/product/README.md` — 索引文件
+- 每个页面一个 `screen-*.md` 文件，含布局结构、组件规格、与当前实现差异
+- `navigation.md` — 导航架构（5Tab + 路由图）
+- `feature-gating.md` — 付费门控 4 态规格
+- `product-overview.md` — 产品定位、用户画像、商业模型
+
+**开发 UI 页面前，先阅读对应的 `screen-*.md` 文件对齐设计稿。**
+
 ## 技术栈
 
 KMP + Compose Multiplatform + Supabase + Room KMP

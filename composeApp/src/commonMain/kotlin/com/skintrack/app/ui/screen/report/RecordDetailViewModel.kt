@@ -50,12 +50,24 @@ class RecordDetailViewModel(
 
             val isPremium = checkFeatureAccess.isPremium()
 
+            // Calculate score change from previous record
+            val allRecords = skinRecordRepository.getRecordsByUser(record.userId).first()
+            val sortedRecords = allRecords.filter { it.overallScore != null }.sortedByDescending { it.recordedAt }
+            val currentIndex = sortedRecords.indexOfFirst { it.id == record.id }
+            val previousScore = if (currentIndex >= 0 && currentIndex < sortedRecords.lastIndex) {
+                sortedRecords[currentIndex + 1].overallScore
+            } else null
+            val scoreDiff = if (record.overallScore != null && previousScore != null) {
+                record.overallScore - previousScore
+            } else null
+
             _uiState.value = RecordDetailUiState.Content(
                 record = record,
                 summary = summary,
                 recommendations = recommendations,
                 usedProducts = products,
                 isPremium = isPremium,
+                scoreDiff = scoreDiff,
             )
         }
     }
@@ -84,5 +96,6 @@ sealed interface RecordDetailUiState {
         val recommendations: List<String>,
         val usedProducts: List<SkincareProduct>,
         val isPremium: Boolean = true,
+        val scoreDiff: Int? = null,
     ) : RecordDetailUiState
 }

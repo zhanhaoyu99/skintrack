@@ -20,6 +20,24 @@ val Apricot300 = Color(0xFFF4A261)
 val Apricot400 = Color(0xFFE68A3E)
 val Apricot500 = Color(0xFFD47826)
 
+// ── Rose (accent) ───────────────────────────────────────────────────
+val Rose50 = Color(0xFFFFF0F3)
+val Rose100 = Color(0xFFFFD6E7)
+val Rose200 = Color(0xFFFFB3C1)
+val Rose300 = Color(0xFFFF8FA3)
+val Rose400 = Color(0xFFFB7185)
+val Rose500 = Color(0xFFE05577)
+val Rose600 = Color(0xFFB74466)
+
+// ── Lavender (accent) ──────────────────────────────────────────────
+val Lavender50 = Color(0xFFF3E8FF)
+val Lavender100 = Color(0xFFE4CCFF)
+val Lavender200 = Color(0xFFC4A1E8)
+val Lavender300 = Color(0xFFA78BFA)
+val Lavender400 = Color(0xFF8B5CF6)
+val Lavender500 = Color(0xFF6D3FCE)
+val Lavender600 = Color(0xFF5A32AB)
+
 // ── Skin Metric Colors ──────────────────────────────────────────────
 val SkinAcneLight = Color(0xFFFF6B6B)
 val SkinAcneDark = Color(0xFFE05555)

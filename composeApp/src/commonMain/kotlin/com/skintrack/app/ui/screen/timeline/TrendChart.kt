@@ -3,8 +3,6 @@ package com.skintrack.app.ui.screen.timeline
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -13,12 +11,16 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.spacing
 import kotlinx.datetime.Instant
@@ -28,13 +30,39 @@ import kotlinx.datetime.toLocalDateTime
 data class ChartRecord(
     val date: Instant,
     val overallScore: Int,
+    val acneCount: Int? = null,
+    val poreScore: Int? = null,
+    val evenScore: Int? = null,
+    val hydrationScore: Int? = null,
 )
+
+enum class ChartMetric(val label: String) {
+    OVERALL("总评分"),
+    ACNE("痘痘"),
+    PORE("毛孔"),
+    EVEN("均匀度"),
+    HYDRATION("水润"),
+}
+
+fun ChartRecord.scoreFor(metric: ChartMetric): Int? = when (metric) {
+    ChartMetric.OVERALL -> overallScore
+    ChartMetric.ACNE -> acneCount
+    ChartMetric.PORE -> poreScore
+    ChartMetric.EVEN -> evenScore
+    ChartMetric.HYDRATION -> hydrationScore
+}
 
 @Composable
 fun TrendChart(
     points: List<ChartRecord>,
+    metric: ChartMetric = ChartMetric.OVERALL,
     modifier: Modifier = Modifier,
 ) {
+    val filteredPoints = remember(points, metric) {
+        points.filter { it.scoreFor(metric) != null }
+    }
+    if (filteredPoints.size < 2) return
+
     val lineColor = MaterialTheme.colorScheme.primary
     val fillColor = lineColor.copy(alpha = 0.1f)
     val labelColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -44,11 +72,17 @@ fun TrendChart(
     val chartLineWidthDp = MaterialTheme.dimens.chartLineWidth
     val chartDotRadiusDp = MaterialTheme.dimens.chartDotRadius
 
-    val yLabels = remember { listOf("100", "50", "0") }
-    val xLabels = remember(points) {
+    val maxScore = if (metric == ChartMetric.ACNE) {
+        (filteredPoints.maxOfOrNull { it.scoreFor(metric) ?: 0 } ?: 20).coerceAtLeast(10)
+    } else 100
+
+    val yLabels = remember(maxScore) {
+        listOf("$maxScore", "${maxScore / 2}", "0")
+    }
+    val xLabels = remember(filteredPoints) {
         listOf(
-            formatChartDate(points.first().date),
-            formatChartDate(points.last().date),
+            formatChartDate(filteredPoints.first().date),
+            formatChartDate(filteredPoints.last().date),
         )
     }
 
@@ -60,13 +94,11 @@ fun TrendChart(
         xLabels.map { textMeasurer.measure(it, labelStyle) }
     }
 
-    Card(modifier = modifier) {
-        Canvas(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(chartHeightDp)
-                .padding(MaterialTheme.spacing.md),
-        ) {
+    Canvas(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(chartHeightDp),
+    ) {
             val yLabelWidth = yLabelLayouts.maxOf { it.size.width }.toFloat()
             val xLabelHeight = xLabelLayouts.maxOf { it.size.height }.toFloat()
             val paddingLeft = yLabelWidth + 8.dp.toPx()
@@ -104,10 +136,11 @@ fun TrendChart(
             )
 
             // Map data points to canvas coordinates
-            val coords = points.mapIndexed { i, point ->
-                val x = if (points.size == 1) chartWidth / 2
-                else paddingLeft + chartWidth * i / (points.size - 1).toFloat()
-                val y = chartHeight * (1f - point.overallScore / 100f)
+            val coords = filteredPoints.mapIndexed { i, point ->
+                val score = point.scoreFor(metric) ?: 0
+                val x = if (filteredPoints.size == 1) chartWidth / 2
+                else paddingLeft + chartWidth * i / (filteredPoints.size - 1).toFloat()
+                val y = chartHeight * (1f - score.toFloat() / maxScore)
                 Offset(x, y)
             }
 
@@ -143,16 +176,70 @@ fun TrendChart(
             )
 
             // Draw data point circles
-            coords.forEach { offset ->
-                drawCircle(
-                    color = lineColor,
-                    radius = chartDotRadiusDp.toPx(),
-                    center = offset,
-                )
+            coords.forEachIndexed { i, offset ->
+                if (i == coords.lastIndex) {
+                    // Last point: larger white circle with primary border + shadow
+                    drawCircle(
+                        color = lineColor.copy(alpha = 0.2f),
+                        radius = 9.dp.toPx(),
+                        center = offset,
+                    )
+                    drawCircle(
+                        color = Color.White,
+                        radius = 7.dp.toPx(),
+                        center = offset,
+                    )
+                    drawCircle(
+                        color = lineColor,
+                        radius = 7.dp.toPx(),
+                        center = offset,
+                        style = Stroke(width = 2.dp.toPx()),
+                    )
+
+                    // Tooltip above last point
+                    val lastScore = filteredPoints.last().scoreFor(metric) ?: 0
+                    val tooltipText = if (metric == ChartMetric.ACNE) "$lastScore 个" else "$lastScore 分"
+                    val tooltipLayout = textMeasurer.measure(
+                        tooltipText,
+                        TextStyle(
+                            color = Color.White,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                        ),
+                    )
+                    val tooltipPaddingH = 10.dp.toPx()
+                    val tooltipPaddingV = 5.dp.toPx()
+                    val tooltipWidth = tooltipLayout.size.width + tooltipPaddingH * 2
+                    val tooltipHeight = tooltipLayout.size.height + tooltipPaddingV * 2
+                    val tooltipX = (offset.x - tooltipWidth / 2).coerceIn(
+                        paddingLeft,
+                        paddingLeft + chartWidth - tooltipWidth,
+                    )
+                    val tooltipY = offset.y - tooltipHeight - 12.dp.toPx()
+                    val cornerRadius = CornerRadius(6.dp.toPx())
+                    drawRoundRect(
+                        color = lineColor,
+                        topLeft = Offset(tooltipX, tooltipY),
+                        size = Size(tooltipWidth, tooltipHeight),
+                        cornerRadius = cornerRadius,
+                    )
+                    drawText(
+                        textLayoutResult = tooltipLayout,
+                        topLeft = Offset(
+                            tooltipX + tooltipPaddingH,
+                            tooltipY + tooltipPaddingV,
+                        ),
+                    )
+                } else {
+                    drawCircle(
+                        color = lineColor,
+                        radius = chartDotRadiusDp.toPx(),
+                        center = offset,
+                    )
+                }
             }
         }
     }
-}
 
 private fun formatChartDate(instant: Instant): String {
     val dt = instant.toLocalDateTime(TimeZone.currentSystemDefault())

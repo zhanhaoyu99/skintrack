@@ -30,6 +30,7 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(libs.compose.ui.tooling.preview)
@@ -115,8 +116,8 @@ android {
         applicationId = "com.skintrack.app"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = (project.findProperty("app.versionCode") as? String)?.toInt() ?: 1
+        versionName = (project.findProperty("app.versionName") as? String) ?: "1.0.0"
 
         // Supabase credentials from local.properties
         val localProperties = rootProject.file("local.properties")
@@ -127,6 +128,37 @@ android {
             "\"${properties.getProperty("supabase.url", "https://YOUR_PROJECT.supabase.co")}\"")
         buildConfigField("String", "SUPABASE_ANON_KEY",
             "\"${properties.getProperty("supabase.anon.key", "YOUR_ANON_KEY")}\"")
+        buildConfigField("String", "KTOR_SERVER_URL",
+            "\"${properties.getProperty("ktor.server.url", "")}\"")
+    }
+
+    signingConfigs {
+        create("release") {
+            val localProperties = rootProject.file("local.properties")
+            val properties = Properties()
+            if (localProperties.exists()) properties.load(localProperties.inputStream().reader())
+
+            storeFile = properties.getProperty("signing.storeFile")?.let { file(it) }
+            storePassword = properties.getProperty("signing.storePassword", "")
+            keyAlias = properties.getProperty("signing.keyAlias", "")
+            keyPassword = properties.getProperty("signing.keyPassword", "")
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
+            signingConfig = if (signingConfigs.getByName("release").storeFile?.exists() == true) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
+        }
     }
 
     buildFeatures {

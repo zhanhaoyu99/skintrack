@@ -77,6 +77,60 @@ class SupabaseAuthRepository(
         authSessionDao.clearSession()
     }
 
+    override suspend fun requestPasswordReset(email: String): Result<Unit> {
+        return try {
+            supabase.auth.resetPasswordForEmail(email.trim())
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(Exception(mapAuthError(e.message)))
+        }
+    }
+
+    override suspend fun resetPassword(email: String, code: String, newPassword: String): Result<Unit> {
+        // Supabase handles password reset via magic link, not code-based flow
+        return Result.failure(Exception("Supabase 使用邮件链接重置密码，请查看邮箱"))
+    }
+
+    override suspend fun changePassword(oldPassword: String, newPassword: String): Result<Unit> {
+        return try {
+            supabase.auth.updateUser { password = newPassword }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(Exception(mapAuthError(e.message)))
+        }
+    }
+
+    override suspend fun refreshAccessToken(): Result<Unit> {
+        return try {
+            supabase.auth.refreshCurrentSession()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(Exception(mapAuthError(e.message)))
+        }
+    }
+
+    override suspend fun deleteAccount(password: String): Result<Unit> {
+        // Supabase account deletion requires admin API or edge function
+        return Result.failure(Exception("Supabase 后端暂不支持自助注销，请联系客服"))
+    }
+
+    override suspend fun updateDisplayName(displayName: String): Result<Unit> {
+        return try {
+            supabase.auth.updateUser {
+                data { put("display_name", kotlinx.serialization.json.JsonPrimitive(displayName)) }
+            }
+            authSessionDao.updateDisplayName(displayName)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(Exception(mapAuthError(e.message)))
+        }
+    }
+
+    override suspend fun exportUserData(): Result<String> {
+        // Supabase data export requires custom edge function
+        return Result.failure(Exception("Supabase 后端暂不支持数据导出，请联系客服"))
+    }
+
     private fun mapAuthError(message: String?): String = when {
         message == null -> "未知错误"
         "Invalid login credentials" in message -> "邮箱或密码错误"

@@ -9,5 +9,6 @@ data class AuthSessionEntity(
     val userId: String,
     val email: String,
     val displayName: String? = null,
+    val refreshToken: String? = null,
     val createdAt: Long,
 )

@@ -2,6 +2,7 @@ package com.skintrack.app.ui.screen.product
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -10,6 +11,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.ModalBottomSheet
@@ -23,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.skintrack.app.domain.model.ProductCategory
+import com.skintrack.app.domain.model.UsagePeriod
 import com.skintrack.app.domain.model.displayName
 import com.skintrack.app.ui.theme.spacing
 
@@ -30,7 +33,7 @@ import com.skintrack.app.ui.theme.spacing
 @Composable
 fun AddProductSheet(
     onDismiss: () -> Unit,
-    onSave: (name: String, brand: String?, category: ProductCategory) -> Unit,
+    onSave: (name: String, brand: String?, category: ProductCategory, usagePeriod: UsagePeriod) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -38,6 +41,7 @@ fun AddProductSheet(
     var brand by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf(ProductCategory.OTHER) }
     var categoryExpanded by remember { mutableStateOf(false) }
+    var selectedPeriod by remember { mutableStateOf(UsagePeriod.BOTH) }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -102,8 +106,27 @@ fun AddProductSheet(
                 }
             }
 
+            Column(verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)) {
+                Text(
+                    text = "使用时段",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
+                ) {
+                    UsagePeriod.entries.forEach { period ->
+                        FilterChip(
+                            selected = selectedPeriod == period,
+                            onClick = { selectedPeriod = period },
+                            label = { Text(period.displayName) },
+                        )
+                    }
+                }
+            }
+
             Button(
-                onClick = { onSave(name, brand, selectedCategory) },
+                onClick = { onSave(name, brand, selectedCategory, selectedPeriod) },
                 enabled = name.isNotBlank(),
                 modifier = Modifier.fillMaxWidth(),
             ) {

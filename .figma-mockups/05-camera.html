@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=390">
+<link rel="stylesheet" href="base.css">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content: center; }
+.phone-frame { flex-shrink: 0; }
+
+/* ===== Camera Viewfinder ===== */
+.cam { height: 100%; background: #000; display: flex; flex-direction: column; }
+.cam .status-bar .time { color: #fff; }
+.cam .status-bar svg { fill: #fff !important; }
+
+/* Preview area */
+.cam-preview { flex: 1; background: linear-gradient(170deg, #2E3D35 0%, #1E2D25 40%, #141E18 100%); position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+
+/* Top toolbar */
+.cam-toolbar { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; z-index: 10; }
+.cam-btn { width: 42px; height: 42px; border-radius: 50%; background: rgba(0,0,0,0.35); backdrop-filter: blur(16px); display: flex; align-items: center; justify-content: center; border: 0.5px solid rgba(255,255,255,0.1); cursor: pointer; }
+.cam-btn svg { width: 22px; height: 22px; color: white; }
+
+/* Face guide with corner brackets */
+.face-guide { width: 240px; height: 310px; position: relative; display: flex; align-items: center; justify-content: center; }
+
+/* Subtle dashed oval */
+.face-guide .oval { width: 100%; height: 100%; border: 1.5px dashed rgba(255,255,255,0.2); border-radius: 120px; position: absolute; }
+
+/* Corner bracket markers */
+.corner { position: absolute; width: 36px; height: 36px; }
+.corner::before, .corner::after { content: ''; position: absolute; background: rgba(255,255,255,0.85); border-radius: 2px; }
+.c-tl { top: 16px; left: 16px; }
+.c-tl::before { top: 0; left: 0; width: 3px; height: 24px; }
+.c-tl::after { top: 0; left: 0; width: 24px; height: 3px; }
+.c-tr { top: 16px; right: 16px; }
+.c-tr::before { top: 0; right: 0; width: 3px; height: 24px; }
+.c-tr::after { top: 0; right: 0; width: 24px; height: 3px; }
+.c-bl { bottom: 16px; left: 16px; }
+.c-bl::before { bottom: 0; left: 0; width: 3px; height: 24px; }
+.c-bl::after { bottom: 0; left: 0; width: 24px; height: 3px; }
+.c-br { bottom: 16px; right: 16px; }
+.c-br::before { bottom: 0; right: 0; width: 3px; height: 24px; }
+.c-br::after { bottom: 0; right: 0; width: 24px; height: 3px; }
+
+/* Face silhouette */
+.face-sil { opacity: 0.06; pointer-events: none; }
+.face-sil svg { width: 140px; height: 180px; color: white; stroke-width: 1; fill: none; }
+
+/* Tip text */
+.guide-tip { position: absolute; bottom: -48px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.7); font-size: 14px; font-weight: 600; white-space: nowrap; letter-spacing: 1px; background: rgba(0,0,0,0.4); padding: 8px 20px; border-radius: var(--r-full); backdrop-filter: blur(8px); border: 0.5px solid rgba(255,255,255,0.08); }
+
+/* Lighting indicator */
+.light-badge { position: absolute; top: 0; left: 50%; transform: translateX(-50%); background: rgba(16,185,129,0.2); border: 1px solid rgba(16,185,129,0.3); color: #6EE7B7; font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: var(--r-full); display: flex; align-items: center; gap: 5px; backdrop-filter: blur(8px); }
+.light-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #6EE7B7; }
+
+/* Bottom controls */
+.cam-controls { height: 150px; background: #000; display: flex; align-items: center; justify-content: center; gap: 48px; padding-bottom: 36px; }
+.shutter { width: 76px; height: 76px; border-radius: 50%; border: 3.5px solid white; background: transparent; padding: 5px; box-shadow: 0 0 28px rgba(255,255,255,0.08); cursor: pointer; }
+.shutter-inner { width: 100%; height: 100%; border-radius: 50%; background: white; }
+.ctrl-btn { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; border: 0.5px solid rgba(255,255,255,0.12); cursor: pointer; }
+.ctrl-btn svg { width: 20px; height: 20px; color: white; }
+
+/* ===== Result Screen ===== */
+.result { height: 100%; display: flex; flex-direction: column; background: var(--surface); }
+.result-photo { height: 340px; position: relative; overflow: hidden; flex-shrink: 0; }
+.result-photo .photo-bg { position: absolute; inset: 0; background: var(--skin-placeholder); }
+/* Face silhouette on photo */
+.result-photo .face-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -48%); opacity: 0.1; pointer-events: none; }
+.result-photo .face-overlay svg { width: 200px; height: 260px; color: #000; fill: none; stroke-width: 0.8; }
+.result-photo .photo-gradient { position: absolute; inset: 0; background: linear-gradient(transparent 40%, rgba(0,0,0,0.2)); }
+.result-photo .back-btn { position: absolute; top: 54px; left: 16px; z-index: 2; }
+
+/* Score ring floating over photo */
+.result-body { flex: 1; padding: 0 24px 24px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.score-ring { width: 120px; height: 120px; position: relative; margin-top: -60px; background: var(--surface); border-radius: 50%; padding: 6px; box-shadow: 0 8px 32px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06); }
+.score-ring svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+.score-ring .score-value { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+.score-ring .score-num { font-size: 32px; font-weight: 800; color: var(--on-surface); display: block; letter-spacing: -1px; }
+.score-ring .score-label { font-size: 10px; color: var(--on-surface-variant); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.result-title { font-size: 22px; font-weight: 800; color: var(--on-surface); margin-top: 14px; letter-spacing: -0.4px; }
+.result-desc { font-size: 14px; color: var(--on-surface-variant); margin-top: 6px; line-height: 1.5; }
+
+/* Mini metrics */
+.metrics-row { display: flex; gap: 14px; margin-top: 16px; }
+.metric { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.metric .dot { width: 8px; height: 8px; border-radius: 50%; }
+.metric .val { font-size: 14px; font-weight: 700; color: var(--on-surface); }
+.metric .lbl { font-size: 10px; color: var(--on-surface-variant); font-weight: 500; }
+
+/* Streak badge */
+.streak-badge { display: inline-flex; align-items: center; gap: 6px; padding: 8px 20px; background: linear-gradient(135deg, var(--apricot-50), #FFF8F0); border: 1px solid var(--apricot-100); border-radius: var(--r-full); color: var(--apricot-500); font-size: 14px; font-weight: 700; margin-top: 14px; }
+.streak-badge svg { width: 16px; height: 16px; fill: var(--apricot-400); stroke: none; }
+
+/* Action buttons */
+.result-actions { display: flex; gap: 12px; width: 100%; margin-top: auto; }
+.result-actions .btn { flex: 1; }
+
+/* ===== Permission Screen ===== */
+.permission { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 36px; background: var(--surface); position: relative; overflow: hidden; }
+.permission::before { content: ''; position: absolute; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, var(--mint-50), transparent 70%); top: 12%; opacity: 0.5; pointer-events: none; }
+.permission::after { content: ''; position: absolute; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, var(--rose-50), transparent 70%); bottom: 18%; right: -40px; opacity: 0.4; pointer-events: none; }
+
+.perm-icon { width: 130px; height: 130px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, var(--rose-100), var(--rose-50)); display: flex; align-items: center; justify-content: center; margin-bottom: 28px; position: relative; z-index: 1; box-shadow: 0 12px 40px rgba(251,113,133,0.15); }
+.perm-icon::before { content: ''; position: absolute; inset: -8px; border-radius: 50%; background: radial-gradient(circle, rgba(251,113,133,0.08), transparent 70%); }
+.perm-icon svg { width: 52px; height: 52px; color: var(--rose-400); stroke-width: 1.4; }
+
+.permission h2 { font-size: 26px; font-weight: 800; color: var(--on-surface); margin-bottom: 8px; letter-spacing: -0.5px; position: relative; z-index: 1; }
+.permission .perm-desc { font-size: 15px; color: var(--on-surface-variant); line-height: 1.65; margin-bottom: 28px; position: relative; z-index: 1; }
+
+/* Feature list */
+.feature-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; position: relative; z-index: 1; width: 100%; }
+.feature-item { display: flex; align-items: center; gap: 12px; text-align: left; }
+.feature-dot { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.feature-dot svg { width: 15px; height: 15px; stroke-width: 2.5; }
+.feature-item span { font-size: 15px; color: var(--on-surface); font-weight: 500; }
+
+.permission .btn { position: relative; z-index: 1; }
+.permission .btn-text { margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<!-- ===== Screen 1: Viewfinder ===== -->
+<div class="phone-frame" style="background:#000">
+  <div class="cam">
+    <div class="status-bar light"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="#fff" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="#fff" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#fff" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="#fff"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="#fff" opacity="0.4" stroke="none"/></svg></div></div>
+    <div class="cam-preview">
+      <div class="cam-toolbar">
+        <div class="cam-btn"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
+        <div class="light-badge"><div class="dot"></div>光线良好</div>
+        <div class="cam-btn"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+      </div>
+      <div class="face-guide">
+        <div class="oval"></div>
+        <div class="corner c-tl"></div>
+        <div class="corner c-tr"></div>
+        <div class="corner c-bl"></div>
+        <div class="corner c-br"></div>
+        <div class="face-sil">
+          <svg viewBox="0 0 140 180" style="stroke:none">
+            <!-- Face oval outline -->
+            <ellipse cx="70" cy="88" rx="48" ry="62" stroke="rgba(255,255,255,0.1)" stroke-width="0.8" fill="none"/>
+            <!-- Cross-hair guides -->
+            <line x1="70" y1="20" x2="70" y2="160" stroke="rgba(255,255,255,0.06)" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="20" y1="80" x2="120" y2="80" stroke="rgba(255,255,255,0.06)" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <!-- Eye zones -->
+            <ellipse cx="50" cy="72" rx="14" ry="8" stroke="rgba(255,255,255,0.1)" stroke-width="0.8" fill="none"/>
+            <ellipse cx="90" cy="72" rx="14" ry="8" stroke="rgba(255,255,255,0.1)" stroke-width="0.8" fill="none"/>
+            <circle cx="50" cy="72" r="3" fill="rgba(255,255,255,0.06)" stroke="none"/>
+            <circle cx="90" cy="72" r="3" fill="rgba(255,255,255,0.06)" stroke="none"/>
+            <!-- Nose hint -->
+            <path d="M67 82 C68 88 72 88 73 82" stroke="rgba(255,255,255,0.08)" stroke-width="0.6" fill="none"/>
+            <!-- Mouth hint -->
+            <path d="M58 100 C64 106 76 106 82 100" stroke="rgba(255,255,255,0.08)" stroke-width="0.6" fill="none"/>
+          </svg>
+        </div>
+        <div class="guide-tip">将面部置于框内 - 保持正面</div>
+      </div>
+    </div>
+    <div class="cam-controls">
+      <div class="ctrl-btn"><svg viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div>
+      <div class="shutter"><div class="shutter-inner"></div></div>
+      <div class="ctrl-btn" style="opacity:0;pointer-events:none"><svg viewBox="0 0 24 24"></svg></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Screen 2: Result ===== -->
+<div class="phone-frame">
+  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="#111827" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="#111827" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#111827" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="#111827"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="#111827" opacity="0.4" stroke="none"/></svg></div></div>
+  <div class="result">
+    <div class="result-photo">
+      <div class="photo-bg"></div>
+      <div class="face-overlay">
+        <svg viewBox="0 0 200 260">
+          <ellipse cx="100" cy="115" rx="70" ry="90"/>
+          <ellipse cx="100" cy="100" rx="52" ry="64"/>
+          <circle cx="80" cy="90" r="5"/>
+          <circle cx="120" cy="90" r="5"/>
+          <ellipse cx="100" cy="108" rx="6" ry="3.5"/>
+          <path d="M85 122 c6 8 22 8 30 0" stroke-width="0.8"/>
+          <path d="M38 70 c5-30 25-50 35-55 5-2 10-3 15-3 15 0 30 10 42 28 8 12 14 28 16 45" stroke-width="0.6" fill="none"/>
+          <path d="M38 70 c-5 20-8 45-5 70" stroke-width="0.5" fill="none"/>
+          <path d="M146 85 c4 18 5 40 2 60" stroke-width="0.5" fill="none"/>
+        </svg>
+      </div>
+      <div class="photo-gradient"></div>
+      <div class="back-btn">
+        <div class="cam-btn"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7" stroke="white"/></svg></div>
+      </div>
+    </div>
+    <div class="result-body">
+      <div class="score-ring">
+        <svg viewBox="0 0 108 108">
+          <circle cx="54" cy="54" r="46" fill="none" stroke="var(--outline-variant)" stroke-width="5.5"/>
+          <circle cx="54" cy="54" r="46" fill="none" stroke="url(#scoreGrad)" stroke-width="5.5" stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="52"/>
+          <defs><linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2D9F7F"/><stop offset="100%" stop-color="#58CAA5"/></linearGradient></defs>
+        </svg>
+        <div class="score-value">
+          <span class="score-num">82</span>
+          <span class="score-label">总评分</span>
+        </div>
+      </div>
+      <div class="result-title">皮肤状态很棒哦!</div>
+      <div class="result-desc">痘痘明显减少了，肤色也更均匀~</div>
+      <div class="metrics-row">
+        <div class="metric"><div class="dot" style="background:var(--acne)"></div><div class="val">85</div><div class="lbl">痘痘</div></div>
+        <div class="metric"><div class="dot" style="background:var(--pore)"></div><div class="val">78</div><div class="lbl">毛孔</div></div>
+        <div class="metric"><div class="dot" style="background:var(--evenness)"></div><div class="val">82</div><div class="lbl">均匀</div></div>
+        <div class="metric"><div class="dot" style="background:var(--redness)"></div><div class="val">75</div><div class="lbl">泛红</div></div>
+        <div class="metric"><div class="dot" style="background:var(--hydration)"></div><div class="val">80</div><div class="lbl">水润</div></div>
+      </div>
+      <div class="streak-badge"><svg viewBox="0 0 16 16"><path d="M8 1C7 3 6.5 5.5 6.5 6.5 6.5 8.4 7.1 9.5 8 10c.9-.5 1.5-1.6 1.5-3.5C9.5 5.5 9 3 8 1z"/></svg> 连续打卡 7 天</div>
+      <div class="result-actions">
+        <button class="btn btn-outlined">继续拍照</button>
+        <button class="btn btn-primary">查看详情</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Screen 3: Permission ===== -->
+<div class="phone-frame">
+  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="#111827" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="#111827" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#111827" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="#111827"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="#111827" opacity="0.4" stroke="none"/></svg></div></div>
+  <div class="permission">
+    <div class="perm-icon">
+      <svg viewBox="0 0 52 52">
+        <path d="M47 41a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V19a4 4 0 0 1 4-4h8l4-6h10l4 6h8a4 4 0 0 1 4 4z"/>
+        <circle cx="26" cy="29" r="10"/>
+        <circle cx="26" cy="29" r="4.5" stroke-width="1"/>
+        <circle cx="38" cy="21" r="2" fill="currentColor" stroke="none" opacity="0.4"/>
+      </svg>
+    </div>
+    <h2>来拍张自拍吧</h2>
+    <p class="perm-desc">我们需要使用相机来帮你记录肌肤状态，所有照片仅保存在你的设备上。</p>
+
+    <div class="feature-list">
+      <div class="feature-item">
+        <div class="feature-dot" style="background:var(--mint-50)"><svg viewBox="0 0 16 16" style="color:var(--primary)"><path d="M3.5 8l3 3L12.5 5"/></svg></div>
+        <span>AI 智能分析五大肌肤指标</span>
+      </div>
+      <div class="feature-item">
+        <div class="feature-dot" style="background:var(--lavender-50)"><svg viewBox="0 0 16 16" style="color:var(--lavender-400)"><path d="M3.5 8l3 3L12.5 5"/></svg></div>
+        <span>追踪每天的肌肤变化趋势</span>
+      </div>
+      <div class="feature-item">
+        <div class="feature-dot" style="background:var(--rose-50)"><svg viewBox="0 0 16 16" style="color:var(--rose-400)"><path d="M3.5 8l3 3L12.5 5"/></svg></div>
+        <span>照片仅存储在本地设备中</span>
+      </div>
+    </div>
+
+    <button class="btn btn-primary">允许使用相机</button>
+    <button class="btn btn-text">下次再说</button>
+  </div>
+</div>
+
+</body>
+</html>

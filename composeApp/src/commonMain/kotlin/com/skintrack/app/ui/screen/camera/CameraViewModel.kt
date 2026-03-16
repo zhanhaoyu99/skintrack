@@ -17,8 +17,13 @@ import com.skintrack.app.platform.CameraController
 import com.skintrack.app.platform.ImageCompressor
 import com.skintrack.app.platform.ImageStorage
 import kotlinx.coroutines.delay
+import com.skintrack.app.ui.component.SnackbarMessage
+import com.skintrack.app.ui.component.SnackbarType
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -42,6 +47,9 @@ class CameraViewModel(
 
     private val _uiState = MutableStateFlow<CameraUiState>(CameraUiState.Previewing)
     val uiState: StateFlow<CameraUiState> = _uiState.asStateFlow()
+
+    private val _snackbarEvent = MutableSharedFlow<SnackbarMessage>(extraBufferCapacity = 1)
+    val snackbarEvent: SharedFlow<SnackbarMessage> = _snackbarEvent.asSharedFlow()
 
     private var cameraController: CameraController? = null
 
@@ -69,11 +77,16 @@ class CameraViewModel(
         _uiState.value = CameraUiState.Previewing
     }
 
+    private val _isProcessing = MutableStateFlow(false)
+    val isProcessing: StateFlow<Boolean> = _isProcessing.asStateFlow()
+
     @OptIn(ExperimentalUuidApi::class)
     fun confirm() {
         val state = _uiState.value
         if (state !is CameraUiState.Confirming) return
+        if (_isProcessing.value) return
 
+        _isProcessing.value = true
         _uiState.value = CameraUiState.Saving
 
         viewModelScope.launch {
@@ -108,11 +121,11 @@ class CameraViewModel(
                 )
                 skinRecordRepository.save(record)
 
-                // AI analysis phase
-                _uiState.value = CameraUiState.Analyzing
+                // AI analysis phase with exponential backoff retry
+                _uiState.value = CameraUiState.Analyzing()
 
-                try {
-                    val result = aiAnalysisService.analyzeSkinImage(compressed)
+                val result = retryAnalysis(compressed)
+                if (result != null) {
                     val updatedRecord = record.copy(
                         overallScore = result.overallScore,
                         acneCount = result.acneCount,
@@ -124,26 +137,45 @@ class CameraViewModel(
                         analysisJson = result.toJson(),
                     )
                     skinRecordRepository.save(updatedRecord)
-                    // Background sync to Supabase
-                    syncManager.pushChanges()
-                    val milestoneMessage = updateCheckInStreak.onNewRecord()
-                    _uiState.value = CameraUiState.Saved(result, milestoneMessage)
-                } catch (e: Exception) {
-                    // Analysis failed — don't block the save, just show Saved without scores
-                    println("AI analysis failed: ${e.message}")
-                    val milestoneMessage = updateCheckInStreak.onNewRecord()
-                    _uiState.value = CameraUiState.Saved(
-                        analysisResult = null,
-                        milestoneMessage = milestoneMessage,
-                    )
                 }
-
-                delay(2000)
-                _uiState.value = CameraUiState.Previewing
+                // Background sync to Supabase
+                syncManager.pushChanges()
+                val milestoneMessage = updateCheckInStreak.onNewRecord()
+                _uiState.value = CameraUiState.Saved(result, milestoneMessage, id)
+                _snackbarEvent.tryEmit(
+                    SnackbarMessage("拍照记录成功", SnackbarType.SUCCESS)
+                )
             } catch (e: Exception) {
                 _uiState.value = CameraUiState.Error(e.message ?: "保存失败")
+                _snackbarEvent.tryEmit(
+                    SnackbarMessage(e.message ?: "保存失败", SnackbarType.ERROR)
+                )
+            } finally {
+                _isProcessing.value = false
             }
         }
+    }
+
+    private suspend fun retryAnalysis(imageBytes: ByteArray): SkinAnalysisResult? {
+        val maxRetries = 3
+        var delayMs = 1000L
+        for (attempt in 1..maxRetries) {
+            try {
+                if (attempt > 1) {
+                    _uiState.value = CameraUiState.Analyzing(retryCount = attempt)
+                }
+                return aiAnalysisService.analyzeSkinImage(imageBytes)
+            } catch (e: Exception) {
+                io.github.aakira.napier.Napier.w("AI analysis attempt $attempt failed: ${e.message}")
+                if (attempt < maxRetries) {
+                    delay(delayMs)
+                    delayMs *= 2
+                }
+            }
+        }
+        // All retries exhausted — record saved as "pending analysis"
+        io.github.aakira.napier.Napier.w("AI analysis failed after $maxRetries attempts, saving as pending")
+        return null
     }
 
     fun resetToPreview() {
@@ -170,10 +202,11 @@ sealed interface CameraUiState {
     data object Capturing : CameraUiState
     data class Confirming(val photoBytes: ByteArray) : CameraUiState
     data object Saving : CameraUiState
-    data object Analyzing : CameraUiState
+    data class Analyzing(val retryCount: Int = 0) : CameraUiState
     data class Saved(
         val analysisResult: SkinAnalysisResult?,
         val milestoneMessage: String? = null,
+        val recordId: String? = null,
     ) : CameraUiState
     data class FeatureGated(val message: String) : CameraUiState
     data class Error(val message: String) : CameraUiState

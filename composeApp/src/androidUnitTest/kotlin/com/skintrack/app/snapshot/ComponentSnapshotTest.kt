@@ -76,9 +76,9 @@ class ComponentSnapshotTest : SnapshotTestBase() {
     @Test
     fun menuItem_light() = captureLight {
         Column(modifier = Modifier.fillMaxWidth()) {
-            MenuItem(title = "会员中心", onClick = {}, trailing = { Text("›") })
+            MenuItem(title = "会员中心", onClick = {})
             MenuItem(title = "打卡提醒", onClick = {}, trailing = { Text("已开启") })
-            MenuItem(title = "退出登录", onClick = {}, textColor = MaterialTheme.colorScheme.error)
+            MenuItem(title = "退出登录", onClick = {}, textColor = MaterialTheme.colorScheme.error, showArrow = false)
         }
     }
 }

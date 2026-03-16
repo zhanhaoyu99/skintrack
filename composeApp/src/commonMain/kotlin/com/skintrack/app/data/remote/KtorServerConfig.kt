@@ -7,11 +7,21 @@ object KtorServerConfig {
             Class.forName("com.skintrack.app.BuildConfig")
                 .getField("KTOR_SERVER_URL").get(null) as String
         } catch (_: Exception) {
-            "http://10.0.2.2:8080" // Android emulator localhost
+            // No fallback URL — server URL must be configured via BuildConfig.
+            // Never hardcode internal IPs here to avoid leaking network topology.
+            ""
         }
 
+    /** Whether a valid server URL has been configured via BuildConfig. */
     val isConfigured: Boolean
         get() = serverUrl.isNotBlank() && !serverUrl.contains("YOUR_SERVER")
 
-    val baseUrl: String get() = serverUrl
+    /** Returns the configured server base URL. Throws if not configured. */
+    val baseUrl: String
+        get() {
+            check(isConfigured) {
+                "Ktor server URL is not configured. Set KTOR_SERVER_URL in BuildConfig via local.properties."
+            }
+            return serverUrl
+        }
 }

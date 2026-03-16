@@ -2,6 +2,7 @@ package com.skintrack.app.ui.screen.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.skintrack.app.data.local.dao.UserPreferencesDao
 import com.skintrack.app.domain.model.AuthUser
 import com.skintrack.app.domain.model.CheckInStreak
 import com.skintrack.app.domain.repository.AuthRepository
@@ -21,6 +22,7 @@ class ProfileViewModel(
     private val skinRecordRepository: SkinRecordRepository,
     private val productRepository: ProductRepository,
     private val updateCheckInStreak: UpdateCheckInStreak,
+    private val userPreferencesDao: UserPreferencesDao,
 ) : ViewModel() {
 
     val authUser: StateFlow<AuthUser?> = authRepository.observeAuthUser()
@@ -36,7 +38,8 @@ class ProfileViewModel(
                 skinRecordRepository.getRecordsByUser(userId),
                 productRepository.getAllProducts(),
                 updateCheckInStreak.observeStreak(userId),
-            ) { records, products, streak ->
+                userPreferencesDao.observePreferences(),
+            ) { records, products, streak, prefs ->
                 val scoredRecords = records.filter { it.overallScore != null }
                 ProfileUiState.Content(
                     totalRecords = records.size,
@@ -49,6 +52,11 @@ class ProfileViewModel(
                         ?.let { list -> list.sumOf { it.overallScore!! } / list.size },
                     currentStreak = streak?.currentStreak ?: 0,
                     longestStreak = streak?.longestStreak ?: 0,
+                    skinType = prefs?.skinType,
+                    skinGoals = prefs?.skinGoals
+                        ?.split(",")
+                        ?.filter { goal -> goal.isNotBlank() }
+                        ?: emptyList(),
                 )
             }.collect { _uiState.value = it }
         }
@@ -57,6 +65,20 @@ class ProfileViewModel(
     fun logout() {
         viewModelScope.launch {
             authRepository.logout()
+        }
+    }
+
+    fun changePassword(
+        oldPassword: String,
+        newPassword: String,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit,
+    ) {
+        viewModelScope.launch {
+            authRepository.changePassword(oldPassword, newPassword).fold(
+                onSuccess = { onSuccess() },
+                onFailure = { e -> onError(e.message ?: "密码修改失败") },
+            )
         }
     }
 }
@@ -70,5 +92,7 @@ sealed interface ProfileUiState {
         val averageScore: Int?,
         val currentStreak: Int = 0,
         val longestStreak: Int = 0,
+        val skinType: String? = null,
+        val skinGoals: List<String> = emptyList(),
     ) : ProfileUiState
 }

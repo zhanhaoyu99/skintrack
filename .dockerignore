@@ -1,0 +1,33 @@
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Build outputs
+build/
+*/build/
+.gradle/
+*/.gradle/
+.kotlin/
+
+# KMP client (not needed for server build)
+composeApp/
+iosApp/
+
+# Dev and design files
+.dev/
+.figma-mockups/
+deploy/
+
+# Git
+.git/
+.gitignore
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Misc
+*.log
+*.DS_Store

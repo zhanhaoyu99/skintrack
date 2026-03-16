@@ -7,11 +7,14 @@ import androidx.compose.ui.unit.dp
 
 @Immutable
 data class Dimens(
-    val buttonHeight: Dp = 48.dp,
+    val buttonHeight: Dp = 52.dp,
+    val inputHeight: Dp = 50.dp,
     val buttonSpinnerSize: Dp = 20.dp,
     val buttonStrokeWidth: Dp = 2.dp,
     val avatarLarge: Dp = 56.dp,
+    val avatarExtraLarge: Dp = 64.dp,
     val avatarIcon: Dp = 32.dp,
+    val menuIconSize: Dp = 32.dp,
     val captureButtonSize: Dp = 72.dp,
     val captureButtonBorder: Dp = 4.dp,
     val captureButtonInnerPadding: Dp = 6.dp,

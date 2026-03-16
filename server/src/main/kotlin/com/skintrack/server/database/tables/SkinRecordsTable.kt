@@ -17,6 +17,7 @@ object SkinRecordsTable : Table("skin_records") {
     val analysisJson = text("analysis_json").nullable()
     val recordedAt = varchar("recorded_at", 50)
     val createdAt = varchar("created_at", 50).nullable()
+    val updatedAt = varchar("updated_at", 50).nullable()
 
     override val primaryKey = PrimaryKey(id)
 }

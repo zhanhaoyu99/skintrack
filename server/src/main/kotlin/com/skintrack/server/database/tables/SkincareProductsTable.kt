@@ -11,6 +11,7 @@ object SkincareProductsTable : Table("skincare_products") {
     val imageUrl = text("image_url").nullable()
     val barcode = varchar("barcode", 100).nullable()
     val createdAt = varchar("created_at", 50).nullable()
+    val updatedAt = varchar("updated_at", 50).nullable()
 
     override val primaryKey = PrimaryKey(id)
 }

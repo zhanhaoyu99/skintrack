@@ -7,12 +7,16 @@ import com.skintrack.app.data.local.dao.CheckInStreakDao
 import com.skintrack.app.data.local.dao.DailyProductUsageDao
 import com.skintrack.app.data.local.dao.SkinRecordDao
 import com.skintrack.app.data.local.dao.SkincareProductDao
+import com.skintrack.app.data.local.dao.SyncQueueDao
+import com.skintrack.app.data.local.dao.UserPreferencesDao
 import com.skintrack.app.data.local.dao.UserSubscriptionDao
 import com.skintrack.app.data.local.entity.AuthSessionEntity
 import com.skintrack.app.data.local.entity.CheckInStreakEntity
 import com.skintrack.app.data.local.entity.DailyProductUsageEntity
 import com.skintrack.app.data.local.entity.SkinRecordEntity
 import com.skintrack.app.data.local.entity.SkincareProductEntity
+import com.skintrack.app.data.local.entity.SyncQueueEntity
+import com.skintrack.app.data.local.entity.UserPreferencesEntity
 import com.skintrack.app.data.local.entity.UserSubscriptionEntity
 
 @Database(
@@ -23,8 +27,10 @@ import com.skintrack.app.data.local.entity.UserSubscriptionEntity
         AuthSessionEntity::class,
         UserSubscriptionEntity::class,
         CheckInStreakEntity::class,
+        SyncQueueEntity::class,
+        UserPreferencesEntity::class,
     ],
-    version = 3,
+    version = 8,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -34,4 +40,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun authSessionDao(): AuthSessionDao
     abstract fun userSubscriptionDao(): UserSubscriptionDao
     abstract fun checkInStreakDao(): CheckInStreakDao
+    abstract fun syncQueueDao(): SyncQueueDao
+    abstract fun userPreferencesDao(): UserPreferencesDao
 }

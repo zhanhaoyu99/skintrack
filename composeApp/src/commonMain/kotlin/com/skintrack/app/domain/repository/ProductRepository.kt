@@ -15,5 +15,8 @@ interface ProductRepository {
     suspend fun logUsage(usage: DailyProductUsage)
     suspend fun removeUsage(userId: String, productId: String, date: LocalDate)
     suspend fun syncToRemote()
-    suspend fun pullFromRemote(userId: String)
+    suspend fun pullFromRemote(userId: String, since: String? = null)
+    suspend fun getProductsPaged(userId: String, limit: Int, offset: Int): List<SkincareProduct>
+    suspend fun countByUser(userId: String): Int
+    suspend fun searchProducts(userId: String, query: String): List<SkincareProduct>
 }

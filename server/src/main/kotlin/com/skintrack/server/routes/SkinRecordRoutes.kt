@@ -18,7 +18,8 @@ fun Route.skinRecordRoutes(service: SkinRecordService) {
         route("/api/skin-records") {
             get {
                 val userId = call.principal<JWTPrincipal>()!!.payload.subject
-                val records = service.loadByUser(userId)
+                val since = call.request.queryParameters["since"]
+                val records = service.loadByUser(userId, since)
                 call.respond(ok(records))
             }
 

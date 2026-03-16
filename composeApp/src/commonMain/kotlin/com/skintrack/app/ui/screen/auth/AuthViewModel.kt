@@ -25,6 +25,14 @@ class AuthViewModel(
         _uiState.update { it.copy(password = password, errorMessage = null) }
     }
 
+    fun updateConfirmPassword(confirmPassword: String) {
+        _uiState.update { it.copy(confirmPassword = confirmPassword, errorMessage = null) }
+    }
+
+    fun updateNickname(nickname: String) {
+        _uiState.update { it.copy(nickname = nickname, errorMessage = null) }
+    }
+
     fun toggleMode() {
         _uiState.update {
             it.copy(
@@ -38,6 +46,12 @@ class AuthViewModel(
         val state = _uiState.value
         if (state.isSubmitting) return
 
+        // Validate confirm password for registration
+        if (!state.isLoginMode && state.password != state.confirmPassword) {
+            _uiState.update { it.copy(errorMessage = "两次输入的密码不一致") }
+            return
+        }
+
         _uiState.update { it.copy(isSubmitting = true, errorMessage = null) }
 
         viewModelScope.launch {
@@ -49,6 +63,10 @@ class AuthViewModel(
 
             result.fold(
                 onSuccess = {
+                    // Save display name after registration
+                    if (!state.isLoginMode && state.nickname.isNotBlank()) {
+                        authRepository.updateDisplayName(state.nickname)
+                    }
                     _uiState.update { it.copy(isSubmitting = false) }
                     syncManager.syncAll()
                     onSuccess()
@@ -69,6 +87,8 @@ class AuthViewModel(
 data class AuthUiState(
     val email: String = "",
     val password: String = "",
+    val confirmPassword: String = "",
+    val nickname: String = "",
     val isLoginMode: Boolean = true,
     val isSubmitting: Boolean = false,
     val errorMessage: String? = null,

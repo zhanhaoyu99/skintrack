@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=390">
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="dark.css">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content: center; background: #0A0B0C; }
+.phone-frame { flex-shrink: 0; }
+
+/* ===== Onboarding ===== */
+.ob { display: flex; flex-direction: column; height: 100%; background: var(--background); }
+.ob-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 36px; text-align: center; }
+
+/* Premium illustration container */
+.illust { width: 260px; height: 260px; position: relative; margin-bottom: 32px; }
+.illust .bg { width: 210px; height: 210px; border-radius: 50%; position: absolute; top: 25px; left: 25px; }
+.illust .glow { width: 240px; height: 240px; border-radius: 50%; position: absolute; top: 10px; left: 10px; opacity: 0.12; filter: blur(30px); }
+.illust .accent { width: 80px; height: 80px; border-radius: 50%; position: absolute; opacity: 0.15; }
+.illust .accent2 { width: 50px; height: 50px; border-radius: 50%; position: absolute; opacity: 0.12; }
+.illust .icon-main { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); z-index: 2; }
+.illust .icon-main svg { width: 160px; height: 160px; stroke: none; }
+.illust .dot { position: absolute; border-radius: 50%; }
+.illust .dot1 { width: 14px; height: 14px; top: 8px; right: 30px; opacity: 0.35; }
+.illust .dot2 { width: 10px; height: 10px; bottom: 12px; left: 15px; opacity: 0.3; }
+.illust .dot3 { width: 7px; height: 7px; top: 42px; left: 6px; opacity: 0.25; }
+.illust .dot4 { width: 12px; height: 12px; bottom: 36px; right: 8px; opacity: 0.2; }
+.illust .dot5 { width: 5px; height: 5px; top: 20px; left: 48px; opacity: 0.3; }
+.illust .leaf { position: absolute; opacity: 0.1; z-index: 1; }
+.illust .leaf svg { width: 32px; height: 32px; }
+.illust .float-badge { position: absolute; z-index: 3; background: var(--surface); border-radius: 10px; padding: 4px 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); font-family: var(--font); display: flex; align-items: center; gap: 4px; border: 0.5px solid rgba(255,255,255,0.06); }
+.illust .float-badge .badge-num { font-size: 13px; font-weight: 800; color: var(--primary); }
+.illust .float-badge .badge-label { font-size: 8px; color: var(--on-surface-variant); font-weight: 600; }
+.illust .float-badge-sm { position: absolute; z-index: 3; background: var(--surface); border-radius: 7px; padding: 3px 6px; box-shadow: 0 1px 6px rgba(0,0,0,0.2); font-family: var(--font); font-size: 9px; font-weight: 700; border: 0.5px solid rgba(255,255,255,0.06); }
+
+/* Page 1: Mint/Science — dark equivalent */
+.illust.p1 .bg { background: radial-gradient(circle at 35% 35%, rgba(29,107,91,0.6) 0%, rgba(21,62,50,0.5) 40%, rgba(13,46,36,0.4) 70%, rgba(46,24,32,0.15) 100%); box-shadow: 0 8px 40px rgba(88,202,165,0.06); }
+.illust.p1 .glow { background: var(--primary); }
+.illust.p1 .accent { background: linear-gradient(135deg, rgba(253,164,175,0.12), rgba(251,113,133,0.08)); top: -2px; right: 12px; }
+.illust.p1 .accent2 { background: linear-gradient(135deg, rgba(148,117,224,0.12), rgba(139,110,214,0.08)); bottom: 15px; left: 2px; }
+.illust.p1 .dot1 { background: var(--rose-300); }
+.illust.p1 .dot2 { background: var(--primary); }
+.illust.p1 .dot3 { background: var(--lavender-300); }
+.illust.p1 .dot4 { background: var(--rose-400); }
+.illust.p1 .dot5 { background: var(--secondary); }
+.illust.p1 .icon-main svg { color: #6DDAB8; stroke-width: 1; }
+
+.ob-body h1 { font-size: 28px; font-weight: 800; color: var(--on-surface); margin-bottom: 14px; letter-spacing: -0.6px; line-height: 1.3; }
+.ob-body p { font-size: 15px; color: var(--on-surface-variant); line-height: 1.7; max-width: 290px; }
+.ob-foot { padding: 24px 36px 50px; }
+.dots { display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; }
+.dot-i { width: 8px; height: 8px; border-radius: 50%; background: var(--outline); transition: all 0.3s; }
+.dot-i.on { width: 28px; border-radius: 4px; background: var(--primary); }
+.skip { text-align: center; margin-top: 16px; font-size: 14px; color: var(--on-surface-variant); font-weight: 600; }
+
+/* ===== Paywall ===== */
+.pw { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow-y: auto; }
+.pw-hero { text-align: center; padding: 16px 32px 24px; position: relative; overflow: hidden; flex-shrink: 0;
+  background: linear-gradient(180deg, rgba(46,24,32,0.4) 0%, rgba(30,24,48,0.3) 40%, transparent 100%);
+}
+.pw-hero::before { content: ''; position: absolute; top: -60px; right: -40px; width: 180px; height: 180px; border-radius: 50%; background: rgba(224,104,120,0.04); }
+.pw-hero::after { content: ''; position: absolute; top: -30px; left: -30px; width: 120px; height: 120px; border-radius: 50%; background: rgba(148,117,224,0.04); }
+.pw-crown { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; position: relative; z-index: 1;
+  background: linear-gradient(145deg, #FFD700 0%, #FFAA00 50%, #FF8C00 100%);
+  box-shadow: 0 0 40px rgba(255,215,0,0.25), 0 8px 28px rgba(255,170,0,0.35);
+}
+.pw-crown::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,140,0,0.08)); z-index: -1; }
+.pw-crown svg { width: 38px; height: 38px; color: white; stroke-width: 1.8; }
+.pw-hero h1 { font-size: 26px; font-weight: 800; color: var(--on-surface); letter-spacing: -0.6px; margin-bottom: 8px; position: relative; z-index: 1; line-height: 1.3; }
+.pw-hero p { font-size: 14px; color: var(--on-surface-variant); position: relative; z-index: 1; line-height: 1.5; }
+
+/* Trial badge */
+.trial-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; border-radius: var(--r-full); font-size: 13px; font-weight: 700; margin-top: 12px; position: relative; z-index: 1;
+  background: rgba(52,211,153,0.12); color: var(--success);
+}
+.trial-badge svg { width: 14px; height: 14px; }
+
+/* Social proof */
+.social-proof { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 0 0; position: relative; z-index: 1; }
+.avatars { display: flex; }
+.avatars .av { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--surface); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; margin-left: -8px; }
+.avatars .av:first-child { margin-left: 0; }
+.social-proof .text { font-size: 12px; color: var(--on-surface-variant); }
+.social-proof .text strong { color: var(--on-surface); font-weight: 700; }
+
+/* Benefits */
+.bens { padding: 4px 28px 20px; flex-shrink: 0; }
+.ben { display: flex; align-items: flex-start; gap: 14px; padding: 11px 0; }
+.ben .ck { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+  background: rgba(88,202,165,0.12);
+}
+.ben .ck svg { width: 14px; height: 14px; color: var(--primary); stroke-width: 3; }
+.ben .tx { flex: 1; }
+.ben .tx .main { font-size: 15px; color: var(--on-surface); font-weight: 600; }
+.ben .tx .sub { font-size: 12px; color: var(--on-surface-variant); margin-top: 2px; }
+
+/* Plans */
+.plans { display: flex; gap: 12px; padding: 0 28px; margin-bottom: 20px; flex-shrink: 0; }
+.plan { flex: 1; border: 2px solid var(--outline-variant); border-radius: var(--r-lg); padding: 18px 12px; text-align: center; position: relative; background: var(--surface); }
+.plan.sel { border-color: var(--primary); background: var(--mint-50); box-shadow: 0 4px 16px rgba(88,202,165,0.1); }
+.plan .sv { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); padding: 4px 14px; border-radius: var(--r-full); color: white; font-size: 11px; font-weight: 700; white-space: nowrap;
+  background: linear-gradient(135deg, var(--secondary), #E68A3E); box-shadow: 0 2px 8px rgba(244,162,97,0.25);
+}
+.plan .pd { font-size: 13px; color: var(--on-surface-variant); margin-bottom: 6px; font-weight: 600; }
+.plan .pr { font-size: 28px; font-weight: 800; color: var(--on-surface); letter-spacing: -1px; }
+.plan .pr .u { font-size: 14px; font-weight: 500; color: var(--on-surface-variant); letter-spacing: 0; }
+.plan .og { font-size: 12px; color: var(--on-surface-variant); text-decoration: line-through; margin-top: 4px; }
+.plan .avg { font-size: 12px; color: var(--primary); font-weight: 700; margin-top: 4px; }
+
+/* Trust signals */
+.trust { display: flex; justify-content: center; gap: 20px; padding: 0 28px; margin-bottom: 16px; }
+.trust-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--on-surface-variant); font-weight: 500; }
+.trust-item svg { width: 14px; height: 14px; color: var(--on-surface-variant); opacity: 0.6; }
+
+/* Bottom */
+.pw-bt { padding: 0 28px 40px; margin-top: auto; }
+.pw-rs { text-align: center; font-size: 14px; color: var(--on-surface-variant); margin-top: 14px; font-weight: 600; }
+.pw-tm { text-align: center; font-size: 11px; color: #555B65; margin-top: 10px; line-height: 1.5; }
+
+/* ===== Settings ===== */
+.slb {
+  font-size: 13px; font-weight: 700; color: var(--on-surface-variant);
+  padding: 20px 20px 8px; letter-spacing: 0.3px;
+  display: flex; align-items: center; gap: 8px;
+}
+.slb::before {
+  content: ''; width: 3px; height: 14px; border-radius: 2px;
+  background: var(--primary); flex-shrink: 0;
+}
+.ssec {
+  background: var(--surface-variant); border-radius: var(--r-lg);
+  padding: 2px 16px; margin: 0 16px 4px;
+  border: 0.5px solid rgba(255,255,255,0.04);
+}
+.toggle {
+  width: 51px; height: 31px; border-radius: 15.5px;
+  background: var(--primary); position: relative; flex-shrink: 0;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
+}
+.toggle .knob {
+  width: 27px; height: 27px; border-radius: 50%;
+  background: white; position: absolute; top: 2px; right: 2px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.toggle.off { background: var(--outline); }
+.toggle.off .knob { right: auto; left: 2px; }
+
+/* Logout button */
+.btn-logout {
+  width: 100%; height: var(--button-height);
+  border-radius: var(--r-full); border: 1.5px solid var(--outline-variant);
+  background: var(--surface); color: var(--on-surface);
+  font-size: 16px; font-weight: 600; font-family: var(--font);
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px;
+}
+.btn-logout svg { width: 18px; height: 18px; color: var(--on-surface-variant); }
+
+/* Delete account link */
+.delete-link {
+  font-size: 13px; color: var(--error); font-weight: 500;
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+}
+.delete-link svg { width: 14px; height: 14px; }
+
+/* Version footer */
+.settings-footer { text-align: center; padding: 24px 16px 8px; }
+.settings-footer .logo-sm {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--grad-primary); margin-bottom: 6px;
+}
+.settings-footer .logo-sm svg { width: 16px; height: 16px; stroke: white; stroke-width: 2.5; }
+.settings-footer .fname { font-size: 12px; font-weight: 700; color: var(--on-surface-variant); letter-spacing: 0.6px; }
+.settings-footer .fver { font-size: 11px; color: var(--outline); margin-top: 2px; font-weight: 500; }
+.settings-footer .fcopy { font-size: 10px; color: var(--outline); margin-top: 4px; }
+
+/* ===== Share ===== */
+.sh { height: 100%; display: flex; flex-direction: column; }
+.sh-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; position: relative; }
+.sh-wrap::before { content: ''; position: absolute; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(88,202,165,0.04), transparent 70%); top: 10%; }
+
+/* Share card stays WHITE — it's a preview card */
+.card { width: 314px; background: white; border-radius: var(--r-xl); overflow: hidden; position: relative; z-index: 1;
+  box-shadow: 0 24px 68px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.2);
+}
+.card-hd { padding: 14px 18px; display: flex; align-items: center; gap: 10px; color: white; position: relative; overflow: hidden;
+  background: var(--grad-hero);
+}
+.card-hd::after { content: ''; position: absolute; top: -20px; right: -20px; width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.06); }
+.card-hd .logo { width: 32px; height: 32px; border-radius: 9px; background: rgba(255,255,255,0.18); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; }
+.card-hd .logo svg { width: 18px; height: 18px; color: white; stroke-width: 1.5; }
+.card-hd .nm { font-size: 16px; font-weight: 700; letter-spacing: -0.2px; flex: 1; }
+.card-hd .user { font-size: 12px; opacity: 0.7; font-weight: 500; }
+.card-phs { display: flex; height: 200px; position: relative; }
+.card-phs .ph { flex: 1; position: relative; overflow: hidden; }
+.card-phs .ph:first-child { background: linear-gradient(145deg, #C8A898, #B8A088); }
+.card-phs .ph:last-child { background: linear-gradient(135deg, #E8CFC0, #D4B8A8, #C8A898, #DCC4B4, #E8D0C0); }
+.card-phs .ph .face-h { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-46%); opacity: 0.06; }
+.card-phs .ph .face-h svg { width: 80px; height: 100px; fill: none; stroke: #000; stroke-width: 0.8; }
+.card-phs .ph::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 40%, rgba(0,0,0,0.5)); z-index: 2; }
+.card-phs .ph .lb { position: absolute; bottom: 10px; left: 12px; z-index: 3; color: white; font-size: 18px; font-weight: 800; letter-spacing: -0.3px; }
+.card-phs .ph .dt { position: absolute; bottom: 10px; right: 12px; z-index: 3; color: rgba(255,255,255,0.7); font-size: 11px; font-weight: 500; }
+.card-phs .vs { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 34px; height: 34px; border-radius: 50%; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; z-index: 5; }
+.card-phs .vs svg { width: 16px; height: 16px; color: #2D9F7F; stroke-width: 2.5; }
+.card-res { padding: 20px 20px 16px; text-align: center; }
+.card-res .delta { font-size: 44px; font-weight: 800; color: #10B981; letter-spacing: -2px; display: flex; align-items: center; justify-content: center; gap: 4px; line-height: 1; }
+.card-res .delta svg { width: 24px; height: 24px; }
+.card-res .desc { font-size: 15px; color: #6B7280; margin-top: 6px; font-weight: 500; }
+.card-res .period { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 9999px; background: #F3F4F6; font-size: 12px; color: #6B7280; font-weight: 600; margin-top: 8px; }
+.card-ft { padding: 12px 18px 14px; display: flex; justify-content: space-between; align-items: center; border-top: 0.5px solid #E5E7EB; }
+.card-ft .wm { font-size: 11px; color: #6B7280; line-height: 1.4; }
+.card-ft .qr { width: 40px; height: 40px; background: #F3F4F6; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.card-ft .qr svg { width: 22px; height: 22px; color: #6B7280; stroke-width: 0; fill: #6B7280; }
+
+/* Template selector */
+.tmpl { display: flex; gap: 10px; justify-content: center; padding: 0 24px 14px; }
+.tmpl-item { width: 48px; height: 48px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; background: var(--surface); }
+.tmpl-item.active { border: 2px solid var(--primary); background: var(--mint-50); }
+.tmpl-item:not(.active) { border: 1.5px solid var(--outline-variant); }
+
+/* Share targets */
+.sh-opts { display: flex; justify-content: center; gap: 20px; padding: 6px 32px 10px; }
+.sh-opt { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.sh-opt .ic { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.sh-opt .ic svg { width: 22px; height: 22px; }
+.sh-opt span { font-size: 11px; color: var(--on-surface-variant); font-weight: 500; }
+.sh-acts { padding: 8px 32px 40px; display: flex; gap: 12px; }
+.sh-acts .btn { flex: 1; }
+</style>
+</head>
+<body>
+<!-- ===== ONBOARDING Page 1 (Dark) ===== -->
+<div class="phone-frame dark">
+  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="#E4E3E8" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="#E4E3E8" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#E4E3E8" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="#E4E3E8"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="#E4E3E8" opacity="0.4" stroke="none"/></svg></div></div>
+  <div class="ob">
+    <div class="ob-body">
+      <div class="illust p1">
+        <div class="glow"></div>
+        <div class="bg"></div>
+        <div class="accent"></div>
+        <div class="accent2"></div>
+        <div class="dot dot1"></div><div class="dot dot2"></div><div class="dot dot3"></div><div class="dot dot4"></div><div class="dot dot5"></div>
+        <div class="leaf" style="top:28px;right:12px;transform:rotate(25deg)"><svg viewBox="0 0 32 32" fill="none" stroke="#6DDAB8" stroke-width="1"><path d="M16 2C10 8 5 18 5 25c6-1 12-5 16-12"/><path d="M16 2c0 10-2 16-5 21"/></svg></div>
+        <div class="leaf" style="bottom:22px;right:40px;transform:rotate(-15deg)"><svg viewBox="0 0 32 32" fill="none" stroke="var(--rose-300)" stroke-width="0.8"><path d="M16 2C10 8 5 18 5 25c6-1 12-5 16-12"/><path d="M16 2c0 10-2 16-5 21"/></svg></div>
+        <!-- Floating score badges -->
+        <div class="float-badge" style="top:38px;right:18px">
+          <div class="badge-num">82</div>
+          <div class="badge-label">肤质</div>
+        </div>
+        <div class="float-badge-sm" style="bottom:52px;left:18px;color:var(--primary)">+3 <span style="font-weight:400;color:var(--on-surface-variant)">水润</span></div>
+        <div class="icon-main"><svg viewBox="0 0 140 140">
+          <!-- Feminine face — detailed, fills the circle -->
+          <!-- Face oval -->
+          <ellipse cx="62" cy="68" rx="30" ry="38" fill="none" stroke="currentColor" stroke-width="1.2"/>
+          <!-- Hair flowing -->
+          <path d="M32 52c0-22 12-36 30-36s30 14 30 36" fill="none" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M32 52c-2 12-3 22-2 30" fill="none" stroke="currentColor" stroke-width="1"/>
+          <path d="M92 52c2 12 3 22 2 30" fill="none" stroke="currentColor" stroke-width="1"/>
+          <!-- Hair detail strands -->
+          <path d="M40 20c4-4 10-6 16-6" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.4"/>
+          <path d="M50 18c4-2 10-2 16 0" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.4"/>
+          <path d="M72 20c4 0 8 2 12 6" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.4"/>
+          <!-- Left eyebrow -->
+          <path d="M46 54c2-3 6-4 10-3" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.5"/>
+          <!-- Right eyebrow -->
+          <path d="M68 54c2-3 6-4 10-3" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.5"/>
+          <!-- Left eye with detail -->
+          <ellipse cx="52" cy="62" rx="5" ry="3.5" fill="none" stroke="currentColor" stroke-width="1"/>
+          <ellipse cx="52" cy="62" rx="2.5" ry="2.5" fill="currentColor" stroke="none"/>
+          <circle cx="53.5" cy="61" r="0.8" fill="#131517" stroke="none"/>
+          <!-- Left lashes -->
+          <path d="M47 59.5l-1.5-2" stroke="currentColor" stroke-width="0.6" opacity="0.5"/>
+          <path d="M49 58.5l-0.5-2" stroke="currentColor" stroke-width="0.6" opacity="0.5"/>
+          <path d="M51 58l0.5-1.8" stroke="currentColor" stroke-width="0.6" opacity="0.5"/>
+          <!-- Right eye with detail -->
+          <ellipse cx="72" cy="62" rx="5" ry="3.5" fill="none" stroke="currentColor" stroke-width="1"/>
+          <ellipse cx="72" cy="62" rx="2.5" ry="2.5" fill="currentColor" stroke="none"/>
+          <circle cx="73.5" cy="61" r="0.8" fill="#131517" stroke="none"/>
+          <!-- Right lashes -->
+          <path d="M77 59.5l1.5-2" stroke="currentColor" stroke-width="0.6" opacity="0.5"/>
+          <path d="M75 58.5l0.5-2" stroke="currentColor" stroke-width="0.6" opacity="0.5"/>
+          <path d="M73 58l-0.5-1.8" stroke="currentColor" stroke-width="0.6" opacity="0.5"/>
+          <!-- Nose -->
+          <path d="M60 67c1 3 2 5 2 6.5" fill="none" stroke="currentColor" stroke-width="0.7" opacity="0.4"/>
+          <path d="M58 74c1.5 1 3.5 1.5 5.5 1 1.5-0.5 2.5-1 3-1.5" fill="none" stroke="currentColor" stroke-width="0.7" opacity="0.4"/>
+          <!-- Smile -->
+          <path d="M54 80c3 4 10 4.5 16 0" fill="none" stroke="currentColor" stroke-width="1"/>
+          <!-- Lower lip hint -->
+          <path d="M56 82c2 2 8 2 12 0" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.3"/>
+          <!-- Blush circles -->
+          <circle cx="44" cy="74" r="6" fill="var(--rose-300)" stroke="none" opacity="0.15"/>
+          <circle cx="80" cy="74" r="6" fill="var(--rose-300)" stroke="none" opacity="0.15"/>
+
+          <!-- Scan line overlay effect -->
+          <line x1="34" y1="50" x2="90" y2="50" stroke="var(--primary)" stroke-width="0.4" opacity="0.2"/>
+          <line x1="36" y1="58" x2="88" y2="58" stroke="var(--primary)" stroke-width="0.4" opacity="0.15"/>
+          <line x1="35" y1="66" x2="89" y2="66" stroke="var(--primary)" stroke-width="0.4" opacity="0.2"/>
+          <line x1="36" y1="74" x2="88" y2="74" stroke="var(--primary)" stroke-width="0.4" opacity="0.15"/>
+          <line x1="37" y1="82" x2="87" y2="82" stroke="var(--primary)" stroke-width="0.4" opacity="0.2"/>
+          <!-- Active scanning line (brighter) -->
+          <line x1="33" y1="70" x2="91" y2="70" stroke="var(--primary)" stroke-width="1.2" opacity="0.4"/>
+          <!-- Scan line glow -->
+          <line x1="33" y1="70" x2="91" y2="70" stroke="var(--primary)" stroke-width="3" opacity="0.1"/>
+
+          <!-- Data points on face -->
+          <circle cx="44" cy="62" r="1.5" fill="var(--primary)" stroke="none" opacity="0.6"/>
+          <circle cx="80" cy="62" r="1.5" fill="var(--primary)" stroke="none" opacity="0.6"/>
+          <circle cx="62" cy="50" r="1.5" fill="var(--primary)" stroke="none" opacity="0.6"/>
+          <circle cx="52" cy="82" r="1.5" fill="var(--primary)" stroke="none" opacity="0.5"/>
+          <circle cx="72" cy="82" r="1.5" fill="var(--primary)" stroke="none" opacity="0.5"/>
+
+          <!-- Phone/camera element to the right -->
+          <rect x="102" y="38" width="24" height="42" rx="5" fill="none" stroke="currentColor" stroke-width="1"/>
+          <rect x="104" y="42" width="20" height="28" rx="2" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.4"/>
+          <!-- Camera lens on phone -->
+          <circle cx="114" cy="56" r="7" fill="none" stroke="currentColor" stroke-width="0.8"/>
+          <circle cx="114" cy="56" r="4" fill="none" stroke="currentColor" stroke-width="0.6"/>
+          <circle cx="114" cy="56" r="1.5" fill="currentColor" stroke="none" opacity="0.3"/>
+          <!-- Phone notch -->
+          <rect x="109" y="40" width="10" height="2" rx="1" fill="currentColor" stroke="none" opacity="0.2"/>
+          <!-- Connection line from phone to face -->
+          <path d="M102 55 L92 60" fill="none" stroke="var(--primary)" stroke-width="0.6" stroke-dasharray="2 2" opacity="0.35"/>
+
+          <!-- Sparkle decorations -->
+          <path d="M16 30l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="var(--primary)" stroke="none" opacity="0.25"/>
+          <path d="M8 70l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z" fill="#6DDAB8" stroke="none" opacity="0.3"/>
+          <path d="M100 92l1 3 3 1-3 1-1 3-1-3-3-1 3-1z" fill="var(--rose-300)" stroke="none" opacity="0.3"/>
+          <path d="M28 100l1.5 4 4 1.5-4 1.5-1.5 4-1.5-4-4-1.5 4-1.5z" fill="var(--lavender-300)" stroke="none" opacity="0.25"/>
+          <path d="M120 26l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z" fill="var(--primary)" stroke="none" opacity="0.3"/>
+
+          <!-- Small floating metric circles -->
+          <circle cx="20" cy="48" r="2" fill="#6DDAB8" stroke="none" opacity="0.45"/>
+          <circle cx="130" cy="70" r="1.5" fill="var(--rose-300)" stroke="none" opacity="0.4"/>
+        </svg></div>
+      </div>
+      <h1>记录你的<br>肌肤变化</h1>
+      <p>每天一张自拍，AI 帮你追踪痘痘、毛孔、肤色等指标，见证皮肤一天天变好</p>
+    </div>
+    <div class="ob-foot">
+      <div class="dots"><div class="dot-i on"></div><div class="dot-i"></div><div class="dot-i"></div><div class="dot-i"></div></div>
+      <button class="btn btn-primary">下一步</button>
+      <div class="skip">跳过</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAYWALL (Dark) ===== -->
+<div class="phone-frame dark">
+  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="#E4E3E8" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="#E4E3E8" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#E4E3E8" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="#E4E3E8"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="#E4E3E8" opacity="0.4" stroke="none"/></svg></div></div>
+  <div class="top-app-bar" style="background:transparent;position:relative;z-index:10"><div class="nav-icon"><svg viewBox="0 0 24 24" width="24" height="24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div><div class="title"></div></div>
+  <div class="pw">
+    <div class="pw-hero">
+      <div class="pw-crown"><svg viewBox="0 0 42 42"><path d="M5 30l7-16 7 10 5-18 5 18 7-10 7 16z" fill="none" stroke="white" stroke-width="2" stroke-linejoin="round"/><rect x="5" y="30" width="33" height="4" rx="1.5" fill="none" stroke="white" stroke-width="2"/></svg></div>
+      <h1>解锁你的<br>变美潜力</h1>
+      <p>科学护肤，让每一分投入都看得见效果</p>
+      <div class="trial-badge"><svg viewBox="0 0 16 16" stroke="var(--success)" stroke-width="2.5" fill="none"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 1.5"/></svg>新用户享 14 天免费试用</div>
+      <div class="social-proof">
+        <div class="avatars">
+          <div class="av" style="background:linear-gradient(135deg,var(--rose-300),var(--rose-400))">L</div>
+          <div class="av" style="background:linear-gradient(135deg,#58CAA5,#2D9F7F)">M</div>
+          <div class="av" style="background:linear-gradient(135deg,var(--lavender-300),var(--lavender-400))">S</div>
+          <div class="av" style="background:linear-gradient(135deg,var(--secondary),#E68A3E)">J</div>
+        </div>
+        <div class="text"><strong>12,580</strong> 位用户已订阅</div>
+      </div>
+    </div>
+
+    <div class="bens">
+      <div class="ben"><div class="ck"><svg viewBox="0 0 16 16"><path d="M3.5 8l3 3L12.5 5"/></svg></div><div class="tx"><div class="main">无限拍照记录</div><div class="sub">不受次数限制，每天追踪肌肤变化</div></div></div>
+      <div class="ben"><div class="ck"><svg viewBox="0 0 16 16"><path d="M3.5 8l3 3L12.5 5"/></svg></div><div class="tx"><div class="main">AI 详细分析报告</div><div class="sub">痘痘、毛孔、均匀度多维度深度解读</div></div></div>
+      <div class="ben"><div class="ck"><svg viewBox="0 0 16 16"><path d="M3.5 8l3 3L12.5 5"/></svg></div><div class="tx"><div class="main">归因分析</div><div class="sub">找出最有效的护肤品组合</div></div></div>
+      <div class="ben"><div class="ck"><svg viewBox="0 0 16 16"><path d="M3.5 8l3 3L12.5 5"/></svg></div><div class="tx"><div class="main">分享对比卡片</div><div class="sub">记录蜕变过程，见证美丽</div></div></div>
+      <div class="ben"><div class="ck"><svg viewBox="0 0 16 16"><path d="M3.5 8l3 3L12.5 5"/></svg></div><div class="tx"><div class="main">云端同步</div><div class="sub">数据安全存储，永不丢失</div></div></div>
+    </div>
+
+    <div class="plans">
+      <div class="plan"><div class="pd">月度会员</div><div class="pr">¥19.9<span class="u">/月</span></div></div>
+      <div class="plan sel"><div class="sv">省 ¥70.8</div><div class="pd">年度会员</div><div class="pr">¥168<span class="u">/年</span></div><div class="og">¥238.8/年</div><div class="avg">约 ¥14/月</div></div>
+    </div>
+
+    <!-- Trust signals -->
+    <div class="trust">
+      <div class="trust-item"><svg viewBox="0 0 16 16"><path d="M8 14s6-3 6-7.5V3l-6-2-6 2v3.5C2 11 8 14 8 14z"/></svg>安全支付</div>
+      <div class="trust-item"><svg viewBox="0 0 16 16"><path d="M14 4l-8 8-4-4"/></svg>随时取消</div>
+      <div class="trust-item"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 1.5"/></svg>即时生效</div>
+    </div>
+
+    <div class="pw-bt">
+      <button class="btn btn-primary">立即订阅</button>
+      <div class="pw-rs">恢复购买</div>
+      <div class="pw-tm">订阅将自动续费，可随时取消。订阅即表示同意服务条款和隐私政策。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SETTINGS (Dark) ===== -->
+<div class="phone-frame dark">
+  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="#E4E3E8" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="#E4E3E8" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#E4E3E8" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="#E4E3E8"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="#E4E3E8" opacity="0.4" stroke="none"/></svg></div></div>
+  <div class="top-app-bar">
+    <div class="nav-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
+    <div class="title">设置</div>
+  </div>
+  <div class="content-no-padding" style="overflow-y:auto">
+
+    <!-- Account Section -->
+    <div class="slb">账户</div>
+    <div class="ssec">
+      <div class="menu-item"><div class="icon-wrap" style="background:rgba(88,202,165,0.12)"><svg viewBox="0 0 24 24" style="color:var(--primary)"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="text"><div class="primary-text">编辑资料</div><div class="secondary-text">头像、昵称、肤质</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:rgba(124,58,237,0.12)"><svg viewBox="0 0 24 24" style="color:#A78BFA"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1.5" stroke-width="1.5"/></svg></div><div class="text"><div class="primary-text">修改密码</div><div class="secondary-text">上次修改：30 天前</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:rgba(217,119,6,0.12)"><svg viewBox="0 0 24 24" style="color:#FBBF24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" fill="#FBBF24" stroke="none"/></svg></div><div class="text"><div class="primary-text">会员管理</div><div class="secondary-text">Pro 会员 · 2026.12.14 到期</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+    </div>
+
+    <!-- Notifications Section -->
+    <div class="slb">通知</div>
+    <div class="ssec">
+      <div class="menu-item"><div class="icon-wrap" style="background:rgba(251,191,36,0.12)"><svg viewBox="0 0 24 24" style="color:var(--warning)"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div class="text"><div class="primary-text">打卡提醒</div><div class="secondary-text">每天 20:00</div></div><div class="toggle"><div class="knob"></div></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:rgba(96,165,250,0.12)"><svg viewBox="0 0 24 24" style="color:var(--info)"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 4 5-8"/></svg></div><div class="text"><div class="primary-text">周报通知</div><div class="secondary-text">每周日发送肌肤周报</div></div><div class="toggle off"><div class="knob"></div></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:rgba(224,104,120,0.12)"><svg viewBox="0 0 24 24" style="color:var(--rose-300)"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div><div class="text"><div class="primary-text">AI 分析完成通知</div><div class="secondary-text">分析完成后推送提醒</div></div><div class="toggle"><div class="knob"></div></div></div>
+    </div>
+
+    <!-- Data & Privacy Section -->
+    <div class="slb">数据与隐私</div>
+    <div class="ssec">
+      <div class="menu-item"><div class="icon-wrap" style="background:rgba(88,202,165,0.12)"><svg viewBox="0 0 24 24" style="color:var(--primary)"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="text"><div class="primary-text">数据同步</div><div class="secondary-text">最后同步：今天 09:30</div></div><div class="trailing" style="display:flex;align-items:center;gap:6px"><span class="badge badge-success">已同步</span><svg viewBox="0 0 24 24" width="18" height="18"><path d="M9 18l6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:rgba(255,255,255,0.06)"><svg viewBox="0 0 24 24" style="color:var(--on-surface-variant)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div><div class="text"><div class="primary-text">导出数据</div><div class="secondary-text">导出为 JSON / CSV</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:rgba(248,113,113,0.1)"><svg viewBox="0 0 24 24" style="color:var(--error)"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></div><div class="text"><div class="primary-text">清除缓存</div><div class="secondary-text">当前缓存 23.4 MB</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+    </div>
+
+    <!-- About Section -->
+    <div class="slb">关于</div>
+    <div class="ssec">
+      <div class="menu-item"><div class="icon-wrap" style="background:rgba(255,255,255,0.06)"><svg viewBox="0 0 24 24" style="color:var(--on-surface-variant)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="text"><div class="primary-text">版本信息</div><div class="secondary-text">v1.0.0 (Build 42)</div></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:rgba(255,255,255,0.06)"><svg viewBox="0 0 24 24" style="color:var(--on-surface-variant)"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="text"><div class="primary-text">隐私政策</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:rgba(255,255,255,0.06)"><svg viewBox="0 0 24 24" style="color:var(--on-surface-variant)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><div class="text"><div class="primary-text">用户协议</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+    </div>
+
+    <!-- Logout + Delete -->
+    <div style="padding:24px 16px 12px">
+      <button class="btn-logout"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>退出登录</button>
+    </div>
+    <div style="text-align:center; padding-bottom:8px">
+      <div class="delete-link"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>注销账户</div>
+    </div>
+
+    <!-- Footer -->
+    <div class="settings-footer">
+      <div class="logo-sm"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+      <div class="fname">SKINTRACK</div>
+      <div class="fver">v1.0.0 (Build 42)</div>
+      <div class="fcopy">&copy; 2026 SkinTrack. All rights reserved.</div>
+    </div>
+    <div style="height:24px"></div>
+  </div>
+</div>
+
+<!-- ===== SHARE (Dark) ===== -->
+<div class="phone-frame dark">
+  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="#E4E3E8" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="#E4E3E8" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#E4E3E8" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="#E4E3E8"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="#E4E3E8" opacity="0.4" stroke="none"/></svg></div></div>
+  <div class="top-app-bar"><div class="nav-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div><div class="title">分享对比卡片</div></div>
+  <div class="sh">
+    <div class="sh-wrap">
+      <div class="card">
+        <div class="card-hd">
+          <div class="logo"><svg viewBox="0 0 18 18"><path d="M9 2C6 2 4 5 4 8c0 2.5 1.5 5 3.5 6 .5-1.2 1-2.2 1.5-2.2s1 1 1.5 2.2C12.5 13 14 10.5 14 8c0-3-2-6-5-6z"/><ellipse cx="9" cy="7.5" rx="2.5" ry="3" opacity="0.4"/></svg></div>
+          <div class="nm">SkinTrack</div>
+          <div class="user">Lisa 的变美日记</div>
+        </div>
+        <div class="card-phs">
+          <div class="ph"><div class="face-h"><svg viewBox="0 0 80 100"><ellipse cx="40" cy="45" rx="30" ry="38"/><circle cx="30" cy="38" r="3"/><circle cx="50" cy="38" r="3"/></svg></div><div class="lb">72 分</div><div class="dt">3月1日</div></div>
+          <div class="vs"><svg viewBox="0 0 16 16"><path d="M5 13l6-5-6-5"/></svg></div>
+          <div class="ph"><div class="face-h"><svg viewBox="0 0 80 100"><ellipse cx="40" cy="45" rx="30" ry="38"/><circle cx="30" cy="38" r="3"/><circle cx="50" cy="38" r="3"/></svg></div><div class="lb">82 分</div><div class="dt">3月14日</div></div>
+        </div>
+        <div class="card-res">
+          <div class="delta"><svg viewBox="0 0 24 24" stroke="#10B981" stroke-width="3" fill="none"><path d="M12 19V5M6 10l6-6 6 6"/></svg>+10 分</div>
+          <div class="desc">14 天变美日记~</div>
+          <div class="period"><svg viewBox="0 0 12 12" width="12" height="12" stroke="#6B7280" stroke-width="1.5" fill="none"><circle cx="6" cy="6" r="5"/><path d="M6 3v3l2 1"/></svg>2026.3.1 - 3.14</div>
+        </div>
+        <div class="card-ft"><div class="wm">使用 SkinTrack<br>追踪肌肤变化</div><div class="qr"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg></div></div>
+      </div>
+    </div>
+
+    <!-- Template selector -->
+    <div class="tmpl">
+      <div class="tmpl-item active"><svg viewBox="0 0 20 20" width="18" height="18" style="color:var(--primary)"><rect x="2" y="2" width="16" height="16" rx="3"/><path d="M2 10h16"/></svg></div>
+      <div class="tmpl-item"><svg viewBox="0 0 20 20" width="18" height="18" style="color:var(--on-surface-variant)"><rect x="2" y="2" width="16" height="16" rx="3"/><circle cx="10" cy="10" r="4"/></svg></div>
+      <div class="tmpl-item"><svg viewBox="0 0 20 20" width="18" height="18" style="color:var(--on-surface-variant)"><rect x="2" y="2" width="16" height="16" rx="3"/><path d="M2 8h16M10 2v16"/></svg></div>
+    </div>
+
+    <!-- Share targets -->
+    <div class="sh-opts">
+      <div class="sh-opt"><div class="ic" style="background:rgba(76,175,80,0.12)"><svg viewBox="0 0 24 24" style="color:#66BB6A"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div><span>微信</span></div>
+      <div class="sh-opt"><div class="ic" style="background:rgba(255,109,0,0.12)"><svg viewBox="0 0 24 24" style="color:#FF8A65"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8" stroke="white" stroke-width="2"/></svg></div><span>微博</span></div>
+      <div class="sh-opt"><div class="ic" style="background:rgba(25,118,210,0.12)"><svg viewBox="0 0 24 24" style="color:#64B5F6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8" stroke="white" stroke-width="1.5"/></svg></div><span>小红书</span></div>
+      <div class="sh-opt"><div class="ic" style="background:var(--surface-variant)"><svg viewBox="0 0 24 24" style="color:var(--on-surface-variant)"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div><span>更多</span></div>
+    </div>
+    <div class="sh-acts"><button class="btn btn-outlined">保存图片</button><button class="btn btn-primary">分享</button></div>
+  </div>
+</div>
+</body></html>

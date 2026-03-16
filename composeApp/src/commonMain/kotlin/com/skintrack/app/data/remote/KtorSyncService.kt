@@ -13,6 +13,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -39,9 +40,11 @@ class KtorSyncService(
         if (!response.success) throw IllegalStateException(response.error)
     }
 
-    override suspend fun loadSkinRecords(userId: String): List<SkinRecordEntity> {
+    override suspend fun loadSkinRecords(userId: String, since: String?): List<SkinRecordEntity> {
         val response: ApiResponse<List<SkinRecordDto>> =
-            client.get("$baseUrl/api/skin-records").body()
+            client.get("$baseUrl/api/skin-records") {
+                if (since != null) parameter("since", since)
+            }.body()
         if (!response.success) throw IllegalStateException(response.error)
         return response.data?.map { it.toEntity() } ?: emptyList()
     }
@@ -57,9 +60,11 @@ class KtorSyncService(
         if (!response.success) throw IllegalStateException(response.error)
     }
 
-    override suspend fun loadProducts(userId: String): List<SkincareProductEntity> {
+    override suspend fun loadProducts(userId: String, since: String?): List<SkincareProductEntity> {
         val response: ApiResponse<List<SkincareProductDto>> =
-            client.get("$baseUrl/api/products").body()
+            client.get("$baseUrl/api/products") {
+                if (since != null) parameter("since", since)
+            }.body()
         if (!response.success) throw IllegalStateException(response.error)
         return response.data?.map { it.toEntity() } ?: emptyList()
     }
@@ -92,7 +97,7 @@ class KtorSyncService(
     }
 }
 
-// ── Entity ↔ DTO Mapping (same as SupabaseSyncService) ──
+// ── Entity ↔ DTO Mapping ──
 
 private fun SkinRecordEntity.toDto() = SkinRecordDto(
     id = id,
@@ -108,6 +113,7 @@ private fun SkinRecordEntity.toDto() = SkinRecordDto(
     imageUrl = imageUrl,
     analysisJson = analysisJson,
     recordedAt = Instant.fromEpochMilliseconds(recordedAt).toString(),
+    updatedAt = Instant.fromEpochMilliseconds(updatedAt).toString(),
 )
 
 private fun SkinRecordDto.toEntity() = SkinRecordEntity(
@@ -126,6 +132,8 @@ private fun SkinRecordDto.toEntity() = SkinRecordEntity(
     recordedAt = Instant.parse(recordedAt).toEpochMilliseconds(),
     createdAt = createdAt?.let { Instant.parse(it).toEpochMilliseconds() }
         ?: Instant.parse(recordedAt).toEpochMilliseconds(),
+    updatedAt = updatedAt?.let { Instant.parse(it).toEpochMilliseconds() }
+        ?: Instant.parse(recordedAt).toEpochMilliseconds(),
     synced = true,
 )
 
@@ -137,6 +145,7 @@ private fun SkincareProductEntity.toDto(userId: String) = SkincareProductDto(
     category = category,
     imageUrl = imageUrl,
     barcode = barcode,
+    updatedAt = Instant.fromEpochMilliseconds(updatedAt).toString(),
 )
 
 private fun SkincareProductDto.toEntity() = SkincareProductEntity(
@@ -147,6 +156,8 @@ private fun SkincareProductDto.toEntity() = SkincareProductEntity(
     category = category,
     imageUrl = imageUrl,
     barcode = barcode,
+    updatedAt = updatedAt?.let { Instant.parse(it).toEpochMilliseconds() }
+        ?: kotlinx.datetime.Clock.System.now().toEpochMilliseconds(),
     synced = true,
 )
 

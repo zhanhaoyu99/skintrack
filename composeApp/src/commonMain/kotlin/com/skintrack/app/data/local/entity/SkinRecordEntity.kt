@@ -1,9 +1,13 @@
 package com.skintrack.app.data.local.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "skin_records")
+@Entity(
+    tableName = "skin_records",
+    indices = [Index(value = ["userId", "recordedAt"])],
+)
 data class SkinRecordEntity(
     @PrimaryKey val id: String,
     val userId: String,
@@ -20,5 +24,6 @@ data class SkinRecordEntity(
     val analysisJson: String? = null,
     val recordedAt: Long,
     val createdAt: Long,
+    val updatedAt: Long = createdAt,
     val synced: Boolean = false,
 )

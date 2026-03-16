@@ -6,17 +6,17 @@ import com.skintrack.app.data.local.entity.SkincareProductEntity
 
 /**
  * Backend-agnostic interface for remote data sync.
- * Implementations: SupabaseSyncService (current), KtorSyncService (future).
+ * Implementations: SupabaseSyncService (legacy), KtorSyncService (current).
  */
 interface RemoteSyncService {
 
     // ── Skin Records ───────────────────────────────────
     suspend fun uploadSkinRecords(entities: List<SkinRecordEntity>)
-    suspend fun loadSkinRecords(userId: String): List<SkinRecordEntity>
+    suspend fun loadSkinRecords(userId: String, since: String? = null): List<SkinRecordEntity>
 
     // ── Skincare Products ──────────────────────────────
     suspend fun uploadProducts(entities: List<SkincareProductEntity>, userId: String)
-    suspend fun loadProducts(userId: String): List<SkincareProductEntity>
+    suspend fun loadProducts(userId: String, since: String? = null): List<SkincareProductEntity>
 
     // ── Daily Product Usage ────────────────────────────
     suspend fun uploadUsage(entities: List<DailyProductUsageEntity>)

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Leaf/plant icon representing SkinTrack brand -->
+    <group
+        android:translateX="27"
+        android:translateY="27">
+        <!-- Leaf shape -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M27,8C27,8 20,2 10,6C0,10 -2,24 4,34C10,44 22,48 32,44C42,40 46,28 42,18C38,8 27,8 27,8Z" />
+        <!-- Leaf vein -->
+        <path
+            android:fillColor="#4A9E7F"
+            android:pathData="M27,8C27,8 22,18 18,28C14,38 12,42 12,42"
+            android:strokeWidth="2"
+            android:strokeColor="#4A9E7F" />
+        <!-- Secondary vein -->
+        <path
+            android:strokeWidth="1.5"
+            android:strokeColor="#4A9E7F"
+            android:pathData="M22,16L14,24" />
+        <path
+            android:strokeWidth="1.5"
+            android:strokeColor="#4A9E7F"
+            android:pathData="M20,24L12,32" />
+    </group>
+</vector>

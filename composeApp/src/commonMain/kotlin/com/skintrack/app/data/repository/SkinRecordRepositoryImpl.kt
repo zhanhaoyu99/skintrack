@@ -59,11 +59,23 @@ class SkinRecordRepositoryImpl(
         }
     }
 
-    override suspend fun pullFromRemote(userId: String) {
+    override suspend fun getRecordsPaged(userId: String, limit: Int, offset: Int): List<SkinRecord> =
+        skinRecordDao.getRecordsPaged(userId, limit, offset).map { it.toDomain() }
+
+    override suspend fun getPendingAnalysis(userId: String): List<SkinRecord> =
+        skinRecordDao.getPendingAnalysis(userId).map { it.toDomain() }
+
+    override suspend fun pullFromRemote(userId: String, since: String?) {
         val service = syncService ?: return
         try {
-            val remote = service.loadSkinRecords(userId)
-            skinRecordDao.insertAll(remote)
+            val remote = service.loadSkinRecords(userId, since)
+            // Last-Write-Wins: only overwrite local if remote is newer
+            remote.forEach { remoteEntity ->
+                val local = skinRecordDao.getById(remoteEntity.id)
+                if (local == null || remoteEntity.updatedAt >= local.updatedAt) {
+                    skinRecordDao.insert(remoteEntity)
+                }
+            }
         } catch (_: Exception) {
             // Pull failure is non-fatal
         }

@@ -1,22 +1,272 @@
 package com.skintrack.app.data.remote
 
+import com.skintrack.app.data.remote.dto.ApiResponse
+import com.skintrack.app.data.remote.dto.AttributionProductDto
+import com.skintrack.app.data.remote.dto.AttributionReportResponseDto
+import com.skintrack.app.data.remote.dto.AttributionRequestDto
+import com.skintrack.app.data.remote.dto.AttributionSkinRecordDto
+import com.skintrack.app.data.remote.dto.AttributionUsageDto
+import com.skintrack.app.data.remote.dto.SkinAnalysisRequest
+import com.skintrack.app.data.remote.dto.SkinAnalysisResponse
+import com.skintrack.app.domain.model.AiProductAttribution
+import com.skintrack.app.domain.model.AttributionReport
+import com.skintrack.app.domain.model.DailyProductUsage
+import com.skintrack.app.domain.model.SkinRecord
 import com.skintrack.app.domain.model.SkinType
+import com.skintrack.app.domain.model.SkincareProduct
+import com.skintrack.app.domain.model.displayName
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import kotlinx.coroutines.delay
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 class AiAnalysisService(
     private val httpClient: HttpClient,
 ) {
     /**
-     * Analyze skin image via multimodal LLM API.
-     * Currently uses mock data; replace [mockAnalyze] with [realAnalyze] when ready.
+     * Analyze skin image via server-side LLM API.
+     * Falls back to mock data when server is not configured.
      */
+    @OptIn(ExperimentalEncodingApi::class)
     suspend fun analyzeSkinImage(imageBytes: ByteArray): SkinAnalysisResult {
-        return mockAnalyze()
+        if (!KtorServerConfig.isConfigured) return mockAnalyze()
+
+        return try {
+            val base64 = Base64.encode(imageBytes)
+            val response = httpClient.post("${KtorServerConfig.baseUrl}/api/ai/analyze-skin") {
+                contentType(ContentType.Application.Json)
+                setBody(SkinAnalysisRequest(imageBase64 = base64))
+            }
+            val apiResponse: ApiResponse<SkinAnalysisResponse> = response.body()
+            val data = apiResponse.data ?: throw IllegalStateException(apiResponse.error ?: "Analysis failed")
+            data.toDomain()
+        } catch (e: Exception) {
+            // Fallback to mock when server call fails
+            println("Server AI analysis failed, falling back to mock: ${e.message}")
+            mockAnalyze()
+        }
     }
 
-    // ── Mock implementation ────────────────────────────
+    /**
+     * Generate an AI-powered attribution report analyzing how skincare products
+     * correlate with skin condition changes over time.
+     *
+     * @param records Recent skin records with scores (time series)
+     * @param usages Product usage records for the same period
+     * @param products All user's skincare products (for name/category lookup)
+     * @return AttributionReport with AI-generated insights
+     */
+    suspend fun generateAttributionReport(
+        records: List<SkinRecord>,
+        usages: List<DailyProductUsage>,
+        products: Map<String, SkincareProduct>,
+    ): AttributionReport {
+        if (!KtorServerConfig.isConfigured) {
+            return mockAttributionAnalysis(records, usages, products)
+        }
+
+        return try {
+            val request = buildAttributionRequest(records, usages, products)
+            val response = httpClient.post("${KtorServerConfig.baseUrl}/api/ai/attribution-report") {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }
+            val apiResponse: ApiResponse<AttributionReportResponseDto> = response.body()
+            val data = apiResponse.data ?: throw IllegalStateException(apiResponse.error ?: "Attribution analysis failed")
+            data.toDomain()
+        } catch (e: Exception) {
+            println("Server attribution analysis failed, falling back to mock: ${e.message}")
+            mockAttributionAnalysis(records, usages, products)
+        }
+    }
+
+    // ── Server request builders ────────────────────────────
+
+    private fun buildAttributionRequest(
+        records: List<SkinRecord>,
+        usages: List<DailyProductUsage>,
+        products: Map<String, SkincareProduct>,
+    ): AttributionRequestDto {
+        val tz = TimeZone.currentSystemDefault()
+        return AttributionRequestDto(
+            records = records.mapNotNull { record ->
+                val score = record.overallScore ?: return@mapNotNull null
+                val date = record.recordedAt.toLocalDateTime(tz).date
+                AttributionSkinRecordDto(
+                    date = date.toString(),
+                    overallScore = score,
+                    acneCount = record.acneCount,
+                    poreScore = record.poreScore,
+                    rednessScore = record.rednessScore,
+                    evenScore = record.evenScore,
+                    blackheadDensity = record.blackheadDensity,
+                    skinType = record.skinType.name,
+                )
+            },
+            products = products.values.map { product ->
+                AttributionProductDto(
+                    id = product.id,
+                    name = product.name,
+                    category = product.category.displayName,
+                    brand = product.brand,
+                )
+            },
+            usages = usages.map { usage ->
+                AttributionUsageDto(
+                    productId = usage.productId,
+                    usedDate = usage.usedDate.toString(),
+                )
+            },
+        )
+    }
+
+    // ── DTO to domain mappers ──────────────────────────────
+
+    private fun SkinAnalysisResponse.toDomain(): SkinAnalysisResult {
+        val parsedSkinType = try {
+            SkinType.valueOf(skinType.uppercase())
+        } catch (_: Exception) {
+            SkinType.UNKNOWN
+        }
+        return SkinAnalysisResult(
+            overallScore = overallScore,
+            acneCount = acneCount,
+            poreScore = poreScore,
+            rednessScore = rednessScore,
+            evenScore = evenScore,
+            blackheadDensity = blackheadDensity,
+            skinType = parsedSkinType,
+            summary = summary,
+            recommendations = recommendations,
+        )
+    }
+
+    private fun AttributionReportResponseDto.toDomain(): AttributionReport {
+        return AttributionReport(
+            summary = summary,
+            overallTrend = overallTrend,
+            productRankings = productRankings.map { ranking ->
+                AiProductAttribution(
+                    productName = ranking.productName,
+                    category = ranking.category,
+                    impactScore = ranking.impactScore,
+                    explanation = ranking.explanation,
+                    daysUsed = ranking.daysUsed,
+                )
+            },
+            recommendations = recommendations,
+            generatedAt = Clock.System.now().toEpochMilliseconds(),
+        )
+    }
+
+    // ── Mock attribution analysis (fallback) ───────────────
+
+    private suspend fun mockAttributionAnalysis(
+        records: List<SkinRecord>,
+        usages: List<DailyProductUsage>,
+        products: Map<String, SkincareProduct>,
+    ): AttributionReport {
+        delay(2000) // Simulate API latency
+
+        val firstScore = records.firstOrNull()?.overallScore ?: 70
+        val lastScore = records.lastOrNull()?.overallScore ?: 70
+        val scoreDelta = lastScore - firstScore
+
+        val trend = when {
+            scoreDelta > 2 -> "improving"
+            scoreDelta < -2 -> "declining"
+            else -> "stable"
+        }
+
+        val trendDesc = when (trend) {
+            "improving" -> "持续改善"
+            "declining" -> "有所下降"
+            else -> "基本稳定"
+        }
+
+        val productUsageCounts = usages.groupBy { it.productId }
+            .mapValues { it.value.size }
+
+        val rankings = productUsageCounts.mapNotNull { (productId, daysUsed) ->
+            val product = products[productId] ?: return@mapNotNull null
+            val baseImpact = when (product.category) {
+                com.skintrack.app.domain.model.ProductCategory.SUNSCREEN -> 0.6f
+                com.skintrack.app.domain.model.ProductCategory.SERUM -> 0.4f
+                com.skintrack.app.domain.model.ProductCategory.CREAM -> 0.3f
+                com.skintrack.app.domain.model.ProductCategory.CLEANSER -> 0.2f
+                com.skintrack.app.domain.model.ProductCategory.TONER -> 0.1f
+                com.skintrack.app.domain.model.ProductCategory.MASK -> 0.2f
+                com.skintrack.app.domain.model.ProductCategory.EYE_CREAM -> 0.1f
+                com.skintrack.app.domain.model.ProductCategory.EMULSION -> 0.15f
+                com.skintrack.app.domain.model.ProductCategory.EXFOLIATOR -> -0.1f
+                com.skintrack.app.domain.model.ProductCategory.OTHER -> 0.0f
+            }
+            val noise = Random.nextFloat() * 0.3f - 0.15f
+            val impact = (baseImpact + noise).coerceIn(-1f, 1f)
+            val roundedImpact = (impact * 100).roundToInt() / 100f
+
+            val explanation = when {
+                roundedImpact > 0.3f -> "使用期间皮肤指标明显改善，该产品对皮肤有积极影响"
+                roundedImpact > 0.0f -> "使用期间皮肤状态有轻微改善，建议继续观察"
+                roundedImpact > -0.2f -> "对皮肤的影响不明显，可能需要更长时间验证"
+                else -> "使用期间皮肤指标有所下降，建议暂停使用并观察变化"
+            }
+
+            AiProductAttribution(
+                productName = product.name,
+                category = product.category.displayName,
+                impactScore = roundedImpact,
+                explanation = explanation,
+                daysUsed = daysUsed,
+            )
+        }.sortedByDescending { it.impactScore }
+
+        val topProduct = rankings.firstOrNull()
+        val worstProduct = rankings.lastOrNull()?.takeIf { it.impactScore < 0 }
+
+        val summary = buildString {
+            append("在分析的 ${records.size} 条皮肤记录中，您的皮肤状态$trendDesc。")
+            if (topProduct != null) {
+                append("${topProduct.productName}（${topProduct.category}）表现最佳，使用期间皮肤评分有显著提升。")
+            }
+            if (worstProduct != null) {
+                append("${worstProduct.productName}可能对皮肤产生了一定负面影响，建议关注。")
+            }
+        }
+
+        val recommendations = buildList {
+            if (topProduct != null) {
+                add("继续使用${topProduct.productName}，它对您的皮肤改善效果明显")
+            }
+            if (worstProduct != null) {
+                add("考虑暂停使用${worstProduct.productName}，观察皮肤变化")
+            }
+            add("建议坚持每日防晒，这是护肤最重要的一步")
+            add("保持规律的护肤记录，每周至少记录 3 次以获得更准确的分析")
+            add("注意饮食和睡眠对皮肤的影响，保持健康的生活习惯")
+        }.take(5)
+
+        return AttributionReport(
+            summary = summary,
+            overallTrend = trend,
+            productRankings = rankings,
+            recommendations = recommendations,
+            generatedAt = Clock.System.now().toEpochMilliseconds(),
+        )
+    }
+
+    // ── Skin image mock implementation (fallback) ──────────
+
     private suspend fun mockAnalyze(): SkinAnalysisResult {
         delay(1500) // Simulate API latency
 
@@ -40,20 +290,6 @@ class AiAnalysisService(
             recommendations = profile.recommendations.shuffled().take(3),
         )
     }
-
-    // TODO: Real LLM API call (GPT-4o / Gemini / Claude)
-    // private suspend fun realAnalyze(imageBytes: ByteArray): SkinAnalysisResult {
-    //     val base64 = Base64.encode(imageBytes)
-    //     val response = httpClient.post("https://api.openai.com/v1/chat/completions") {
-    //         header("Authorization", "Bearer $apiKey")
-    //         contentType(ContentType.Application.Json)
-    //         setBody(buildJsonObject {
-    //             put("model", "gpt-4o")
-    //             putJsonArray("messages") { ... }
-    //         })
-    //     }
-    //     return parseResponse(response.body())
-    // }
 }
 
 private enum class MockProfile(

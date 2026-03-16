@@ -36,4 +36,10 @@ interface SkinRecordDao {
 
     @Query("SELECT COUNT(*) FROM skin_records WHERE userId = :userId")
     suspend fun countByUser(userId: String): Int
+
+    @Query("SELECT * FROM skin_records WHERE userId = :userId ORDER BY recordedAt DESC LIMIT :limit OFFSET :offset")
+    suspend fun getRecordsPaged(userId: String, limit: Int, offset: Int): List<SkinRecordEntity>
+
+    @Query("SELECT * FROM skin_records WHERE userId = :userId AND overallScore IS NULL")
+    suspend fun getPendingAnalysis(userId: String): List<SkinRecordEntity>
 }

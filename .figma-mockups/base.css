@@ -1,0 +1,163 @@
+/* SkinTrack Design System v3 — Commercial Grade+ */
+:root {
+  --mint-50: #E8F7F3; --mint-100: #B8E8D9; --mint-200: #89D9BF;
+  --mint-300: #58CAA5; --mint-400: #2D9F7F; --mint-500: #248068;
+  --mint-600: #1D6B5B; --mint-700: #155146;
+  --apricot-50: #FFF4EA; --apricot-100: #FFE4C8; --apricot-200: #FFC996;
+  --apricot-300: #F4A261; --apricot-400: #E68A3E; --apricot-500: #D47826;
+  --acne: #FF6B6B; --pore: #4ECDC4; --evenness: #FFE66D;
+  --hydration: #45B7D1; --redness: #F38181;
+  --success: #10B981; --warning: #F59E0B; --error: #EF4444; --info: #3B82F6;
+  /* Feminine accent colors */
+  --rose-50: #FFF1F2; --rose-100: #FFE4E6; --rose-200: #FECDD3;
+  --rose-300: #FDA4AF; --rose-400: #FB7185; --rose-500: #F43F5E;
+  --lavender-50: #F5F3FF; --lavender-100: #EDE9FE; --lavender-200: #DDD6FE;
+  --lavender-300: #C4B5FD; --lavender-400: #A78BFA;
+  --primary: #2D9F7F; --on-primary: #FFFFFF;
+  --primary-container: #D1F0E4; --on-primary-container: #002117;
+  --secondary: #F4A261; --on-secondary: #FFFFFF;
+  --secondary-container: #FFE4C8; --on-secondary-container: #2B1700;
+  --surface: #FFFFFF; --on-surface: #111827;
+  --on-surface-variant: #6B7280; --surface-variant: #F3F4F6;
+  --surface-container: #F9FAFB; --outline: #D1D5DB; --outline-variant: #E5E7EB;
+  --background: #F8FAFB; --on-background: #111827;
+  --xs: 4px; --sm: 8px; --md: 16px; --lg: 24px; --xl: 32px; --xxl: 48px;
+  --button-height: 52px;
+  --r-xs: 6px; --r-sm: 10px; --r-md: 14px; --r-lg: 20px; --r-xl: 28px; --r-full: 9999px;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.03);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.03), 0 10px 24px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 16px rgba(0,0,0,0.04), 0 16px 40px rgba(0,0,0,0.08);
+  --shadow-xl: 0 20px 60px rgba(0,0,0,0.12);
+  --font: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --grad-primary: linear-gradient(135deg, #2D9F7F 0%, #3DB89A 50%, #58CAA5 100%);
+  --grad-warm: linear-gradient(135deg, #FFF8F2 0%, #F0FAF6 100%);
+  --grad-hero: linear-gradient(145deg, #1A7A63 0%, #2D9F7F 35%, #3DBFA0 70%, #58CAA5 100%);
+  --grad-surface: linear-gradient(180deg, #F7FAF9 0%, #FFFFFF 100%);
+  --grad-glass: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+  --skin-placeholder: linear-gradient(135deg, #E8CFC0 0%, #D4B8A8 25%, #C8A898 50%, #DCC4B4 75%, #E8D0C0 100%);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font); background: #DFE3E8; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+.phone-frame {
+  width: 390px; height: 844px; background: var(--background);
+  overflow: hidden; position: relative; display: flex; flex-direction: column;
+  border-radius: 50px; box-shadow: 0 0 0 1px rgba(0,0,0,0.06), var(--shadow-xl);
+}
+
+/* iOS Status Bar - pixel perfect */
+.status-bar {
+  height: 54px; padding: 14px 28px 0; display: flex; justify-content: space-between;
+  align-items: center; flex-shrink: 0; z-index: 10;
+}
+.status-bar .time { font-size: 16px; font-weight: 600; color: var(--on-surface); letter-spacing: 0.3px; }
+.status-bar .icons { display: flex; gap: 6px; align-items: center; }
+.status-bar .icons svg { height: 12px; }
+.status-bar.light .time { color: #fff; }
+.status-bar.light svg { fill: #fff !important; }
+
+/* Top App Bar */
+.top-app-bar {
+  height: 56px; padding: 0 8px 0 20px; display: flex; align-items: center; flex-shrink: 0;
+}
+.top-app-bar .title { font-size: 20px; font-weight: 700; color: var(--on-surface); flex: 1; letter-spacing: -0.4px; }
+.top-app-bar .nav-icon, .top-app-bar .action {
+  width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+}
+.top-app-bar .nav-icon svg, .top-app-bar .action svg { width: 24px; height: 24px; }
+
+/* Content */
+.content { flex: 1; overflow-y: auto; padding: var(--md); }
+.content-no-padding { flex: 1; overflow-y: auto; }
+
+/* Bottom Nav — 4 Tab + Center FAB */
+.bottom-nav {
+  height: 84px; background: var(--surface); display: flex; align-items: flex-start;
+  justify-content: space-around; flex-shrink: 0; padding: 6px 8px 0; position: relative;
+  border-top: 0.5px solid rgba(0,0,0,0.06);
+}
+.ni { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 64px; padding-top: 4px; }
+.ni svg { width: 24px; height: 24px; color: #9CA3AF; }
+.ni.active svg { color: var(--primary); }
+.ni .label { font-size: 10px; font-weight: 500; color: #9CA3AF; letter-spacing: 0.1px; }
+.ni.active .label { color: var(--primary); font-weight: 700; }
+.ni-fab { display: flex; flex-direction: column; align-items: center; width: 64px; margin-top: -22px; }
+.fab {
+  width: 52px; height: 52px; border-radius: 50%; background: var(--primary);
+  color: white; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(45,159,127,0.4); border: none;
+}
+.fab svg { width: 26px; height: 26px; stroke: white; stroke-width: 2.5; }
+.ni-fab .label { font-size: 10px; font-weight: 500; color: #9CA3AF; margin-top: 3px; }
+
+/* Section Card */
+.section-card {
+  background: var(--surface); border-radius: var(--r-lg); padding: var(--md);
+  margin-bottom: 12px; box-shadow: var(--shadow-sm);
+}
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.section-header .title { font-size: 17px; font-weight: 700; color: var(--on-surface); letter-spacing: -0.3px; }
+.section-header .action { font-size: 14px; color: var(--primary); font-weight: 600; }
+
+/* Menu Item */
+.menu-item { display: flex; align-items: center; padding: 14px 0; gap: 14px; }
+.menu-item .icon-wrap {
+  width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0;
+}
+.menu-item .icon-wrap svg { width: 20px; height: 20px; }
+.menu-item .text { flex: 1; }
+.menu-item .text .primary-text { font-size: 16px; font-weight: 500; color: var(--on-surface); }
+.menu-item .text .secondary-text { font-size: 13px; color: var(--on-surface-variant); margin-top: 1px; }
+.menu-item .trailing { color: #C4C8CC; }
+.menu-item .trailing svg { width: 18px; height: 18px; stroke-width: 2.5; }
+.menu-item + .menu-item { border-top: 0.5px solid var(--outline-variant); }
+
+/* Buttons */
+.btn {
+  height: var(--button-height); border-radius: var(--r-full); border: none;
+  font-size: 16px; font-weight: 600; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; width: 100%; letter-spacing: -0.1px;
+  font-family: var(--font);
+}
+.btn-primary {
+  background: var(--primary); color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(45,159,127,0.3), 0 1px 3px rgba(45,159,127,0.2);
+}
+.btn-outlined { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); }
+.btn-tonal { background: var(--primary-container); color: var(--on-primary-container); }
+.btn-text { background: transparent; color: var(--primary); height: auto; box-shadow: none; font-weight: 600; }
+
+/* Text Field */
+.text-field { width: 100%; margin-bottom: 14px; }
+.text-field label { font-size: 13px; font-weight: 600; color: var(--on-surface-variant); margin-bottom: 6px; display: block; letter-spacing: 0.1px; }
+.text-field input {
+  width: 100%; height: 52px; border: 1.5px solid var(--outline-variant); border-radius: var(--r-md);
+  padding: 0 var(--md); font-size: 16px; font-family: var(--font); background: var(--surface-container);
+  color: var(--on-surface); outline: none; transition: all 0.2s;
+}
+.text-field input:focus { border-color: var(--primary); background: var(--surface); box-shadow: 0 0 0 3px rgba(45,159,127,0.1); }
+.text-field input::placeholder { color: #B0B8C1; }
+
+/* Chip */
+.chip {
+  display: inline-flex; align-items: center; padding: 7px 16px; border-radius: var(--r-full);
+  font-size: 13px; font-weight: 600; border: 1.5px solid var(--outline-variant);
+  background: transparent; color: var(--on-surface-variant); white-space: nowrap;
+}
+.chip.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 2px 8px rgba(45,159,127,0.25); }
+
+/* Score Bar */
+.score-bar { height: 6px; background: var(--surface-variant); border-radius: var(--r-full); overflow: hidden; }
+.score-bar .fill { height: 100%; border-radius: var(--r-full); }
+
+/* Badge */
+.badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: var(--r-full); font-size: 12px; font-weight: 600; }
+.badge-success { background: #ECFDF5; color: #059669; }
+
+/* iOS Status Bar SVGs - reusable snippet */
+/* Signal + WiFi + Battery in each HTML to avoid repetition in docs */
+
+svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }

@@ -6,17 +6,23 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("StatusPages")
 
 fun Application.configureStatusPages() {
     install(StatusPages) {
         exception<IllegalArgumentException> { call, cause ->
-            call.respond(HttpStatusCode.BadRequest, err(cause.message ?: "请求参数错误"))
+            logger.warn("Bad request: {}", cause.message, cause)
+            call.respond(HttpStatusCode.BadRequest, err("请求参数错误"))
         }
         exception<IllegalStateException> { call, cause ->
-            call.respond(HttpStatusCode.Conflict, err(cause.message ?: "操作冲突"))
+            logger.warn("Conflict: {}", cause.message, cause)
+            call.respond(HttpStatusCode.Conflict, err("操作冲突"))
         }
         exception<Exception> { call, cause ->
-            call.respond(HttpStatusCode.InternalServerError, err(cause.message ?: "服务器内部错误"))
+            logger.error("Internal server error", cause)
+            call.respond(HttpStatusCode.InternalServerError, err("服务器内部错误"))
         }
     }
 }

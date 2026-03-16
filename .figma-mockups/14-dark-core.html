@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=390">
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="dark.css">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content: center; background: #0A0B0C; }
+.phone-frame { flex-shrink: 0; }
+/* Dashboard Header */
+.dh { padding: 4px 20px 14px; display: flex; justify-content: space-between; align-items: center; }
+.dh-left .greeting { font-size: 14px; color: var(--on-surface-variant); font-weight: 500; letter-spacing: 0.1px; }
+.dh-left .name { font-size: 26px; font-weight: 800; color: var(--on-surface); letter-spacing: -0.6px; margin-top: 2px; }
+.dh-right { display: flex; gap: 8px; align-items: center; }
+.dh-right .bell { width: 44px; height: 44px; border-radius: 50%; background: var(--surface-variant); display: flex; align-items: center; justify-content: center; position: relative; border: 0.5px solid rgba(255,255,255,0.06); }
+.dh-right .bell svg { width: 20px; height: 20px; color: var(--on-surface-variant); }
+.dh-right .bell .dot { position: absolute; top: 9px; right: 10px; width: 8px; height: 8px; border-radius: 50%; background: var(--error); border: 2px solid var(--background); }
+.dh-right .av { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-weight: 700; box-shadow: 0 3px 12px rgba(251,113,133,0.3); }
+
+/* Hero Card */
+.hero { border-radius: var(--r-xl); padding: 18px 20px; margin: 0 16px 12px; color: white; position: relative; overflow: hidden;
+  background: var(--grad-hero);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.hero::before { content: ''; position: absolute; top: -50px; right: -30px; width: 160px; height: 160px; border-radius: 50%; background: rgba(255,255,255,0.04); }
+.hero::after { content: ''; position: absolute; bottom: -60px; left: -30px; width: 140px; height: 140px; border-radius: 50%; background: rgba(255,255,255,0.03); }
+.hero .dec1 { position: absolute; top: 15px; right: 50px; width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.03); }
+.hero .dec2 { position: absolute; bottom: 10px; right: 15px; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.02); }
+
+.hero-top { display: flex; align-items: center; gap: 18px; position: relative; z-index: 1; }
+.hr { width: 84px; height: 84px; position: relative; flex-shrink: 0; z-index: 1; }
+.hr svg { transform: rotate(-90deg); }
+.hr .v { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+.hr .v .n { font-size: 34px; font-weight: 800; display: block; letter-spacing: -1px; line-height: 1; }
+.hr .v .l { font-size: 10px; opacity: 0.65; font-weight: 500; letter-spacing: 0.5px; margin-top: 2px; display: block; }
+.hi { z-index: 1; flex: 1; }
+.hi h2 { font-size: 19px; font-weight: 700; margin-bottom: 5px; letter-spacing: -0.3px; }
+.hi p { font-size: 13px; opacity: 0.72; line-height: 1.4; }
+
+.hero-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; position: relative; z-index: 1; }
+.ht { display: inline-flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.12); backdrop-filter: blur(8px); padding: 6px 14px; border-radius: var(--r-full); font-size: 13px; font-weight: 600; }
+.ht svg { width: 14px; height: 14px; }
+.hero-date { font-size: 12px; opacity: 0.55; font-weight: 500; }
+
+/* Mini Metrics */
+.metrics { display: flex; gap: 6px; padding: 0 16px; margin: 0 0 12px; }
+.metric { flex: 1; background: var(--surface); border-radius: var(--r-md); padding: 8px 6px 6px; text-align: center; border: 0.5px solid rgba(255,255,255,0.04); }
+.metric .val { font-size: 16px; font-weight: 800; line-height: 1; }
+.metric .lbl { font-size: 10px; color: var(--on-surface-variant); font-weight: 600; margin-top: 4px; }
+.metric .mini-bar { width: 100%; height: 3px; background: var(--surface-variant); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+.metric .mini-bar .fill { height: 100%; border-radius: 2px; }
+
+/* Reminder Card */
+.rm { border-radius: var(--r-lg); padding: 12px 16px; margin: 0 16px 12px; display: flex; align-items: center; gap: 14px; position: relative; overflow: hidden; }
+.rm .ic { width: 44px; height: 44px; border-radius: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.rm .ic svg { width: 22px; height: 22px; }
+.rm .tx { flex: 1; }
+.rm .tx .t { font-size: 15px; font-weight: 700; color: var(--on-surface); }
+.rm .tx .s { font-size: 12px; color: var(--on-surface-variant); margin-top: 2px; }
+.rm .ab { padding: 8px 20px; border-radius: var(--r-full); color: #2B1700; font-size: 13px; font-weight: 700; border: none; font-family: var(--font); flex-shrink: 0; }
+
+/* Quick Actions — 2x2 Bento Grid */
+.acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 16px; margin-bottom: 12px; }
+.ai { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--surface); border-radius: var(--r-lg); border: 0.5px solid rgba(255,255,255,0.04); }
+.ai .ic { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ai .ic svg { width: 20px; height: 20px; }
+.ai .ai-text { display: flex; flex-direction: column; }
+.ai .ai-text .ai-title { font-size: 14px; font-weight: 700; color: var(--on-surface); }
+.ai .ai-text .ai-sub { font-size: 11px; color: var(--on-surface-variant); margin-top: 1px; }
+
+/* Skin Tip Card */
+.tip-card { border-radius: var(--r-lg); padding: 12px 16px; margin: 0 16px 12px; display: flex; align-items: center; gap: 14px; border: 0.5px solid rgba(255,255,255,0.04); }
+.tip-card .ic { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.tip-card .ic svg { width: 20px; height: 20px; }
+.tip-card .tx { flex: 1; }
+.tip-card .tx .t { font-size: 14px; font-weight: 700; color: var(--on-surface); }
+.tip-card .tx .s { font-size: 12px; color: var(--on-surface-variant); margin-top: 2px; line-height: 1.4; }
+/* Check-in Card */
+.ck { background: var(--surface); border-radius: var(--r-lg); padding: 14px; margin: 0 16px 12px; border: 0.5px solid rgba(255,255,255,0.04); }
+.ck-h { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.ck-h .t { font-size: 17px; font-weight: 700; color: var(--on-surface); }
+.ck-s { display: flex; align-items: center; gap: 5px; font-weight: 700; font-size: 14px; }
+.ck-s svg { width: 16px; height: 16px; }
+.wk { display: flex; justify-content: space-between; }
+.dy { text-align: center; flex: 1; }
+.dy .dl { font-size: 11px; color: var(--on-surface-variant); margin-bottom: 6px; font-weight: 600; }
+.dy .dc { width: 34px; height: 34px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+.dy .dc.done { background: var(--primary); color: white; box-shadow: 0 2px 8px rgba(88,202,165,0.25); }
+.dy .dc.today { border: 2.5px solid var(--primary); color: var(--primary); background: rgba(88,202,165,0.1); font-weight: 800; }
+
+/* Milestone Badge */
+.milestone { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: linear-gradient(135deg, var(--mint-50), var(--apricot-50)); border-radius: var(--r-md); margin-top: 12px; }
+.milestone svg { width: 18px; height: 18px; flex-shrink: 0; }
+.milestone span { font-size: 12px; font-weight: 600; color: var(--on-surface); }
+
+/* Trend Card */
+.ts { background: var(--surface); border-radius: var(--r-lg); padding: 14px; margin: 0 16px 12px; border: 0.5px solid rgba(255,255,255,0.04); }
+/* Compare Card */
+.cmp { background: linear-gradient(135deg, rgba(21,62,50,0.6) 0%, rgba(29,107,91,0.3) 50%, rgba(40,30,60,0.3) 100%); border-radius: var(--r-xl); padding: 16px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.04); }
+.cmp .hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.cmp .hd .t { font-size: 17px; font-weight: 700; color: var(--on-surface); }
+.cmp .hd .a { font-size: 13px; color: var(--primary); font-weight: 600; display: flex; align-items: center; gap: 4px; }
+.cmp .hd .a svg { width: 14px; height: 14px; }
+.phs { display: flex; gap: 10px; margin-bottom: 12px; }
+.phs .ph { flex: 1; height: 155px; border-radius: var(--r-lg); position: relative; overflow: hidden; }
+.phs .ph:first-child { background: linear-gradient(145deg, #D4B8A8 0%, #C8A898 40%, #BBAA98 100%); }
+.phs .ph:last-child { background: linear-gradient(145deg, #E8CFC0 0%, #DCC4B4 40%, #D0BAA8 100%); }
+.phs .ph::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-48%); width: 70px; height: 90px; border-radius: 35px; border: 1px solid rgba(0,0,0,0.04); background: radial-gradient(ellipse, rgba(0,0,0,0.03), transparent 70%); z-index: 1; }
+.phs .ph::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 35%, rgba(0,0,0,0.5)); z-index: 2; }
+.phs .vs { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.15); backdrop-filter: blur(4px); box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; z-index: 5; font-size: 10px; font-weight: 800; color: rgba(255,255,255,0.8); letter-spacing: 0.5px; }
+.phs .ph .lb { position: absolute; bottom: 10px; left: 12px; z-index: 3; color: white; font-size: 13px; font-weight: 700; letter-spacing: -0.2px; }
+.phs .ph .dt { position: absolute; bottom: 10px; right: 12px; z-index: 3; color: rgba(255,255,255,0.7); font-size: 11px; font-weight: 500; }
+.cmp-sc { text-align: center; padding: 6px 0 2px; }
+.cmp-sc .d { font-size: 24px; font-weight: 800; color: var(--success); letter-spacing: -0.5px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+.cmp-sc .d svg { width: 18px; height: 18px; }
+.cmp-sc .s { font-size: 13px; color: var(--on-surface-variant); margin-top: 3px; }
+/* Trend Filter */
+.tf { background: var(--surface-variant); border-radius: var(--r-lg); padding: 16px; margin-bottom: 12px; }
+.chips { display: flex; gap: 8px; margin-bottom: 14px; }
+/* Record Item */
+.rec { background: var(--surface-variant); border-radius: var(--r-lg); padding: 14px; margin-bottom: 8px; display: flex; gap: 14px; align-items: center; border: 0.5px solid rgba(255,255,255,0.04); }
+.rec .thumb { width: 60px; height: 60px; border-radius: var(--r-md); flex-shrink: 0; }
+.rec:nth-child(odd) .thumb { background: linear-gradient(145deg, #D4B8A8, #C8A898); position: relative; overflow: hidden; }
+.rec:nth-child(even) .thumb { background: linear-gradient(145deg, #E0C8B8, #D4B8A8); position: relative; overflow: hidden; }
+.rec .thumb::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-46%); width: 32px; height: 40px; border-radius: 16px; border: 0.8px solid rgba(0,0,0,0.04); background: radial-gradient(ellipse, rgba(0,0,0,0.03), transparent 70%); }
+.rec .info { flex: 1; }
+.rec .info .dt { font-size: 15px; font-weight: 700; color: var(--on-surface); letter-spacing: -0.2px; }
+.rec .info .sm { font-size: 13px; color: var(--on-surface-variant); margin-top: 3px; line-height: 1.3; }
+.mr { width: 46px; height: 46px; position: relative; flex-shrink: 0; }
+.mr svg { transform: rotate(-90deg); }
+.mr .v { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 14px; font-weight: 800; color: var(--on-surface); }
+/* Profile Hero Card */
+.pcard { background: var(--grad-hero); border-radius: var(--r-xl); padding: 22px 20px; margin: 0 16px 14px; display: flex; align-items: center; gap: 16px; box-shadow: 0 8px 28px rgba(0,0,0,0.4); position: relative; overflow: hidden; color: white; }
+.pcard::before { content: ''; position: absolute; top: -30px; right: -30px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.04); }
+.pcard .av { width: 58px; height: 58px; border-radius: 50%; background: rgba(255,255,255,0.15); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.2); }
+.pcard .inf { flex: 1; z-index: 1; }
+.pcard .inf .nm { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; }
+.pcard .inf .em { font-size: 13px; opacity: 0.75; margin-top: 2px; }
+.pcard .inf .mbr { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: var(--r-full); background: rgba(255,255,255,0.12); backdrop-filter: blur(4px); font-size: 12px; font-weight: 700; margin-top: 8px; }
+.pcard .inf .mbr svg { width: 14px; height: 14px; fill: #FFD700; stroke: none; }
+.pcard .arr { z-index: 1; opacity: 0.6; }
+.pcard .arr svg { width: 20px; height: 20px; color: white; }
+/* Stats */
+.sts { background: var(--surface-variant); border-radius: var(--r-lg); padding: 18px 12px; margin: 0 16px 14px; display: flex; text-align: center; }
+.st { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.st .v { font-size: 26px; font-weight: 800; color: var(--on-surface); letter-spacing: -0.5px; }
+.st .v.mint { color: var(--primary); }
+.st .v.orange { color: var(--secondary); }
+.st .l { font-size: 11px; color: var(--on-surface-variant); font-weight: 600; }
+.st-d { width: 0.5px; background: var(--outline-variant); margin: 6px 0; }
+.st .mini { width: 36px; height: 36px; position: relative; margin-bottom: 2px; }
+.st .mini svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+.st .mini .mv { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 11px; font-weight: 800; color: var(--on-surface); }
+/* Menu sections */
+.msec { background: var(--surface-variant); border-radius: var(--r-lg); padding: 2px 16px; margin: 0 16px 12px; border: 0.5px solid rgba(255,255,255,0.04); }
+</style>
+</head>
+<body>
+<!-- ===== DASHBOARD (Dark) ===== -->
+<div class="phone-frame dark">
+  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="#E4E3E8" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="#E4E3E8" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#E4E3E8" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="#E4E3E8"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="#E4E3E8" opacity="0.4" stroke="none"/></svg></div></div>
+  <div class="dh">
+    <div class="dh-left"><div class="greeting">上午好 ☀️</div><div class="name">Lisa</div></div>
+    <div class="dh-right">
+      <div class="bell"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="dot"></div></div>
+      <div class="av" style="background:linear-gradient(135deg,var(--rose-300),var(--rose-400))">L</div>
+    </div>
+  </div>
+
+  <div class="content-no-padding" style="padding-bottom:84px">
+    <!-- Hero Card -->
+    <div class="hero">
+      <div class="dec1"></div>
+      <div class="dec2"></div>
+      <div class="hero-top">
+        <div class="hr">
+          <svg width="84" height="84" viewBox="0 0 84 84">
+            <circle cx="42" cy="42" r="35" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6.5"/>
+            <circle cx="42" cy="42" r="35" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="6.5" stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="39.6"/>
+          </svg>
+          <div class="v"><span class="n">82</span><span class="l">总评分</span></div>
+        </div>
+        <div class="hi">
+          <h2>皮肤状态不错哦</h2>
+          <p>各项指标都在稳步改善中，继续保持~</p>
+        </div>
+      </div>
+      <div class="hero-bottom">
+        <div class="ht"><svg viewBox="0 0 16 16" stroke="white" stroke-width="2.5"><path d="M8 12V4M4.5 7L8 3.5 11.5 7"/></svg> 较上周 +3.2</div>
+        <div class="hero-date">2026.03.14 记录</div>
+      </div>
+    </div>
+
+    <!-- Mini Metrics -->
+    <div class="metrics">
+      <div class="metric"><div class="val" style="color:var(--acne)">85</div><div class="lbl">痘痘</div><div class="mini-bar"><div class="fill" style="width:85%;background:var(--acne)"></div></div></div>
+      <div class="metric"><div class="val" style="color:var(--pore)">78</div><div class="lbl">毛孔</div><div class="mini-bar"><div class="fill" style="width:78%;background:var(--pore)"></div></div></div>
+      <div class="metric"><div class="val" style="color:var(--evenness)">82</div><div class="lbl">均匀</div><div class="mini-bar"><div class="fill" style="width:82%;background:var(--evenness)"></div></div></div>
+      <div class="metric"><div class="val" style="color:var(--redness)">75</div><div class="lbl">泛红</div><div class="mini-bar"><div class="fill" style="width:75%;background:var(--redness)"></div></div></div>
+      <div class="metric"><div class="val" style="color:var(--hydration)">80</div><div class="lbl">水润</div><div class="mini-bar"><div class="fill" style="width:80%;background:var(--hydration)"></div></div></div>
+    </div>
+
+    <!-- Photo Reminder -->
+    <div class="rm" style="background:rgba(251,113,133,0.08);border:1px solid rgba(251,113,133,0.12)">
+      <div class="ic" style="background:rgba(251,113,133,0.12)"><svg viewBox="0 0 24 24" style="color:#FB7185"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+      <div class="tx"><div class="t">今天还没拍照哦~</div><div class="s">坚持记录，看见皮肤的变化</div></div>
+      <button class="ab" style="background:var(--secondary);box-shadow:0 2px 8px rgba(255,201,150,0.2)">去拍照</button>
+    </div>
+
+    <!-- Quick Actions — 2x2 Bento -->
+    <div class="acts">
+      <div class="ai">
+        <div class="ic" style="background:rgba(88,202,165,0.12)"><svg viewBox="0 0 24 24" style="color:var(--primary)"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 4 5-8"/></svg></div>
+        <div class="ai-text"><span class="ai-title">肌肤趋势</span><span class="ai-sub">7 天变化</span></div>
+      </div>
+      <div class="ai">
+        <div class="ic" style="background:rgba(255,201,150,0.12)"><svg viewBox="0 0 24 24" style="color:var(--secondary)"><path d="M8 2h8l2 4H6l2-4z"/><rect x="6" y="6" width="12" height="14" rx="2"/><line x1="12" y1="10" x2="12" y2="16"/></svg></div>
+        <div class="ai-text"><span class="ai-title">护肤品</span><span class="ai-sub">6 个在用</span></div>
+      </div>
+      <div class="ai">
+        <div class="ic" style="background:rgba(196,181,253,0.12)"><svg viewBox="0 0 24 24" style="color:var(--lavender-400)"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg></div>
+        <div class="ai-text"><span class="ai-title">归因分析</span><span class="ai-sub">AI 洞察</span></div>
+      </div>
+      <div class="ai">
+        <div class="ic" style="background:rgba(251,113,133,0.12)"><svg viewBox="0 0 24 24" style="color:var(--rose-400)"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div>
+        <div class="ai-text"><span class="ai-title">分享对比</span><span class="ai-sub">记录蜕变</span></div>
+      </div>
+    </div>
+
+    <!-- Skin Tip -->
+    <div class="tip-card" style="background:rgba(196,181,253,0.06);border-color:rgba(196,181,253,0.08)">
+      <div class="ic" style="background:rgba(196,181,253,0.12)"><svg viewBox="0 0 24 24" style="color:var(--lavender-400)"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/><circle cx="12" cy="12" r="5"/></svg></div>
+      <div class="tx"><div class="t">今日紫外线偏强</div><div class="s">记得涂防晒哦~ 出门前 15 分钟使用效果最佳</div></div>
+    </div>
+
+    <!-- Check-in -->
+    <div class="ck">
+      <div class="ck-h">
+        <div class="t">每日打卡</div>
+        <div class="ck-s" style="color:var(--rose-300)"><svg viewBox="0 0 16 16" fill="var(--rose-300)" stroke="none"><path d="M8 2C6.5 4 5 6.5 5 8.5 5 11 6.3 12 8 12s3-1 3-3.5C11 6.5 9.5 4 8 2z"/></svg> 连续 7 天</div>
+      </div>
+      <div class="wk">
+        <div class="dy"><div class="dl">一</div><div class="dc done"><svg viewBox="0 0 14 14" width="12" height="12" stroke="white" stroke-width="2.5"><path d="M3 7l2.5 2.5L11 4.5"/></svg></div></div>
+        <div class="dy"><div class="dl">二</div><div class="dc done"><svg viewBox="0 0 14 14" width="12" height="12" stroke="white" stroke-width="2.5"><path d="M3 7l2.5 2.5L11 4.5"/></svg></div></div>
+        <div class="dy"><div class="dl">三</div><div class="dc done"><svg viewBox="0 0 14 14" width="12" height="12" stroke="white" stroke-width="2.5"><path d="M3 7l2.5 2.5L11 4.5"/></svg></div></div>
+        <div class="dy"><div class="dl">四</div><div class="dc done"><svg viewBox="0 0 14 14" width="12" height="12" stroke="white" stroke-width="2.5"><path d="M3 7l2.5 2.5L11 4.5"/></svg></div></div>
+        <div class="dy"><div class="dl">五</div><div class="dc done"><svg viewBox="0 0 14 14" width="12" height="12" stroke="white" stroke-width="2.5"><path d="M3 7l2.5 2.5L11 4.5"/></svg></div></div>
+        <div class="dy"><div class="dl">六</div><div class="dc done"><svg viewBox="0 0 14 14" width="12" height="12" stroke="white" stroke-width="2.5"><path d="M3 7l2.5 2.5L11 4.5"/></svg></div></div>
+        <div class="dy"><div class="dl">日</div><div class="dc today">7</div></div>
+      </div>
+      <div class="milestone">
+        <svg viewBox="0 0 24 24" width="18" height="18" style="color:var(--secondary)" stroke="none" fill="var(--secondary)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <span>太棒了! 连续打卡 7 天，达成一周成就</span>
+      </div>
+    </div>
+
+    <!-- Trend Chart -->
+    <div class="ts">
+      <div class="section-header"><div class="title">肌肤趋势</div><div class="action">查看全部</div></div>
+      <!-- Period selector chips -->
+      <div style="display:flex;gap:6px;margin-bottom:12px">
+        <div style="padding:5px 14px;border-radius:var(--r-full);background:var(--primary);color:var(--on-primary);font-size:12px;font-weight:600">7 天</div>
+        <div style="padding:5px 14px;border-radius:var(--r-full);background:var(--surface-variant);color:var(--on-surface-variant);font-size:12px;font-weight:600">30 天</div>
+        <div style="padding:5px 14px;border-radius:var(--r-full);background:var(--surface-variant);color:var(--on-surface-variant);font-size:12px;font-weight:600">90 天</div>
+      </div>
+      <div style="height:100px;position:relative">
+        <svg viewBox="0 0 340 100" style="width:100%;height:100%;stroke:none">
+          <defs>
+            <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--primary)" stop-opacity="0.15"/><stop offset="100%" stop-color="var(--primary)" stop-opacity="0.01"/></linearGradient>
+            <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <!-- Y-axis labels -->
+          <text x="4" y="12" font-size="9" fill="var(--on-surface-variant)" font-family="var(--font)" font-weight="500" stroke="none" opacity="0.5">90</text>
+          <text x="4" y="45" font-size="9" fill="var(--on-surface-variant)" font-family="var(--font)" font-weight="500" stroke="none" opacity="0.5">75</text>
+          <text x="4" y="78" font-size="9" fill="var(--on-surface-variant)" font-family="var(--font)" font-weight="500" stroke="none" opacity="0.5">60</text>
+          <!-- Grid lines -->
+          <line x1="22" y1="8" x2="340" y2="8" stroke="var(--outline-variant)" stroke-width="0.5" stroke-dasharray="3,4"/>
+          <line x1="22" y1="42" x2="340" y2="42" stroke="var(--outline-variant)" stroke-width="0.5" stroke-dasharray="3,4"/>
+          <line x1="22" y1="75" x2="340" y2="75" stroke="var(--outline-variant)" stroke-width="0.5" stroke-dasharray="3,4"/>
+          <!-- Area fill -->
+          <path d="M30,74 C78,70 126,60 174,46 C222,32 270,22 318,17 L318,92 L30,92 Z" fill="url(#tg)"/>
+          <!-- Trend line -->
+          <path d="M30,74 C78,70 126,60 174,46 C222,32 270,22 318,17" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Data points -->
+          <circle cx="30" cy="74" r="3" fill="var(--primary)"/>
+          <circle cx="78" cy="67" r="3" fill="var(--primary)"/>
+          <circle cx="126" cy="55" r="3" fill="var(--primary)"/>
+          <circle cx="174" cy="42" r="3" fill="var(--primary)"/>
+          <circle cx="222" cy="30" r="3" fill="var(--primary)"/>
+          <circle cx="270" cy="21" r="3" fill="var(--primary)"/>
+          <!-- Current point with glow -->
+          <circle cx="318" cy="17" r="7" fill="var(--surface)" stroke="var(--primary)" stroke-width="2.5" filter="url(#glow)"/>
+          <!-- Current value tooltip -->
+          <rect x="296" y="0" width="44" height="16" rx="5" fill="var(--primary)" stroke="none"/>
+          <text x="318" y="11" text-anchor="middle" font-size="10" fill="var(--on-primary)" font-family="var(--font)" font-weight="700" stroke="none">82 分</text>
+        </svg>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--on-surface-variant);margin-top:6px;font-weight:500;padding:0 8px"><span>3/8</span><span>3/9</span><span>3/10</span><span>3/11</span><span>3/12</span><span>3/13</span><span style="color:var(--primary);font-weight:700">今天</span></div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="ni active"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="var(--primary)" stroke="var(--primary)" stroke-width="1.5"/><polyline points="9 22 9 12 15 12 15 22" stroke="white" stroke-width="1.5" fill="none"/></svg><div class="label">首页</div></div>
+    <div class="ni"><svg viewBox="0 0 24 24" width="24" height="24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><div class="label">记录</div></div>
+    <div class="ni-fab"><div class="fab"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div class="label">拍照</div></div>
+    <div class="ni"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 4 5-8"/></svg><div class="label">分析</div></div>
+    <div class="ni"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="label">我的</div></div>
+  </div>
+</div>
+
+<!-- ===== TIMELINE (Dark) ===== -->
+<div class="phone-frame dark">
+  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="#E4E3E8" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="#E4E3E8" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#E4E3E8" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="#E4E3E8"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="#E4E3E8" opacity="0.4" stroke="none"/></svg></div></div>
+  <div class="top-app-bar"><div class="title">肌肤记录</div></div>
+  <div class="content" style="padding-bottom:84px">
+    <div class="cmp">
+      <div class="hd"><div class="t">前后对比</div><div class="a"><svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>分享</div></div>
+      <div class="phs" style="position:relative"><div class="ph"><div class="lb" style="z-index:3">72 分</div><div class="dt" style="z-index:3">3月1日</div></div><div class="vs">VS</div><div class="ph"><div class="lb" style="z-index:3">82 分</div><div class="dt" style="z-index:3">3月14日</div></div></div>
+      <div class="cmp-sc"><div class="d"><svg viewBox="0 0 18 18" stroke="var(--success)" stroke-width="2.5"><path d="M9 14V4M5 7.5L9 3.5 13 7.5"/></svg>+10 分</div><div class="s">皮肤在变好哦，继续加油~</div></div>
+    </div>
+
+    <div class="tf">
+      <div class="section-header"><div class="title">趋势变化</div></div>
+      <div class="chips"><div class="chip active">总评分</div><div class="chip">痘痘</div><div class="chip">毛孔</div><div class="chip">均匀度</div></div>
+      <div style="height:120px"><svg viewBox="0 0 340 110" style="width:100%;height:100%;stroke:none"><defs><linearGradient id="tg3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--primary)" stop-opacity="0.15"/><stop offset="100%" stop-color="var(--primary)" stop-opacity="0.01"/></linearGradient></defs><line x1="0" y1="27" x2="340" y2="27" stroke="var(--outline-variant)" stroke-width="0.5" stroke-dasharray="3,3"/><line x1="0" y1="55" x2="340" y2="55" stroke="var(--outline-variant)" stroke-width="0.5" stroke-dasharray="3,3"/><line x1="0" y1="82" x2="340" y2="82" stroke="var(--outline-variant)" stroke-width="0.5" stroke-dasharray="3,3"/><path d="M0,90 C48,85 96,72 144,55 C192,38 240,28 288,20 C312,16 340,14 340,14 L340,110 L0,110 Z" fill="url(#tg3)"/><path d="M0,90 C48,85 96,72 144,55 C192,38 240,28 288,20 C312,16 340,14 340,14" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round"/><circle cx="0" cy="90" r="3" fill="var(--primary)"/><circle cx="49" cy="83" r="3" fill="var(--primary)"/><circle cx="97" cy="68" r="3" fill="var(--primary)"/><circle cx="146" cy="52" r="3" fill="var(--primary)"/><circle cx="194" cy="35" r="3" fill="var(--primary)"/><circle cx="243" cy="24" r="3" fill="var(--primary)"/><circle cx="291" cy="18" r="3" fill="var(--primary)"/><circle cx="340" cy="14" r="6" fill="var(--surface-variant)" stroke="var(--primary)" stroke-width="2.5"/></svg></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--on-surface-variant);margin-top:6px;font-weight:500"><span>3/1</span><span>3/3</span><span>3/5</span><span>3/7</span><span>3/9</span><span>3/11</span><span>3/13</span><span style="color:var(--primary);font-weight:700">今天</span></div>
+    </div>
+
+    <div class="section-header"><div class="title">所有记录</div></div>
+    <div class="rec"><div class="thumb"></div><div class="info"><div class="dt" style="display:flex;align-items:center;gap:6px">2026年3月14日 <span style="font-size:11px;font-weight:700;color:var(--success);background:rgba(52,211,153,0.12);padding:1px 6px;border-radius:4px">↑+4</span></div><div class="sm">皮肤状态不错哦，痘痘明显减少</div></div><div class="mr"><svg width="46" height="46" viewBox="0 0 46 46"><circle cx="23" cy="23" r="19" fill="none" stroke="var(--outline-variant)" stroke-width="3.5"/><circle cx="23" cy="23" r="19" fill="none" stroke="var(--primary)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="97.4" stroke-dashoffset="17.5"/></svg><div class="v">82</div></div></div>
+    <div class="rec"><div class="thumb"></div><div class="info"><div class="dt" style="display:flex;align-items:center;gap:6px">2026年3月13日 <span style="font-size:11px;font-weight:700;color:var(--success);background:rgba(52,211,153,0.12);padding:1px 6px;border-radius:4px">↑+2</span></div><div class="sm">肤色均匀度有所提升</div></div><div class="mr"><svg width="46" height="46" viewBox="0 0 46 46"><circle cx="23" cy="23" r="19" fill="none" stroke="var(--outline-variant)" stroke-width="3.5"/><circle cx="23" cy="23" r="19" fill="none" stroke="var(--primary)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="97.4" stroke-dashoffset="21.4"/></svg><div class="v">78</div></div></div>
+    <div class="rec"><div class="thumb"></div><div class="info"><div class="dt" style="display:flex;align-items:center;gap:6px">2026年3月12日 <span style="font-size:11px;font-weight:700;color:var(--success);background:rgba(52,211,153,0.12);padding:1px 6px;border-radius:4px">↑+3</span></div><div class="sm">毛孔收缩效果显现</div></div><div class="mr"><svg width="46" height="46" viewBox="0 0 46 46"><circle cx="23" cy="23" r="19" fill="none" stroke="var(--outline-variant)" stroke-width="3.5"/><circle cx="23" cy="23" r="19" fill="none" stroke="var(--secondary)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="97.4" stroke-dashoffset="25.3"/></svg><div class="v">74</div></div></div>
+    <div class="rec"><div class="thumb"></div><div class="info"><div class="dt" style="display:flex;align-items:center;gap:6px">2026年3月11日 <span style="font-size:11px;font-weight:700;color:var(--on-surface-variant);background:var(--outline-variant);padding:1px 6px;border-radius:4px">→ 0</span></div><div class="sm">整体评分稳定</div></div><div class="mr"><svg width="46" height="46" viewBox="0 0 46 46"><circle cx="23" cy="23" r="19" fill="none" stroke="var(--outline-variant)" stroke-width="3.5"/><circle cx="23" cy="23" r="19" fill="none" stroke="var(--secondary)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="97.4" stroke-dashoffset="29.2"/></svg><div class="v">70</div></div></div>
+  </div>
+  <div class="bottom-nav">
+    <div class="ni"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="label">首页</div></div>
+    <div class="ni active"><svg viewBox="0 0 24 24" width="24" height="24"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="var(--primary)" stroke="var(--primary)"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="var(--primary)" stroke="var(--primary)"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="var(--primary)" stroke="var(--primary)"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="var(--primary)" stroke="var(--primary)"/></svg><div class="label">记录</div></div>
+    <div class="ni-fab"><div class="fab"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div class="label">拍照</div></div>
+    <div class="ni"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 4 5-8"/></svg><div class="label">分析</div></div>
+    <div class="ni"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="label">我的</div></div>
+  </div>
+</div>
+
+<!-- ===== PROFILE (Dark) ===== -->
+<div class="phone-frame dark">
+  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="#E4E3E8" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="#E4E3E8" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#E4E3E8" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="#E4E3E8"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="#E4E3E8" opacity="0.4" stroke="none"/></svg></div></div>
+  <div class="top-app-bar"><div class="title">我的</div><div class="action"><svg viewBox="0 0 24 24" width="24" height="24" style="color:var(--on-surface-variant)"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></div></div>
+  <div class="content-no-padding" style="overflow-y:auto;padding-bottom:84px">
+    <!-- Profile Hero -->
+    <div class="pcard">
+      <div class="av" style="background:linear-gradient(135deg,#FDA4AF,#FB7185)">L</div>
+      <div class="inf">
+        <div class="nm">Lisa</div>
+        <div class="em">lisa@example.com</div>
+        <div class="mbr"><svg viewBox="0 0 14 14"><path d="M7 1l1.8 3.7L13 5.4l-3 2.9.7 4L7 10.3 3.3 12.3l.7-4-3-2.9 4.2-.7z"/></svg> Pro 会员 <span style="margin-left:4px;padding:2px 8px;border-radius:var(--r-full);background:rgba(255,255,255,0.12);font-size:11px;font-weight:600">混合肌</span></div>
+      </div>
+      <div class="arr"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="white"/></svg></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="sts">
+      <div class="st"><div class="v">42</div><div class="l">总记录</div></div>
+      <div class="st-d"></div>
+      <div class="st"><div class="v orange">7</div><div class="l">连续打卡</div></div>
+      <div class="st-d"></div>
+      <div class="st"><div class="v">8</div><div class="l">护肤品</div></div>
+      <div class="st-d"></div>
+      <div class="st">
+        <div class="mini"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" fill="none" stroke="var(--outline-variant)" stroke-width="3"/><circle cx="18" cy="18" r="15" fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round" stroke-dasharray="77" stroke-dashoffset="14"/></svg><div class="mv">82</div></div>
+        <div class="l">最新评分</div>
+      </div>
+    </div>
+
+    <!-- Skin goals -->
+    <div style="background:var(--surface-variant);border-radius:var(--r-lg);padding:14px 16px;margin:0 16px 12px;border:0.5px solid rgba(255,255,255,0.04)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-size:15px;font-weight:700;color:var(--on-surface)">我的护肤目标</div><div style="font-size:13px;color:var(--primary);font-weight:600">编辑</div></div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <div style="display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:var(--r-full);background:rgba(251,113,133,0.1);font-size:13px;font-weight:600;color:#FDA4AF"><svg viewBox="0 0 14 14" width="14" height="14" style="color:#FDA4AF"><circle cx="7" cy="7" r="5"/><circle cx="7" cy="7" r="2" fill="#FDA4AF" stroke="none"/></svg>祛痘</div>
+        <div style="display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:var(--r-full);background:rgba(88,202,165,0.1);font-size:13px;font-weight:600;color:var(--primary)"><svg viewBox="0 0 14 14" width="14" height="14" style="color:var(--primary)"><circle cx="7" cy="7" r="5"/><path d="M5 7l1.5 1.5L9 6"/></svg>收毛孔</div>
+        <div style="display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:var(--r-full);background:rgba(196,181,253,0.1);font-size:13px;font-weight:600;color:#C4B5FD"><svg viewBox="0 0 14 14" width="14" height="14" style="color:#C4B5FD"><path d="M7 1v12M1 7h12"/></svg>提亮</div>
+        <div style="display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:var(--r-full);background:var(--outline-variant);font-size:13px;font-weight:600;color:var(--on-surface-variant)"><svg viewBox="0 0 14 14" width="14" height="14"><path d="M7 3v8M3 7h8"/></svg>添加</div>
+      </div>
+    </div>
+
+    <!-- Menu: Features -->
+    <div class="msec">
+      <div class="menu-item"><div class="icon-wrap" style="background:rgba(255,201,150,0.12)"><svg viewBox="0 0 24 24" style="color:var(--secondary)"><path d="M8 2h8l2 4H6l2-4z"/><rect x="6" y="6" width="12" height="14" rx="2"/><line x1="12" y1="10" x2="12" y2="16"/></svg></div><div class="text"><div class="primary-text">护肤品管理</div><div class="secondary-text">管理你的护肤品清单</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:rgba(124,58,237,0.12)"><svg viewBox="0 0 24 24" style="color:#A78BFA"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 4 5-8"/></svg></div><div class="text"><div class="primary-text">归因分析报告</div><div class="secondary-text">查看护肤品效果分析</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:rgba(251,191,36,0.12)"><svg viewBox="0 0 24 24" style="color:var(--warning)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg></div><div class="text"><div class="primary-text">会员中心</div><div class="secondary-text">Pro 会员 · 2026.12.14 到期</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+    </div>
+
+    <!-- Menu: Settings -->
+    <div class="msec">
+      <div class="menu-item"><div class="icon-wrap" style="background:rgba(251,191,36,0.12)"><svg viewBox="0 0 24 24" style="color:var(--warning)"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div class="text"><div class="primary-text">打卡提醒</div><div class="secondary-text">每天 20:00 提醒</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:rgba(96,165,250,0.12)"><svg viewBox="0 0 24 24" style="color:var(--info)"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div><div class="text"><div class="primary-text">数据同步</div><div class="secondary-text">已同步</div></div><div class="trailing" style="display:flex;align-items:center;gap:6px"><span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:var(--r-full);font-size:12px;font-weight:600;background:rgba(52,211,153,0.12);color:var(--success)">已同步</span><svg viewBox="0 0 24 24" width="18" height="18"><path d="M9 18l6-6-6-6"/></svg></div></div>
+      <div class="menu-item"><div class="icon-wrap" style="background:var(--surface)"><svg viewBox="0 0 24 24" style="color:var(--on-surface-variant)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="text"><div class="primary-text">关于 SkinTrack</div><div class="secondary-text">版本 1.0.0</div></div><div class="trailing"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div></div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="ni"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="label">首页</div></div>
+    <div class="ni"><svg viewBox="0 0 24 24" width="24" height="24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><div class="label">记录</div></div>
+    <div class="ni-fab"><div class="fab"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div class="label">拍照</div></div>
+    <div class="ni"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 4 5-8"/></svg><div class="label">分析</div></div>
+    <div class="ni active"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" fill="var(--primary)" stroke="var(--primary)"/><circle cx="12" cy="7" r="4" fill="var(--primary)" stroke="var(--primary)"/></svg><div class="label">我的</div></div>
+  </div>
+</div>
+</body></html>
