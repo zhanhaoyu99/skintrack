@@ -431,7 +431,7 @@ private fun OverviewCard(state: AttributionUiState.Content) {
         // 3 stat sub-cards in a Row (matching design: green gradient, mint gradient, purple gradient)
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             val deltaPrefix = if (state.trendDelta >= 0) "+" else ""
             StatSubCard(

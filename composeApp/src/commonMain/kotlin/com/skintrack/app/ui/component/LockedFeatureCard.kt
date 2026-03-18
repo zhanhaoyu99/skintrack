@@ -110,19 +110,21 @@ fun LockedFeatureCard(
                 )
             }
 
-            // Message text
-            Text(
-                text = message,
-                style = MaterialTheme.typography.bodySmall,
-                fontSize = 13.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-
-            // Subtitle description
+            // Subtitle description (design shows only title + subtitle, not message)
+            // When title is present, subtitle replaces message as the description line
             if (subtitle != null) {
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
+                    fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            } else {
+                // Fallback: show message when no subtitle is provided
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }

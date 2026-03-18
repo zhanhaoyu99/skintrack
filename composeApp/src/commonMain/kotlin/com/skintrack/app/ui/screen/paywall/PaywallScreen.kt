@@ -262,7 +262,7 @@ private fun PaywallContent(
         item(key = "plans") {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 PlanCard(
                     title = "月度会员",

@@ -64,7 +64,7 @@ data class ShareCardScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("分享卡片") },
+                    title = { Text("分享对比卡片") },
                     navigationIcon = {
                         IconButton(onClick = { navigator.pop() }) {
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")

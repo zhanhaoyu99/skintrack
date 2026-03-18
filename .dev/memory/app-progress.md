@@ -3,8 +3,8 @@
 
 ## 当前状态（新session必读5行）
 - **阶段**: M3 测试上线 95% 进行中
-- **当前里程碑**: M3 视觉还原审查（Dashboard/Timeline 对比HTML设计稿修复中）
-- **当前工作**: RecordDetail+Attribution 设计稿像素对齐 — RecordDetail(评分卡标题改人性化文案19sp/13sp/18dp间距, 浮动卡overlap36dp, 照片按钮42dp/0.2alpha, 分数标签14sp/18dp*7dp, 雷达图"综合"→"整体", 指标行10dp间距+divider+13sp标签+15sp分数+36dp变化宽度, AI卡圆角extraLarge, 高亮区12dp*10dp填充, 产品芯片13sp/14dp*7dp), Attribution(对比区8dp上+20dp下+6dp标签间距, delta文字18sp, 影响分18sp+10sp标签, 产品名15sp, 统计卡14dp垂直, 建议图标渐变bg, 产品图标渐变bg, 排名1渐变bg), ScoreRing(compact模式24sp/ExtraBold/mini模式分离)
+- **当前里程碑**: M3 视觉还原审查完成（全12页面对比HTML设计稿）
+- **当前工作**: 全页面UI审查完成 — Dashboard(MiniMetricCard彩色边线同步快照), Attribution(stat间距10dp+AI lineHeight24sp), Paywall(plan间距12dp), Auth(trust badges emoji同步), Profile(StatsCard渐变线+Avatar halo同步快照), Settings(padding16dp+section缩进+SyncBadge颜色+trailing箭头), LockedFeatureCard(title+subtitle双行时隐藏message), Share(标题+水印文案+footer padding+QR尺寸+新建ShareSnapshotTest)
 - **阻塞问题**: 部署服务器到国内云（需要云服务器），真实支付/FCM为V2范围
 - **下一步**: 部署到国内云 → 服务端联调 → 内测20-30人 → Bug修复 → 发布
 - **产品文档**: `.dev/product/README.md`（索引）— 含全部 16 页设计规格
@@ -339,7 +339,7 @@
 | 10 | AttributionReportScreen | ✅ 概览+徽章+建议 | ✅ 对齐 | screen-attribution.md |
 | 11 | PaywallScreen | ✅ 皇冠+试用+省钱标签 | ✅ 对齐 | screen-paywall.md |
 | 12 | ShareCardScreen | ✅ 模板+分享目标 | ✅ 对齐 | screen-share.md |
-| 13 | SettingsScreen | ✅ 全功能(退出/注销/导出/同步) | ✅ 对齐 | screen-settings.md |
+| 13 | SettingsScreen | ✅ 全功能(退出/注销/导出/同步) | ✅ 对齐(R4) | screen-settings.md |
 | 14 | LockedFeatureCard | ✅ tags+渐变按钮+试用 | ✅ 对齐 | feature-gating.md |
 | 15 | EditProfileScreen | ✅ 头像+昵称+肤质选择 | ✅ 对齐 | screen-settings.md |
 | 16 | ChangePasswordScreen | ✅ 三密码+校验+成功提示 | ✅ 对齐 | screen-settings.md |
@@ -358,6 +358,7 @@
 | DashboardSnapshotTest | 4 | ✅ 通过（content/empty × light/dark） |
 | HomeScreenSnapshotTest | 2 | ✅ 通过（导航栏+FAB） |
 | CameraSnapshotTest | 8 | ✅ 通过（权限请求/拒绝/保存+分析/保存无分析 × light/dark） |
+| ShareSnapshotTest | 3 | ✅ 通过（卡片light/dark+控件light） |
 
 ## 自绘/共享组件
 | 组件 | 位置 | 用途 | 状态 |

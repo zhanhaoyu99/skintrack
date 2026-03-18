@@ -94,7 +94,7 @@ private fun SettingsPreview() {
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = MaterialTheme.spacing.lg),
+                .padding(horizontal = MaterialTheme.spacing.md),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
         ) {
             // Account section
@@ -290,7 +290,7 @@ private fun SettingsSectionTitle(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = MaterialTheme.spacing.xs),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
     ) {

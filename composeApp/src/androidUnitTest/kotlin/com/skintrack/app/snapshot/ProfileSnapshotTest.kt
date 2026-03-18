@@ -52,6 +52,7 @@ import com.skintrack.app.ui.component.ScoreRing
 import com.skintrack.app.ui.component.SectionCard
 import com.skintrack.app.ui.theme.Apricot400
 import com.skintrack.app.ui.theme.Apricot50
+import com.skintrack.app.ui.theme.Lavender300
 import com.skintrack.app.ui.theme.Lavender400
 import com.skintrack.app.ui.theme.Lavender50
 import com.skintrack.app.ui.theme.Mint50
@@ -171,10 +172,12 @@ private fun ProfileHeader() {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(bottom = spacing.md),
             ) {
-                // Avatar
+                // Avatar with outer halo + Rose gradient + white border
                 Box(
                     modifier = Modifier
-                        .size(MaterialTheme.dimens.avatarExtraLarge)
+                        .size(MaterialTheme.dimens.avatarExtraLarge + 8.dp)
+                        .border(1.5.dp, Color.White.copy(alpha = 0.2f), CircleShape)
+                        .padding(4.dp)
                         .border(3.dp, Color.White.copy(alpha = 0.35f), CircleShape)
                         .padding(3.dp)
                         .clip(CircleShape)
@@ -270,6 +273,11 @@ private fun ProfilePill(text: String) {
 
 @Composable
 private fun StatsCard(modifier: Modifier = Modifier) {
+    val accentColors = listOf(
+        MaterialTheme.colorScheme.primary,
+        Rose300,
+        Lavender300,
+    )
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -281,6 +289,15 @@ private fun StatsCard(modifier: Modifier = Modifier) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .drawBehind {
+                    val inset = 16.dp.toPx()
+                    drawLine(
+                        brush = Brush.horizontalGradient(accentColors),
+                        start = Offset(inset, 0f),
+                        end = Offset(size.width - inset, 0f),
+                        strokeWidth = 2.dp.toPx(),
+                    )
+                }
                 .height(IntrinsicSize.Min)
                 .padding(horizontal = 12.dp, vertical = 18.dp),
             verticalAlignment = Alignment.CenterVertically,

@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
@@ -55,7 +56,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.skintrack.app.ui.theme.Mint50
+
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -67,7 +68,6 @@ import com.skintrack.app.ui.component.animateCardEntrance
 import com.skintrack.app.ui.screen.auth.AuthScreen
 import com.skintrack.app.ui.screen.paywall.PaywallScreen
 import com.skintrack.app.ui.theme.Mint100
-import com.skintrack.app.ui.theme.Rose400
 import com.skintrack.app.ui.theme.Rose50
 import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.gradients
@@ -183,7 +183,7 @@ class SettingsScreen : Screen {
                     .fillMaxSize()
                     .padding(padding)
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = MaterialTheme.spacing.lg),
+                    .padding(horizontal = MaterialTheme.spacing.md),
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
             ) {
                 // ── Account section ──────────────────────────────────────
@@ -288,7 +288,21 @@ class SettingsScreen : Screen {
                         subtitle = "最后同步：今天 09:30",
                         leading = { MenuIcon(Icons.Default.Refresh, Mint100, MaterialTheme.colorScheme.primary) },
                         onClick = { viewModel.manualSync() },
-                        trailing = { SyncBadge() },
+                        trailing = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            ) {
+                                SyncBadge()
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.outline,
+                                    modifier = Modifier.size(18.dp),
+                                )
+                            }
+                        },
+                        showArrow = false,
                     )
                     HorizontalDivider(
                         modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md),
@@ -414,7 +428,7 @@ private fun SettingsSectionTitle(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = MaterialTheme.spacing.xs),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
     ) {
@@ -478,14 +492,15 @@ private fun SyncBadge() {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(50))
-            .background(Mint50)
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .background(Color(0xFFECFDF5))
+            .padding(horizontal = 10.dp, vertical = 3.dp),
     ) {
         Text(
             text = "已同步",
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.primary,
-            fontSize = 11.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = Color(0xFF059669),
+            fontSize = 12.sp,
         )
     }
 }

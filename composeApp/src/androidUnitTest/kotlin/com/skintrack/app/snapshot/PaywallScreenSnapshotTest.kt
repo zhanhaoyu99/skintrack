@@ -176,7 +176,7 @@ private fun PaywallPreview(yearlySelected: Boolean) {
         item {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 PlanCardPreview(
                     title = "月度会员",

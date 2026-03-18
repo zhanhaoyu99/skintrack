@@ -40,6 +40,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.gradients
 import com.skintrack.app.ui.theme.spacing
@@ -290,12 +291,12 @@ private fun AuthScreenPreview(isLoginMode: Boolean) {
                     ),
                 ) {
                     if (isLoginMode) {
-                        TrustBadge(icon = Icons.Default.Lock, label = "\u9690\u79C1\u5B89\u5168")
-                        TrustBadge(icon = Icons.Default.Person, label = "10\u4E07+\u7528\u6237")
+                        TrustBadge(emoji = "\uD83D\uDEE1\uFE0F", label = "\u9690\u79C1\u5B89\u5168")
+                        TrustBadge(emoji = "\u2705", label = "10\u4E07+\u7528\u6237")
                         TrustBadge(icon = Icons.Default.Star, label = "4.8\u5206\u597D\u8BC4")
                     } else {
-                        TrustBadge(icon = Icons.Default.Lock, label = "\u6570\u636E\u52A0\u5BC6")
-                        TrustBadge(icon = Icons.Default.Person, label = "\u968F\u65F6\u6CE8\u9500")
+                        TrustBadge(emoji = "\uD83D\uDD12", label = "\u6570\u636E\u52A0\u5BC6")
+                        TrustBadge(emoji = "\uD83D\uDEE1\uFE0F", label = "\u968F\u65F6\u6CE8\u9500")
                     }
                 }
             }
@@ -391,19 +392,24 @@ private fun SocialLoginButton(
 
 @Composable
 private fun TrustBadge(
-    icon: ImageVector,
     label: String,
+    icon: ImageVector? = null,
+    emoji: String? = null,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(14.dp),
-        )
+        if (emoji != null) {
+            Text(text = emoji, fontSize = 13.sp)
+        } else if (icon != null) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(14.dp),
+            )
+        }
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,

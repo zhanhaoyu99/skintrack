@@ -195,7 +195,7 @@ private fun AttributionPreview() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = spacing.sm),
-                        horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
                         data class StatItem(val value: String, val label: String, val brush: Brush, val valueColor: Color)
                         listOf(
@@ -264,7 +264,7 @@ private fun AttributionPreview() {
                             text = "过去 14 天你的皮肤整体评分从 70 提升到了 82，提升了 17%! CeraVe 洁面+薇诺娜精华的组合对你很有效。建议保持现在的晨间方案，晚上可以加一款修复精华会更好~",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurface,
-                            lineHeight = 22.sp,
+                            lineHeight = 24.sp,
                         )
                     }
                 }

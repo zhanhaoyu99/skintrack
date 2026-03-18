@@ -229,18 +229,18 @@ fun ShareCardContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(spacing.sm),
+                    .padding(horizontal = 18.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column {
                     Text(
-                        text = "使用SkinTrack",
+                        text = "使用 SkinTrack",
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(
-                        text = "追踪肌肤变化",
+                        text = "见证每一天的美好变化",
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -248,7 +248,7 @@ fun ShareCardContent(
                 // QR placeholder
                 Box(
                     modifier = Modifier
-                        .size(38.dp)
+                        .size(40.dp)
                         .background(
                             color = MaterialTheme.colorScheme.surfaceVariant,
                             shape = MaterialTheme.shapes.extraSmall,
