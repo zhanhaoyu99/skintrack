@@ -35,6 +35,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -62,6 +64,8 @@ import com.skintrack.app.ui.screen.paywall.PaywallScreen
 import com.skintrack.app.ui.screen.share.ShareCardScreen
 import com.skintrack.app.ui.screen.timeline.formatRecordDate
 import com.skintrack.app.ui.theme.FullRoundedShape
+import com.skintrack.app.ui.theme.Lavender300
+import com.skintrack.app.ui.theme.Rose300
 import com.skintrack.app.ui.theme.extendedColors
 import com.skintrack.app.ui.theme.spacing
 import org.koin.compose.viewmodel.koinViewModel
@@ -455,10 +459,20 @@ private fun RadarChartCard(record: SkinRecord, modifier: Modifier = Modifier) {
     }
 
     if (metrics.size >= 3) {
+        // Radial gradient fill: teal center → mint middle → lavender edge
+        val radarFillBrush = Brush.radialGradient(
+            colors = listOf(
+                Color(0x1F4ECDC4), // teal at 0.12 opacity
+                Color(0x1F2D9F7F), // mint/primary
+                Color(0x1FA78BFA), // lavender
+            ),
+        )
+
         SectionCard(modifier = modifier) {
             SectionHeader("多维评分")
             RadarChart(
                 metrics = metrics,
+                fillBrush = radarFillBrush,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -550,11 +564,12 @@ private fun MetricBarRow(
             modifier = Modifier.width(52.dp),
         )
 
-        // Gradient bar (7dp height per design)
+        // Gradient bar (7dp height per design) with micro glow shadow
         Box(
             modifier = Modifier
                 .weight(1f)
                 .height(7.dp)
+                .shadow(elevation = 1.dp, shape = FullRoundedShape)
                 .clip(FullRoundedShape)
                 .background(MaterialTheme.colorScheme.surfaceVariant),
         ) {
@@ -639,6 +654,14 @@ private fun AiSummaryCard(
         )
     }
 
+    val accentGradient = Brush.horizontalGradient(
+        listOf(
+            MaterialTheme.colorScheme.primary,
+            Lavender300,
+            Rose300,
+        ),
+    )
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.extraLarge,
@@ -647,6 +670,18 @@ private fun AiSummaryCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(brush = aiCardGradient)
+                .drawBehind {
+                    // 3-color accent line at top (primary → lavender → rose)
+                    val inset = 16.dp.toPx()
+                    drawRect(
+                        brush = accentGradient,
+                        topLeft = androidx.compose.ui.geometry.Offset(inset, 0f),
+                        size = androidx.compose.ui.geometry.Size(
+                            width = size.width - inset * 2,
+                            height = 2.dp.toPx(),
+                        ),
+                    )
+                }
                 .padding(spacing.md),
             verticalArrangement = Arrangement.spacedBy(spacing.sm),
         ) {

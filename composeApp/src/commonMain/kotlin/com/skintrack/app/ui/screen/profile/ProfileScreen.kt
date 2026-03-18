@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -68,6 +69,7 @@ import com.skintrack.app.ui.screen.settings.SettingsScreen
 import com.skintrack.app.ui.theme.Apricot400
 import com.skintrack.app.ui.theme.Apricot50
 import com.skintrack.app.ui.theme.Lavender50
+import com.skintrack.app.ui.theme.Lavender300
 import com.skintrack.app.ui.theme.Lavender400
 import com.skintrack.app.ui.theme.Mint50
 import com.skintrack.app.ui.theme.Rose200
@@ -222,10 +224,12 @@ private fun ProfileHeader(
                     .clip(MaterialTheme.shapes.medium)
                     .clickable(onClick = onProfileClick),
             ) {
-                // Avatar with Rose gradient + white border
+                // Avatar with outer halo + Rose gradient + white border
                 Box(
                     modifier = Modifier
-                        .size(MaterialTheme.dimens.avatarExtraLarge)
+                        .size(MaterialTheme.dimens.avatarExtraLarge + 8.dp)
+                        .border(1.5.dp, Color.White.copy(alpha = 0.2f), CircleShape)
+                        .padding(4.dp)
                         .border(3.dp, Color.White.copy(alpha = 0.35f), CircleShape)
                         .padding(3.dp)
                         .clip(CircleShape)
@@ -352,6 +356,11 @@ private fun ProfilePill(text: String) {
 
 @Composable
 private fun StatsCard(state: ProfileUiState.Content, modifier: Modifier = Modifier) {
+    val accentColors = listOf(
+        MaterialTheme.colorScheme.primary,
+        Rose300,
+        Lavender300,
+    )
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -363,6 +372,15 @@ private fun StatsCard(state: ProfileUiState.Content, modifier: Modifier = Modifi
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .drawBehind {
+                    val inset = 16.dp.toPx()
+                    drawLine(
+                        brush = Brush.horizontalGradient(accentColors),
+                        start = Offset(inset, 0f),
+                        end = Offset(size.width - inset, 0f),
+                        strokeWidth = 2.dp.toPx(),
+                    )
+                }
                 .height(IntrinsicSize.Min)
                 .padding(horizontal = 12.dp, vertical = 18.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -571,6 +589,7 @@ private fun GoalPill(
 ) {
     Box(
         modifier = Modifier
+            .shadow(1.dp, shape = RoundedCornerShape(50))
             .clip(RoundedCornerShape(50))
             .background(bgColor)
             .padding(horizontal = 14.dp, vertical = 6.dp),

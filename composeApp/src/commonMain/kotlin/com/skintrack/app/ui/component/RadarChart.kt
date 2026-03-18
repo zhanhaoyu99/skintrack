@@ -21,6 +21,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -48,6 +49,7 @@ fun RadarChart(
     metrics: List<RadarMetric>,
     modifier: Modifier = Modifier,
     fillColor: Color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+    fillBrush: Brush? = null,
     strokeColor: Color = MaterialTheme.colorScheme.primary,
     gridColor: Color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
     gridLevels: Int = 4,
@@ -124,7 +126,11 @@ fun RadarChart(
             }
             dataPath.close()
 
-            drawPath(path = dataPath, color = fillColor, style = Fill)
+            if (fillBrush != null) {
+                drawPath(path = dataPath, brush = fillBrush, style = Fill)
+            } else {
+                drawPath(path = dataPath, color = fillColor, style = Fill)
+            }
             drawPath(
                 path = dataPath,
                 color = strokeColor,

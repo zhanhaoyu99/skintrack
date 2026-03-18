@@ -1,4 +1,4 @@
-/* SkinTrack Design System v3 — Commercial Grade+ */
+/* SkinTrack Design System v5 — Premium Commercial Grade */
 :root {
   --mint-50: #E8F7F3; --mint-100: #B8E8D9; --mint-200: #89D9BF;
   --mint-300: #58CAA5; --mint-400: #2D9F7F; --mint-500: #248068;
@@ -42,6 +42,13 @@
   /* Card refinement tokens */
   --card-border: 0.5px solid rgba(0,0,0,0.04);
   --card-border-accent: 0.5px solid rgba(45,159,127,0.06);
+  /* Premium shadows with brand tint */
+  --shadow-primary-sm: 0 2px 8px rgba(45,159,127,0.12), 0 1px 2px rgba(45,159,127,0.08);
+  --shadow-primary-md: 0 4px 16px rgba(45,159,127,0.18), 0 2px 6px rgba(45,159,127,0.1);
+  --shadow-rose-sm: 0 2px 8px rgba(251,113,133,0.12), 0 1px 2px rgba(251,113,133,0.08);
+  --shadow-gold-sm: 0 2px 8px rgba(245,158,11,0.15), 0 1px 2px rgba(245,158,11,0.1);
+  /* Score ring gradient */
+  --grad-score: linear-gradient(135deg, #2D9F7F 0%, #58CAA5 40%, #4ECDC4 70%, #45B7D1 100%);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: var(--font); background: #DFE3E8; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; -webkit-font-smoothing: antialiased; }
@@ -80,9 +87,11 @@ body { font-family: var(--font); background: #DFE3E8; display: flex; justify-con
 
 /* Bottom Nav — 4 Tab + Center FAB */
 .bottom-nav {
-  height: 84px; background: var(--surface); display: flex; align-items: flex-start;
+  height: 84px; background: rgba(255,255,255,0.88); backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  display: flex; align-items: flex-start;
   justify-content: space-around; flex-shrink: 0; padding: 6px 8px 0; position: relative;
-  border-top: 0.5px solid rgba(0,0,0,0.06);
+  border-top: 0.5px solid rgba(0,0,0,0.04);
 }
 .ni { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 64px; padding-top: 4px; }
 .ni svg { width: 24px; height: 24px; color: #9CA3AF; }
@@ -91,9 +100,11 @@ body { font-family: var(--font); background: #DFE3E8; display: flex; justify-con
 .ni.active .label { color: var(--primary); font-weight: 700; }
 .ni-fab { display: flex; flex-direction: column; align-items: center; width: 64px; margin-top: -22px; }
 .fab {
-  width: 52px; height: 52px; border-radius: 50%; background: var(--primary);
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(145deg, #3DBFA0 0%, var(--primary) 60%, #1D6B5B 100%);
   color: white; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 16px rgba(45,159,127,0.4); border: none;
+  box-shadow: 0 4px 16px rgba(45,159,127,0.45), 0 0 0 3px rgba(45,159,127,0.08);
+  border: 0.5px solid rgba(255,255,255,0.2);
 }
 .fab svg { width: 26px; height: 26px; stroke: white; stroke-width: 2.5; }
 .ni-fab .label { font-size: 10px; font-weight: 500; color: #9CA3AF; margin-top: 3px; }
@@ -155,7 +166,7 @@ body { font-family: var(--font); background: #DFE3E8; display: flex; justify-con
   font-size: 13px; font-weight: 600; border: 1.5px solid var(--outline-variant);
   background: transparent; color: var(--on-surface-variant); white-space: nowrap;
 }
-.chip.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 2px 8px rgba(45,159,127,0.25); }
+.chip.active { background: linear-gradient(135deg, #31A887, var(--primary)); color: white; border-color: var(--primary); box-shadow: var(--shadow-primary-sm); }
 
 /* Score Bar */
 .score-bar { height: 6px; background: var(--surface-variant); border-radius: var(--r-full); overflow: hidden; }
@@ -169,3 +180,42 @@ body { font-family: var(--font); background: #DFE3E8; display: flex; justify-con
 /* Signal + WiFi + Battery in each HTML to avoid repetition in docs */
 
 svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ===== Premium Utilities ===== */
+
+/* Shimmer animation for loading skeletons */
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, var(--surface-variant) 0%, #EDEEF1 20%, var(--surface-variant) 40%, var(--surface-variant) 100%);
+  background-size: 800px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* Subtle float animation for decorative elements */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+.float-anim { animation: float 3s ease-in-out infinite; }
+
+/* Pulse glow for active elements */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(45,159,127,0.2); }
+  50% { box-shadow: 0 0 0 8px rgba(45,159,127,0); }
+}
+
+/* Active nav dot indicator */
+.ni.active { position: relative; }
+.ni.active::after {
+  content: ''; position: absolute; bottom: 14px;
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--primary); box-shadow: 0 0 6px rgba(45,159,127,0.4);
+}
+
+/* Colored top accent for cards */
+.accent-mint::before { content: ''; position: absolute; top: 0; left: 20px; right: 20px; height: 2px; border-radius: 0 0 2px 2px; background: var(--grad-primary); }
+.accent-rose::before { content: ''; position: absolute; top: 0; left: 20px; right: 20px; height: 2px; border-radius: 0 0 2px 2px; background: linear-gradient(90deg, var(--rose-300), var(--rose-400)); }
+.accent-lavender::before { content: ''; position: absolute; top: 0; left: 20px; right: 20px; height: 2px; border-radius: 0 0 2px 2px; background: linear-gradient(90deg, var(--lavender-300), var(--lavender-400)); }

@@ -1,6 +1,11 @@
 package com.skintrack.app.ui.screen.camera
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -42,6 +47,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -69,6 +75,7 @@ import com.skintrack.app.ui.theme.Lavender50
 import com.skintrack.app.ui.theme.Mint50
 import com.skintrack.app.ui.theme.Rose100
 import com.skintrack.app.ui.theme.Rose400
+import com.skintrack.app.ui.theme.Motion
 import com.skintrack.app.ui.theme.Rose50
 import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.extendedColors
@@ -216,9 +223,15 @@ private fun CameraContent(viewModel: CameraViewModel) {
                     )
                 }
                 if (state.milestoneMessage != null) {
-                    // Streak badge - Apricot pill style
+                    // Streak badge - Apricot pill style with warm glow
                     Row(
                         modifier = Modifier
+                            .shadow(
+                                elevation = 6.dp,
+                                shape = RoundedCornerShape(percent = 50),
+                                ambientColor = Apricot300.copy(alpha = 0.15f),
+                                spotColor = Apricot300.copy(alpha = 0.12f),
+                            )
                             .background(
                                 brush = Brush.linearGradient(
                                     colors = listOf(Apricot50, Color(0xFFFFF8F0)),
@@ -299,16 +312,42 @@ private fun CaptureButton(
 ) {
     val cameraColors = MaterialTheme.extendedColors.camera
     val dimens = MaterialTheme.dimens
-    Box(
-        modifier = Modifier
-            .size(dimens.captureButtonSize)
-            .clip(CircleShape)
-            .border(dimens.captureButtonBorder, cameraColors.buttonBorder, CircleShape)
-            .padding(dimens.captureButtonInnerPadding)
-            .clip(CircleShape)
-            .background(if (enabled) cameraColors.buttonFill else cameraColors.buttonDisabled)
-            .clickable(enabled = enabled, onClick = onClick),
+
+    // Pulsing outer ring animation
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val pulseAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.08f,
+        targetValue = 0.22f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 2000, easing = Motion.Standard),
+            repeatMode = RepeatMode.Reverse,
+        ),
+        label = "pulseAlpha",
     )
+
+    Box(contentAlignment = Alignment.Center) {
+        // Pulse ring (slightly outside the button)
+        Box(
+            modifier = Modifier
+                .size(dimens.captureButtonSize + 10.dp)
+                .border(
+                    width = 1.5.dp,
+                    color = Color.White.copy(alpha = if (enabled) pulseAlpha else 0.08f),
+                    shape = CircleShape,
+                ),
+        )
+        // Main button
+        Box(
+            modifier = Modifier
+                .size(dimens.captureButtonSize)
+                .clip(CircleShape)
+                .border(dimens.captureButtonBorder, cameraColors.buttonBorder, CircleShape)
+                .padding(dimens.captureButtonInnerPadding)
+                .clip(CircleShape)
+                .background(if (enabled) cameraColors.buttonFill else cameraColors.buttonDisabled)
+                .clickable(enabled = enabled, onClick = onClick),
+        )
+    }
 }
 
 @Composable

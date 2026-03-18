@@ -35,6 +35,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -60,6 +61,8 @@ import com.skintrack.app.ui.component.SectionCard
 import com.skintrack.app.ui.component.SectionHeader
 import com.skintrack.app.ui.component.animateListItem
 import com.skintrack.app.ui.screen.paywall.PaywallScreen
+import com.skintrack.app.ui.theme.Apricot300
+import com.skintrack.app.ui.theme.Lavender300
 import com.skintrack.app.ui.theme.Mint50
 import com.skintrack.app.ui.theme.extendedColors
 import com.skintrack.app.ui.theme.spacing
@@ -519,6 +522,14 @@ private fun AiInsightCard(insight: String) {
         )
     }
 
+    val accentGradient = Brush.horizontalGradient(
+        listOf(
+            MaterialTheme.colorScheme.primary,
+            Lavender300,
+            Apricot300,
+        ),
+    )
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -531,6 +542,18 @@ private fun AiInsightCard(insight: String) {
                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
                 shape = MaterialTheme.shapes.large,
             )
+            .drawBehind {
+                // 3-color accent line at top (primary → lavender → apricot)
+                val inset = 16.dp.toPx()
+                drawRect(
+                    brush = accentGradient,
+                    topLeft = Offset(inset, 0f),
+                    size = androidx.compose.ui.geometry.Size(
+                        width = size.width - inset * 2,
+                        height = 2.dp.toPx(),
+                    ),
+                )
+            }
             .padding(spacing.md),
     ) {
         Column(
@@ -618,7 +641,12 @@ private fun ProductAttributionItem(
             .then(
                 if (rank == 1) {
                     Modifier
-                        .shadow(elevation = 2.dp, shape = MaterialTheme.shapes.medium)
+                        .shadow(
+                            elevation = 6.dp,
+                            shape = MaterialTheme.shapes.medium,
+                            ambientColor = Color(0x1FF59E0B), // golden glow
+                            spotColor = Color(0x14F59E0B),
+                        )
                         .border(
                             width = 1.dp,
                             color = cardBorderColor,

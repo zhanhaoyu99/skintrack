@@ -182,6 +182,30 @@
 - **15/16/17**: 文案同步至 v4 版本
 - `dark.css`: 新增暗色渐变 token + 按钮渐变样式
 
+### v5 微质感 & 动效暗示升级（2026.03.18）
+
+#### 设计系统（base.css / dark.css）
+- 品牌色阴影 token: `--shadow-primary-sm/md`, `--shadow-rose-sm`, `--shadow-gold-sm`
+- 分数环渐变 token: `--grad-score`
+- FAB 升级: 三段渐变 + 外圈光晕 + 高光内边框
+- Bottom Nav 毛玻璃: `backdrop-filter: blur(20px) saturate(180%)`
+- Active Chip 渐变 + 品牌色阴影
+- Active Nav 底部指示点（4px mint dot + glow）
+- CSS 动画关键帧: `shimmer`(骨架屏), `float`(浮动元素), `pulse-glow`(脉冲光晕)
+- 卡片彩色顶线工具类: `.accent-mint/rose/lavender::before`
+
+#### 视觉微质感（逐页）
+- **01-onboarding**: 引导点发光晕, 浮动徽章 float 动画, 按钮 transition
+- **03-dashboard**: 5 指标卡片彩色顶线(acne/pore/evenness/redness/hydration), Hero 第三装饰圆, 打卡火焰文字发光, 快捷操作卡片边框
+- **04-timeline**: VS 徽章毛玻璃, 今日记录分数环发光滤镜, 空状态三色装饰浮点
+- **05-camera**: 快门按钮脉冲外环, 分数环三色渐变(mint→teal→blue), 连续打卡徽章暖光
+- **06-record-detail**: 分数环三色渐变, 雷达图径向渐变填充(teal→mint→lavender), AI 卡片三色顶线, 指标条微发光
+- **07-profile**: 毛玻璃统计卡三色顶线, 头像外圈光环, 目标标签微阴影
+- **09-attribution**: #1 排名金色发光阴影, AI 洞察三色顶线
+- **10-paywall**: 皇冠呼吸发光动画(3s), 选中方案顶部shine线, 社会证明头像投影
+- **12-share**: 分享卡品牌色边框阴影, 模板选择器 active 发光环
+- **18-loading-states**: 骨架屏 shimmer 动画(1.6s), Hero 骨架 mint 色调渐变
+
 ## 后续优化方向
 
 - [x] 补充 Forgot Password 页面（已在 02-auth 中实现）

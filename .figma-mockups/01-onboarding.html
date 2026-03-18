@@ -72,8 +72,9 @@ body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content
 .ob-foot { padding: 24px 36px 50px; }
 .dots { display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; }
 .dot-i { width: 8px; height: 8px; border-radius: 50%; background: var(--outline-variant); transition: all 0.3s; }
-.dot-i.on { width: 28px; border-radius: 4px; background: var(--primary); }
+.dot-i.on { width: 28px; border-radius: 4px; background: var(--primary); box-shadow: 0 0 10px rgba(45,159,127,0.4); }
 .skip { text-align: center; margin-top: 16px; font-size: 14px; color: var(--on-surface-variant); font-weight: 600; }
+.btn-primary { transition: transform 0.15s, box-shadow 0.15s; }
 
 /* Floating badge styles */
 .illust .float-badge { position: absolute; z-index: 3; background: white; border-radius: 10px; padding: 4px 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); font-family: var(--font); display: flex; align-items: center; gap: 4px; }
@@ -107,7 +108,7 @@ body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content
         <div class="leaf" style="top:28px;right:12px;transform:rotate(25deg)"><svg viewBox="0 0 32 32" fill="none" stroke="var(--primary)" stroke-width="1"><path d="M16 2C10 8 5 18 5 25c6-1 12-5 16-12"/><path d="M16 2c0 10-2 16-5 21"/></svg></div>
         <div class="leaf" style="bottom:22px;right:40px;transform:rotate(-15deg)"><svg viewBox="0 0 32 32" fill="none" stroke="var(--rose-300)" stroke-width="0.8"><path d="M16 2C10 8 5 18 5 25c6-1 12-5 16-12"/><path d="M16 2c0 10-2 16-5 21"/></svg></div>
         <!-- Floating score badges -->
-        <div class="float-badge" style="top:38px;right:18px">
+        <div class="float-badge float-anim" style="top:38px;right:18px">
           <div class="badge-num">82</div>
           <div class="badge-label">肤质</div>
         </div>
@@ -338,7 +339,7 @@ body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content
         <div class="float-badge" style="top:32px;right:8px">
           <div class="badge-num" style="color:var(--lavender-400)">+12%</div>
         </div>
-        <div class="float-badge-sm" style="bottom:50px;right:18px;color:var(--primary);background:var(--mint-50)">AI 推荐</div>
+        <div class="float-badge-sm float-anim" style="bottom:50px;right:18px;color:var(--primary);background:var(--mint-50);animation-delay:0.5s">AI 推荐</div>
         <div class="icon-main"><svg viewBox="0 0 140 140">
           <!-- Chart frame — larger, more prominent -->
           <rect x="12" y="24" width="90" height="72" rx="8" fill="none" stroke="currentColor" stroke-width="1.2"/>

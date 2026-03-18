@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -44,6 +45,9 @@ import com.skintrack.app.ui.screen.attribution.AttributionReportScreen
 import com.skintrack.app.ui.screen.report.RecordDetailScreen
 import com.skintrack.app.ui.screen.share.ShareCardScreen
 import com.skintrack.app.ui.theme.FullRoundedShape
+import com.skintrack.app.ui.theme.Lavender300
+import com.skintrack.app.ui.theme.Mint300
+import com.skintrack.app.ui.theme.Rose300
 import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.extendedColors
 import com.skintrack.app.ui.theme.spacing
@@ -317,14 +321,24 @@ private fun TimelineRecordItem(
                 )
             }
 
-            // Mini ScoreRing 44dp
+            // Mini ScoreRing 44dp with subtle glow
             if (record.overallScore != null) {
-                ScoreRing(
-                    score = record.overallScore,
-                    size = 44.dp,
-                    strokeWidth = 3.5.dp,
-                    label = "",
-                )
+                Box(
+                    modifier = Modifier
+                        .shadow(
+                            elevation = 6.dp,
+                            shape = androidx.compose.foundation.shape.CircleShape,
+                            ambientColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                            spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                        ),
+                ) {
+                    ScoreRing(
+                        score = record.overallScore,
+                        size = 44.dp,
+                        strokeWidth = 3.5.dp,
+                        label = "",
+                    )
+                }
             } else {
                 Text(
                     text = "待分析",
@@ -342,8 +356,36 @@ private fun TimelineEmptyState(
 ) {
     val spacing = MaterialTheme.spacing
 
+    Box(modifier = modifier) {
+        // Decorative floating dots
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(start = 32.dp, top = 60.dp)
+                .size(8.dp)
+                .clip(androidx.compose.foundation.shape.CircleShape)
+                .background(Mint300.copy(alpha = 0.3f)),
+        )
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(end = 48.dp, top = 80.dp)
+                .size(6.dp)
+                .clip(androidx.compose.foundation.shape.CircleShape)
+                .background(Rose300.copy(alpha = 0.25f)),
+        )
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 56.dp, bottom = 120.dp)
+                .size(5.dp)
+                .clip(androidx.compose.foundation.shape.CircleShape)
+                .background(Lavender300.copy(alpha = 0.2f)),
+        )
+
     Column(
-        modifier = modifier
+        modifier = Modifier
+            .fillMaxSize()
             .padding(horizontal = spacing.xl, vertical = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -439,6 +481,7 @@ private fun TimelineEmptyState(
             )
         }
     }
+    } // Box
 }
 
 @Composable

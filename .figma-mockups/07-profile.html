@@ -50,7 +50,9 @@ body { display: flex; gap: 32px; padding: 32px; justify-content: center; }
   flex-shrink: 0;
   border: 3px solid rgba(255,255,255,0.35);
   box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  position: relative;
 }
+.user-avatar::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.2); }
 .user-info { flex: 1; color: white; z-index: 1; }
 .user-name {
   font-size: 22px; font-weight: 800; letter-spacing: -0.4px;
@@ -91,8 +93,9 @@ body { display: flex; gap: 32px; padding: 32px; justify-content: center; }
   display: flex; text-align: center;
   box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
   border: 0.5px solid rgba(45,159,127,0.08);
-  position: relative; z-index: 5;
+  position: relative; z-index: 5; overflow: hidden;
 }
+.stats-glass::before { content: ''; position: absolute; top: 0; left: 16px; right: 16px; height: 2px; border-radius: 0 0 2px 2px; background: linear-gradient(90deg, var(--primary), var(--rose-300), var(--lavender-300)); }
 .stat-item {
   flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
 }
@@ -137,6 +140,7 @@ body { display: flex; gap: 32px; padding: 32px; justify-content: center; }
   display: inline-flex; align-items: center; gap: 5px;
   padding: 6px 14px; border-radius: var(--r-full);
   font-size: 13px; font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 
 /* ===== Menu Sections ===== */

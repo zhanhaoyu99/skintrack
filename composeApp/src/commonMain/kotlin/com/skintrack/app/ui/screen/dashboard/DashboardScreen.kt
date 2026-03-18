@@ -37,7 +37,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -595,6 +597,13 @@ private fun HeroCard(
                     .clip(CircleShape)
                     .background(Color.White.copy(alpha = 0.05f)),
             )
+            Box(
+                modifier = Modifier
+                    .size(80.dp)
+                    .offset(x = 60.dp, y = 50.dp)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.03f)),
+            )
 
             Column(
                 modifier = Modifier
@@ -759,6 +768,13 @@ private fun MiniMetricCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .drawBehind {
+                    drawRect(
+                        color = color,
+                        topLeft = Offset.Zero,
+                        size = Size(size.width, 2.dp.toPx()),
+                    )
+                }
                 .padding(horizontal = 6.dp, vertical = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -951,7 +967,8 @@ private fun QuickActionCard(
     val spacing = MaterialTheme.spacing
 
     Card(
-        modifier = modifier,
+        modifier = modifier
+            .border(0.5.dp, Color.Black.copy(alpha = 0.04f), MaterialTheme.shapes.large),
         shape = MaterialTheme.shapes.large,
         onClick = onClick,
     ) {
@@ -1107,7 +1124,13 @@ private fun CheckInCard(
                     text = "连续 $streak 天",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (isSystemInDarkTheme()) Rose400 else Rose400,
+                    color = Rose400,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        shadow = Shadow(
+                            color = Rose400.copy(alpha = 0.3f),
+                            blurRadius = 8f,
+                        ),
+                    ),
                 )
             }
         }

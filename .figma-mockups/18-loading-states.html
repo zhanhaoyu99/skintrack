@@ -8,8 +8,9 @@
 body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content: center; }
 .phone-frame { flex-shrink: 0; }
 
-/* Skeleton shimmer animation hint (static for mockup) */
-.sk { background: linear-gradient(90deg, var(--surface-variant) 25%, #EDEEF1 37%, var(--surface-variant) 63%); border-radius: var(--r-sm); }
+/* Skeleton shimmer animation */
+@keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
+.sk { background: linear-gradient(90deg, var(--surface-variant) 0%, #EDEEF1 20%, var(--surface-variant) 40%, var(--surface-variant) 100%); background-size: 800px 100%; animation: shimmer 1.6s ease-in-out infinite; border-radius: var(--r-sm); }
 .sk-circle { border-radius: 50%; }
 .sk-pill { border-radius: var(--r-full); }
 .sk-card { background: var(--surface); border-radius: var(--r-lg); padding: 16px; margin: 0 16px 12px; box-shadow: var(--shadow-xs); }
@@ -19,7 +20,7 @@ body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content
 .dh-sk-left { display: flex; flex-direction: column; gap: 6px; }
 
 /* Hero skeleton */
-.hero-sk { border-radius: var(--r-xl); padding: 22px 20px; margin: 0 16px 14px; background: linear-gradient(135deg, var(--surface-variant) 0%, #E8EAED 100%); display: flex; align-items: center; gap: 18px; height: 140px; }
+.hero-sk { border-radius: var(--r-xl); padding: 22px 20px; margin: 0 16px 14px; background: linear-gradient(145deg, #D1E8DF 0%, #D8DDE0 30%, #E2E5E8 100%); display: flex; align-items: center; gap: 18px; height: 140px; }
 
 /* Metric skeleton */
 .metrics-sk { display: flex; gap: 6px; padding: 0 16px; margin-bottom: 14px; }

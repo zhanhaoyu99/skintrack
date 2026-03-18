@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.skintrack.app.ui.component.SkeletonBox
 import com.skintrack.app.ui.component.SkeletonCard
@@ -106,10 +107,13 @@ private fun HeroSkeleton() {
             .clip(MaterialTheme.shapes.extraLarge)
             .background(
                 brush = Brush.linearGradient(
-                    listOf(
-                        MaterialTheme.colorScheme.surfaceVariant,
-                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
+                    colors = listOf(
+                        Color(0xFFD1E8DF),
+                        Color(0xFFD8DDE0),
+                        Color(0xFFE2E5E8),
                     ),
+                    start = androidx.compose.ui.geometry.Offset(0f, 0f),
+                    end = androidx.compose.ui.geometry.Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY),
                 ),
             )
             .height(140.dp)

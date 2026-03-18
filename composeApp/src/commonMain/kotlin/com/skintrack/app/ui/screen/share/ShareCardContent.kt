@@ -3,6 +3,7 @@ package com.skintrack.app.ui.screen.share
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.draw.shadow
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,7 +51,21 @@ fun ShareCardContent(
     val scoreDiff = (after.overallScore ?: 0) - (before.overallScore ?: 0)
     val functional = MaterialTheme.extendedColors.functional
 
-    Card(modifier = modifier.fillMaxWidth()) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .shadow(
+                elevation = 24.dp,
+                shape = MaterialTheme.shapes.medium,
+                ambientColor = Color.Black.copy(alpha = 0.12f),
+                spotColor = Color.Black.copy(alpha = 0.05f),
+            )
+            .border(
+                width = 0.5.dp,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.06f),
+                shape = MaterialTheme.shapes.medium,
+            ),
+    ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             // Brand header with hero gradient + logo + app name + decorative circles
             Box(
@@ -265,6 +280,19 @@ internal fun TemplateSelector(
             val isSelected = index == 0
             Box(
                 modifier = Modifier
+                    .then(
+                        if (isSelected) {
+                            // Outer glow ring: 3dp padding with primary tinted background
+                            Modifier
+                                .background(
+                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+                                    shape = MaterialTheme.shapes.medium,
+                                )
+                                .padding(3.dp)
+                        } else {
+                            Modifier
+                        },
+                    )
                     .size(48.dp)
                     .background(
                         color = if (isSelected) Mint50

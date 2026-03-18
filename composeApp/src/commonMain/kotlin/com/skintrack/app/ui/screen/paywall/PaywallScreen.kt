@@ -28,6 +28,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -36,6 +41,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -131,19 +138,55 @@ private fun PaywallContent(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(spacing.sm),
                 ) {
-                    // Crown: 80dp golden gradient circle with glow
+                    // Crown: 80dp golden gradient circle with breathing glow
+                    val crownGlow = rememberInfiniteTransition()
+                    val glowAlpha by crownGlow.animateFloat(
+                        initialValue = 0.35f,
+                        targetValue = 0.5f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(durationMillis = 3000),
+                            repeatMode = RepeatMode.Reverse,
+                        ),
+                    )
+                    val glowRadius by crownGlow.animateFloat(
+                        initialValue = 60f,
+                        targetValue = 80f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(durationMillis = 3000),
+                            repeatMode = RepeatMode.Reverse,
+                        ),
+                    )
+                    val outerGlowAlpha by crownGlow.animateFloat(
+                        initialValue = 0.1f,
+                        targetValue = 0.18f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(durationMillis = 3000),
+                            repeatMode = RepeatMode.Reverse,
+                        ),
+                    )
                     Box(
                         modifier = Modifier
                             .size(80.dp)
                             .drawBehind {
+                                // Outer soft glow
                                 drawCircle(
                                     brush = Brush.radialGradient(
                                         colors = listOf(
-                                            Color(0xFFFFAA00).copy(alpha = 0.15f),
+                                            Color(0xFFFFAA00).copy(alpha = outerGlowAlpha),
                                             Color.Transparent,
                                         ),
                                     ),
-                                    radius = 60.dp.toPx(),
+                                    radius = glowRadius.dp.toPx(),
+                                )
+                                // Inner glow
+                                drawCircle(
+                                    brush = Brush.radialGradient(
+                                        colors = listOf(
+                                            Color(0xFFFFAA00).copy(alpha = glowAlpha),
+                                            Color.Transparent,
+                                        ),
+                                    ),
+                                    radius = 48.dp.toPx(),
                                 )
                             }
                             .background(
@@ -389,6 +432,26 @@ private fun PlanCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .then(
+                        if (isSelected) {
+                            Modifier.drawBehind {
+                                // Top shine line: transparent → primary → transparent
+                                val shineBrush = Brush.horizontalGradient(
+                                    colors = listOf(
+                                        Color.Transparent,
+                                        Color(0xFF2D9F7F).copy(alpha = 0.4f),
+                                        Color.Transparent,
+                                    ),
+                                )
+                                drawRect(
+                                    brush = shineBrush,
+                                    size = Size(size.width, 2.dp.toPx()),
+                                )
+                            }
+                        } else {
+                            Modifier
+                        },
+                    )
                     .padding(horizontal = 12.dp, vertical = 18.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(spacing.xs),
@@ -481,6 +544,7 @@ private fun SocialProofInline() {
                 Box(
                     modifier = Modifier
                         .size(28.dp)
+                        .shadow(2.dp, CircleShape)
                         .border(2.dp, Color.White, CircleShape)
                         .background(
                             brush = Brush.linearGradient(colors),

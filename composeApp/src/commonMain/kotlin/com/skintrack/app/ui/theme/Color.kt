@@ -38,6 +38,13 @@ val Lavender400 = Color(0xFF8B5CF6)
 val Lavender500 = Color(0xFF6D3FCE)
 val Lavender600 = Color(0xFF5A32AB)
 
+// ── Accent: Teal / Blue ──────────────────────────────────────────────
+val TealLight = Color(0xFF4ECDC4)
+val TealDark = Color(0xFF6EE7DE)
+val BlueAccentLight = Color(0xFF45B7D1)
+val BlueAccentDark = Color(0xFF60A5FA)
+val BlueAccentMidDark = Color(0xFF67D4E8)
+
 // ── Skin Metric Colors ──────────────────────────────────────────────
 val SkinAcneLight = Color(0xFFFF6B6B)
 val SkinAcneDark = Color(0xFFE05555)

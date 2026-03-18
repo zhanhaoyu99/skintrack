@@ -56,7 +56,8 @@ body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content
 
 /* Bottom controls */
 .cam-controls { height: 150px; background: #000; display: flex; align-items: center; justify-content: center; gap: 48px; padding-bottom: 36px; }
-.shutter { width: 76px; height: 76px; border-radius: 50%; border: 3.5px solid white; background: transparent; padding: 5px; box-shadow: 0 0 28px rgba(255,255,255,0.08); cursor: pointer; }
+.shutter { width: 76px; height: 76px; border-radius: 50%; border: 3.5px solid white; background: transparent; padding: 5px; box-shadow: 0 0 28px rgba(255,255,255,0.08); cursor: pointer; position: relative; }
+.shutter::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.15); animation: pulse-glow 2s ease-in-out infinite; }
 .shutter-inner { width: 100%; height: 100%; border-radius: 50%; background: white; }
 .ctrl-btn { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; border: 0.5px solid rgba(255,255,255,0.12); cursor: pointer; }
 .ctrl-btn svg { width: 20px; height: 20px; color: white; }
@@ -90,7 +91,7 @@ body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content
 .metric .lbl { font-size: 10px; color: var(--on-surface-variant); font-weight: 500; }
 
 /* Streak badge */
-.streak-badge { display: inline-flex; align-items: center; gap: 6px; padding: 8px 20px; background: linear-gradient(135deg, var(--apricot-50), #FFF8F0); border: 1px solid var(--apricot-100); border-radius: var(--r-full); color: var(--apricot-500); font-size: 14px; font-weight: 700; margin-top: 14px; }
+.streak-badge { display: inline-flex; align-items: center; gap: 6px; padding: 8px 20px; background: linear-gradient(135deg, var(--apricot-50), #FFF8F0); border: 1px solid var(--apricot-100); border-radius: var(--r-full); color: var(--apricot-500); font-size: 14px; font-weight: 700; margin-top: 14px; box-shadow: 0 2px 12px rgba(244,162,97,0.15); }
 .streak-badge svg { width: 16px; height: 16px; fill: var(--apricot-400); stroke: none; }
 
 /* Action buttons */
@@ -196,7 +197,7 @@ body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content
         <svg viewBox="0 0 108 108">
           <circle cx="54" cy="54" r="46" fill="none" stroke="var(--outline-variant)" stroke-width="5.5"/>
           <circle cx="54" cy="54" r="46" fill="none" stroke="url(#scoreGrad)" stroke-width="5.5" stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="52"/>
-          <defs><linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2D9F7F"/><stop offset="100%" stop-color="#58CAA5"/></linearGradient></defs>
+          <defs><linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2D9F7F"/><stop offset="50%" stop-color="#4ECDC4"/><stop offset="100%" stop-color="#45B7D1"/></linearGradient></defs>
         </svg>
         <div class="score-value">
           <span class="score-num">82</span>

@@ -8,8 +8,16 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,8 +32,6 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +48,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -56,6 +63,7 @@ import com.skintrack.app.ui.screen.dashboard.DashboardScreen
 import com.skintrack.app.ui.screen.profile.ProfileScreen
 import com.skintrack.app.ui.screen.timeline.TimelineScreen
 import com.skintrack.app.ui.theme.Motion
+import com.skintrack.app.ui.theme.gradients
 import kotlinx.coroutines.delay
 
 class HomeScreen : Screen {
@@ -82,17 +90,25 @@ class HomeScreen : Screen {
             TabItem("我的", Icons.Filled.Person, Icons.Outlined.Person),
         )
 
+        val isDark = isSystemInDarkTheme()
+        // Frosted glass nav bar background
+        val navBarColor = if (isDark) {
+            Color(0xFF1C1E20).copy(alpha = 0.88f)
+        } else {
+            Color.White.copy(alpha = 0.88f)
+        }
+
         Scaffold(
             bottomBar = {
                 Box {
                     // Top divider line for clean separation
                     HorizontalDivider(
                         thickness = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                        color = Color.Black.copy(alpha = 0.04f),
                     )
 
                     NavigationBar(
-                        containerColor = MaterialTheme.colorScheme.surface,
+                        containerColor = navBarColor,
                         tonalElevation = 0.dp,
                     ) {
                         tabs.forEachIndexed { index, tab ->
@@ -127,19 +143,42 @@ class HomeScreen : Screen {
                                     4 -> 3
                                     else -> 0
                                 }
+                                val isSelected = selectedTab == contentIndex
                                 NavigationBarItem(
-                                    selected = selectedTab == contentIndex,
+                                    selected = isSelected,
                                     onClick = {
                                         previousTab = selectedTab
                                         selectedTab = contentIndex
                                     },
                                     icon = {
                                         Icon(
-                                            imageVector = if (selectedTab == contentIndex) tab.selectedIcon else tab.unselectedIcon,
+                                            imageVector = if (isSelected) tab.selectedIcon else tab.unselectedIcon,
                                             contentDescription = tab.title,
                                         )
                                     },
-                                    label = { Text(tab.title) },
+                                    label = {
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                        ) {
+                                            Text(tab.title)
+                                            Spacer(modifier = Modifier.height(2.dp))
+                                            // Active indicator dot
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(4.dp)
+                                                    .then(
+                                                        if (isSelected) {
+                                                            Modifier.background(
+                                                                color = MaterialTheme.colorScheme.primary,
+                                                                shape = CircleShape,
+                                                            )
+                                                        } else {
+                                                            Modifier
+                                                        }
+                                                    ),
+                                            )
+                                        }
+                                    },
                                     colors = NavigationBarItemDefaults.colors(
                                         indicatorColor = Color.Transparent,
                                         selectedIconColor = MaterialTheme.colorScheme.primary,
@@ -152,7 +191,7 @@ class HomeScreen : Screen {
                         }
                     }
 
-                    // Elevated FAB overlaid on center of NavigationBar
+                    // Elevated FAB with gradient + glow + highlight border
                     AnimatedVisibility(
                         visible = fabVisible,
                         enter = scaleIn() + fadeIn(),
@@ -160,22 +199,32 @@ class HomeScreen : Screen {
                             .align(Alignment.TopCenter)
                             .offset(y = (-22).dp),
                     ) {
-                        FloatingActionButton(
-                            onClick = {
-                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                navigator.push(CameraScreen())
-                            },
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary,
-                            shape = CircleShape,
-                            modifier = Modifier.size(52.dp),
-                            elevation = FloatingActionButtonDefaults.elevation(
-                                defaultElevation = 8.dp,
-                            ),
+                        val fabGradient = MaterialTheme.gradients.fab
+                        val brandGlow = Color(0xFF2D9F7F)
+                        Box(
+                            modifier = Modifier
+                                .size(52.dp)
+                                .shadow(
+                                    elevation = 16.dp,
+                                    shape = CircleShape,
+                                    ambientColor = brandGlow.copy(alpha = 0.45f),
+                                    spotColor = brandGlow.copy(alpha = 0.45f),
+                                )
+                                .background(brush = fabGradient, shape = CircleShape)
+                                .border(0.5.dp, Color.White.copy(alpha = 0.2f), CircleShape)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null,
+                                ) {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    navigator.push(CameraScreen())
+                                },
+                            contentAlignment = Alignment.Center,
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,
                                 contentDescription = "拍照记录",
+                                tint = Color.White,
                                 modifier = Modifier.size(26.dp),
                             )
                         }
