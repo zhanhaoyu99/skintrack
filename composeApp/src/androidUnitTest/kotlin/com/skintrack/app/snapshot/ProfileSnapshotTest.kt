@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,7 +26,6 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -124,18 +124,18 @@ private fun ProfileHeader() {
             .fillMaxWidth()
             .drawBehind {
                 drawCircle(
-                    color = Color.White.copy(alpha = 0.08f),
-                    radius = 120.dp.toPx(),
+                    color = Color.White.copy(alpha = 0.06f),
+                    radius = 110.dp.toPx(),
                     center = Offset(size.width * 0.85f, size.height * 0.2f),
                 )
                 drawCircle(
-                    color = Color.White.copy(alpha = 0.05f),
+                    color = Color.White.copy(alpha = 0.04f),
                     radius = 80.dp.toPx(),
                     center = Offset(size.width * 0.1f, size.height * 0.7f),
                 )
             }
             .background(brush = MaterialTheme.gradients.hero)
-            .padding(bottom = 48.dp),
+            .padding(bottom = 52.dp),
     ) {
         Column(
             modifier = Modifier
@@ -175,7 +175,7 @@ private fun ProfileHeader() {
                 Box(
                     modifier = Modifier
                         .size(MaterialTheme.dimens.avatarExtraLarge)
-                        .border(3.dp, Color.White, CircleShape)
+                        .border(3.dp, Color.White.copy(alpha = 0.35f), CircleShape)
                         .padding(3.dp)
                         .clip(CircleShape)
                         .background(
@@ -290,7 +290,7 @@ private fun StatsCard(modifier: Modifier = Modifier) {
                 value = "42",
                 iconBg = Mint50,
                 iconEmoji = "\uD83D\uDCCB",
-                valueColor = MaterialTheme.colorScheme.primary,
+                valueColor = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
             )
             VerticalDivider(
@@ -395,7 +395,9 @@ private fun StatItem(
 private fun SkinGoalsSection() {
     val primary = MaterialTheme.colorScheme.primary
 
-    SectionCard {
+    SectionCard(
+        contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.md, vertical = 14.dp),
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -405,11 +407,14 @@ private fun SkinGoalsSection() {
                 text = "\u6211\u7684\u62A4\u80A4\u76EE\u6807",
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
+                fontSize = 15.sp,
             )
             Text(
                 text = "\u7F16\u8F91",
                 style = MaterialTheme.typography.bodySmall,
                 color = primary,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 13.sp,
             )
         }
 
@@ -424,7 +429,7 @@ private fun SkinGoalsSection() {
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(50))
-                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(50))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .padding(horizontal = 14.dp, vertical = 6.dp),
             ) {
                 Text(
@@ -458,33 +463,34 @@ private fun GoalPill(text: String, bgColor: Color, textColor: Color) {
 @Composable
 private fun MenuSection() {
     val spacing = MaterialTheme.spacing
+    val menuPadding = PaddingValues(horizontal = spacing.md, vertical = 2.dp)
 
     // Function group
-    SectionCard {
+    SectionCard(contentPadding = menuPadding) {
         MenuItem(
             title = "\u62A4\u80A4\u54C1\u7BA1\u7406",
             subtitle = "\u7BA1\u7406\u4F60\u7684\u62A4\u80A4\u54C1\u6E05\u5355",
-            leading = { MenuIcon(Icons.Default.Star, Apricot50, Apricot400) },
+            leading = { EmojiMenuIcon("\uD83E\uDDF4", Apricot50) },
             onClick = {},
         )
         HorizontalDivider(modifier = Modifier.padding(horizontal = spacing.md))
         MenuItem(
             title = "\u5F52\u56E0\u5206\u6790\u62A5\u544A",
             subtitle = "\u67E5\u770B\u62A4\u80A4\u54C1\u6548\u679C\u5206\u6790",
-            leading = { MenuIcon(Icons.Default.Star, Color(0xFFEDE9FE), Color(0xFF7C3AED)) },
+            leading = { EmojiMenuIcon("\uD83D\uDCCA", Color(0xFFEDE9FE)) },
             onClick = {},
         )
         HorizontalDivider(modifier = Modifier.padding(horizontal = spacing.md))
         MenuItem(
             title = "\u4F1A\u5458\u4E2D\u5FC3",
             subtitle = "Pro \u4F1A\u5458 \u00B7 2026.12.14 \u5230\u671F",
-            leading = { MenuIcon(Icons.Default.Star, Color(0xFFFEF3C7), Color(0xFFD97706)) },
+            leading = { EmojiMenuIcon("\uD83D\uDC51", Color(0xFFFEF3C7)) },
             onClick = {},
         )
     }
 
     // System group
-    SectionCard {
+    SectionCard(contentPadding = menuPadding) {
         MenuItem(
             title = "\u6253\u5361\u63D0\u9192",
             subtitle = "\u6BCF\u5929 20:00 \u63D0\u9192",
@@ -500,7 +506,7 @@ private fun MenuSection() {
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50))
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))
+                        .background(Mint50)
                         .padding(horizontal = 8.dp, vertical = 4.dp),
                 ) {
                     Text(
@@ -529,7 +535,7 @@ private fun MenuSection() {
     }
 
     // Logout
-    Card(modifier = Modifier.fillMaxWidth()) {
+    SectionCard(contentPadding = menuPadding) {
         MenuItem(
             title = "\u9000\u51FA\u767B\u5F55",
             onClick = {},
@@ -547,8 +553,8 @@ private fun MenuIcon(
 ) {
     Box(
         modifier = Modifier
-            .size(40.dp)
-            .clip(RoundedCornerShape(10.dp))
+            .size(38.dp)
+            .clip(RoundedCornerShape(11.dp))
             .background(backgroundColor),
         contentAlignment = Alignment.Center,
     ) {
@@ -556,8 +562,24 @@ private fun MenuIcon(
             imageVector = icon,
             contentDescription = null,
             tint = tintColor,
-            modifier = Modifier.size(20.dp),
+            modifier = Modifier.size(MaterialTheme.dimens.iconSmall),
         )
+    }
+}
+
+@Composable
+private fun EmojiMenuIcon(
+    emoji: String,
+    backgroundColor: Color,
+) {
+    Box(
+        modifier = Modifier
+            .size(38.dp)
+            .clip(RoundedCornerShape(11.dp))
+            .background(backgroundColor),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(text = emoji, fontSize = 16.sp)
     }
 }
 
@@ -584,7 +606,7 @@ private fun AppFooter() {
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            letterSpacing = 2.sp,
+            letterSpacing = 0.5.sp,
         )
         Text(
             text = "v1.0.0 (Build 42)",

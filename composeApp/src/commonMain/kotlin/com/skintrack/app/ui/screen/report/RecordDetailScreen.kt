@@ -1,6 +1,7 @@
 package com.skintrack.app.ui.screen.report
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -105,7 +107,7 @@ data class RecordDetailScreen(val recordId: String) : Screen {
 }
 
 private val PhotoPreviewHeight = 280.dp
-private val FloatingCardOverlap = 40.dp
+private val FloatingCardOverlap = 36.dp
 
 private val SkinToneGradient = Brush.linearGradient(
     colors = listOf(
@@ -124,6 +126,14 @@ private fun getScoreLabel(score: Int): String = when {
     else -> "需改善"
 }
 
+private fun getScoreMessage(score: Int): String = when {
+    score >= 85 -> "你的肌肤状态太棒了"
+    score >= 70 -> "你的肌肤状态很棒哦"
+    score >= 55 -> "你的肌肤状态还不错"
+    score >= 40 -> "你的肌肤需要更多关注"
+    else -> "让我们一起改善肌肤吧"
+}
+
 @Composable
 private fun DetailContent(
     state: RecordDetailUiState.Content,
@@ -140,7 +150,7 @@ private fun DetailContent(
         ) {
             // Photo preview area + floating score card
             item(key = "photo_header") {
-                PhotoHeaderSection(record, onBack, onShare, state.scoreDiff)
+                PhotoHeaderSection(record, onBack, onShare, state.scoreDiff, state.percentile)
             }
 
             // Radar chart
@@ -154,7 +164,8 @@ private fun DetailContent(
             // Metric detail bars
             item(key = "metric_bars") {
                 MetricBarsCard(
-                    record,
+                    record = record,
+                    metricDiffs = state.metricDiffs,
                     modifier = Modifier.padding(
                         horizontal = spacing.md,
                         vertical = spacing.sm,
@@ -180,6 +191,8 @@ private fun DetailContent(
                         message = FeatureGate.DETAILED_AI_REPORT.lockedMessage,
                         onUpgrade = { navigator.push(PaywallScreen()) },
                         modifier = Modifier.padding(horizontal = spacing.md),
+                        title = "解锁完整分析报告",
+                        subtitle = "AI 智能分析 · 多维雷达图 · 个性化建议",
                     )
                 }
             }
@@ -216,6 +229,7 @@ private fun PhotoHeaderSection(
     onBack: () -> Unit,
     onShare: () -> Unit,
     scoreDiff: Int? = null,
+    percentile: Int? = null,
 ) {
     val spacing = MaterialTheme.spacing
 
@@ -247,11 +261,11 @@ private fun PhotoHeaderSection(
                             color = Color.Black.copy(alpha = 0.35f),
                             shape = FullRoundedShape,
                         )
-                        .padding(horizontal = spacing.md, vertical = spacing.sm),
+                        .padding(horizontal = 18.dp, vertical = 7.dp),
                 ) {
                     Text(
                         text = "${record.overallScore}分 · ${getScoreLabel(record.overallScore)}",
-                        style = MaterialTheme.typography.labelLarge,
+                        fontSize = 14.sp,
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                     )
@@ -270,9 +284,9 @@ private fun PhotoHeaderSection(
                 IconButton(onClick = onBack) {
                     Box(
                         modifier = Modifier
-                            .size(36.dp)
+                            .size(42.dp)
                             .background(
-                                color = Color.Black.copy(alpha = 0.3f),
+                                color = Color.Black.copy(alpha = 0.2f),
                                 shape = CircleShape,
                             ),
                         contentAlignment = Alignment.Center,
@@ -281,16 +295,16 @@ private fun PhotoHeaderSection(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "返回",
                             tint = Color.White,
-                            modifier = Modifier.size(20.dp),
+                            modifier = Modifier.size(22.dp),
                         )
                     }
                 }
                 IconButton(onClick = onShare) {
                     Box(
                         modifier = Modifier
-                            .size(36.dp)
+                            .size(42.dp)
                             .background(
-                                color = Color.Black.copy(alpha = 0.3f),
+                                color = Color.Black.copy(alpha = 0.2f),
                                 shape = CircleShape,
                             ),
                         contentAlignment = Alignment.Center,
@@ -308,6 +322,7 @@ private fun PhotoHeaderSection(
         FloatingScoreCard(
             record = record,
             scoreDiff = scoreDiff,
+            percentile = percentile,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = spacing.md)
@@ -321,6 +336,7 @@ private fun PhotoHeaderSection(
 private fun FloatingScoreCard(
     record: SkinRecord,
     scoreDiff: Int? = null,
+    percentile: Int? = null,
     modifier: Modifier = Modifier,
 ) {
     val spacing = MaterialTheme.spacing
@@ -336,8 +352,8 @@ private fun FloatingScoreCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = spacing.lg, vertical = spacing.md),
-            horizontalArrangement = Arrangement.spacedBy(spacing.md),
+                .padding(horizontal = 20.dp, vertical = 18.dp),
+            horizontalArrangement = Arrangement.spacedBy(18.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (record.overallScore != null) {
@@ -350,15 +366,24 @@ private fun FloatingScoreCard(
                     verticalArrangement = Arrangement.spacedBy(spacing.xs),
                 ) {
                     Text(
-                        text = "肌肤状态${getScoreLabel(record.overallScore)}",
-                        style = MaterialTheme.typography.titleMedium,
+                        text = getScoreMessage(record.overallScore),
+                        fontSize = 19.sp,
                         fontWeight = FontWeight.ExtraBold,
+                        letterSpacing = (-0.3).sp,
                     )
-                    Text(
-                        text = formatRecordDate(record.recordedAt),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                    if (percentile != null) {
+                        Text(
+                            text = "整体评分超过 ${percentile}% 的用户",
+                            fontSize = 13.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    } else {
+                        Text(
+                            text = formatRecordDate(record.recordedAt),
+                            fontSize = 13.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                     // Score change pill
                     if (scoreDiff != null) {
                         val (text, color) = when {
@@ -405,9 +430,10 @@ private fun RadarChartCard(record: SkinRecord, modifier: Modifier = Modifier) {
 
     if (!hasMetrics) return
 
+    // Order matches design spec: 综合→毛孔→泛红→水润→均匀→痘痘 (clockwise)
     val metrics = buildList {
         record.overallScore?.let {
-            add(RadarMetric("综合", it.toFloat(), color = MaterialTheme.colorScheme.primary))
+            add(RadarMetric("整体", it.toFloat(), color = MaterialTheme.colorScheme.primary))
         }
         record.poreScore?.let {
             add(RadarMetric("毛孔", it.toFloat(), color = skinMetric.pore))
@@ -415,11 +441,11 @@ private fun RadarChartCard(record: SkinRecord, modifier: Modifier = Modifier) {
         record.rednessScore?.let {
             add(RadarMetric("泛红", it.toFloat(), color = skinMetric.redness))
         }
+        record.blackheadDensity?.let {
+            add(RadarMetric("水润", it.toFloat(), color = skinMetric.hydration))
+        }
         record.evenScore?.let {
             add(RadarMetric("均匀度", it.toFloat(), color = skinMetric.evenness))
-        }
-        record.blackheadDensity?.let {
-            add(RadarMetric("黑头", it.toFloat(), color = skinMetric.hydration))
         }
         record.acneCount?.let {
             // Normalize acne count to 0-100 scale (0 acne = 100 score, 20+ acne = 0 score)
@@ -442,54 +468,48 @@ private fun RadarChartCard(record: SkinRecord, modifier: Modifier = Modifier) {
 @Composable
 private fun MetricBarsCard(
     record: SkinRecord,
+    metricDiffs: RecordDetailUiState.MetricDiffs = RecordDetailUiState.MetricDiffs(),
     modifier: Modifier = Modifier,
-    scoreDiff: RecordDetailUiState.Content? = null,
 ) {
     val skinMetric = MaterialTheme.extendedColors.skinMetric
+
+    // Collect metric rows to add dividers between them
+    data class MetricRow(val label: String, val score: Int, val gradientStart: Color, val gradientEnd: Color, val change: Int?)
+    val metricRows = buildList {
+        record.acneCount?.let { score ->
+            val normalized = (100 - score * 5).coerceIn(0, 100)
+            add(MetricRow("痘痘", normalized, Color(0xFFFF8A8A), skinMetric.acne, metricDiffs.acne))
+        }
+        record.poreScore?.let { score ->
+            add(MetricRow("毛孔", score, Color(0xFF7EDCD4), skinMetric.pore, metricDiffs.pore))
+        }
+        record.evenScore?.let { score ->
+            add(MetricRow("均匀度", score, Color(0xFFFFEE8D), skinMetric.evenness, metricDiffs.evenness))
+        }
+        record.rednessScore?.let { score ->
+            add(MetricRow("泛红", score, Color(0xFFF5A1A1), skinMetric.redness, metricDiffs.redness))
+        }
+        record.blackheadDensity?.let { score ->
+            add(MetricRow("水润", score, Color(0xFF75C7E1), skinMetric.hydration, metricDiffs.hydration))
+        }
+    }
 
     SectionCard(modifier = modifier) {
         SectionHeader("各项指标")
 
-        // Design spec: gradient bars with change values
-        record.acneCount?.let { score ->
-            val normalized = (100 - score * 5).coerceIn(0, 100)
+        metricRows.forEachIndexed { index, row ->
+            if (index > 0) {
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    thickness = 0.5.dp,
+                )
+            }
             MetricBarRow(
-                label = "痘痘",
-                score = normalized,
-                gradientStart = Color(0xFFFF8A8A),
-                gradientEnd = skinMetric.acne,
-            )
-        }
-        record.poreScore?.let { score ->
-            MetricBarRow(
-                label = "毛孔",
-                score = score,
-                gradientStart = Color(0xFF7EDCD4),
-                gradientEnd = skinMetric.pore,
-            )
-        }
-        record.evenScore?.let { score ->
-            MetricBarRow(
-                label = "均匀度",
-                score = score,
-                gradientStart = Color(0xFFFFEE8D),
-                gradientEnd = skinMetric.evenness,
-            )
-        }
-        record.rednessScore?.let { score ->
-            MetricBarRow(
-                label = "泛红",
-                score = score,
-                gradientStart = Color(0xFFF5A1A1),
-                gradientEnd = skinMetric.redness,
-            )
-        }
-        record.blackheadDensity?.let { score ->
-            MetricBarRow(
-                label = "水润",
-                score = score,
-                gradientStart = Color(0xFF75C7E1),
-                gradientEnd = skinMetric.hydration,
+                label = row.label,
+                score = row.score,
+                gradientStart = row.gradientStart,
+                gradientEnd = row.gradientEnd,
+                change = row.change,
             )
         }
     }
@@ -517,14 +537,14 @@ private fun MetricBarRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = spacing.xs),
+            .padding(vertical = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(spacing.sm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // Label (52dp width per design)
+        // Label (52dp width, 13sp per design)
         Text(
             text = label,
-            style = MaterialTheme.typography.bodySmall,
+            fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.width(52.dp),
@@ -551,14 +571,14 @@ private fun MetricBarRow(
             )
         }
 
-        // Score value
+        // Score value (15sp/800 per design)
         Text(
             text = "$score",
-            style = MaterialTheme.typography.bodyMedium,
+            fontSize = 15.sp,
             fontWeight = FontWeight.ExtraBold,
         )
 
-        // Change value
+        // Change value (36dp width per design)
         if (change != null) {
             val functional = MaterialTheme.extendedColors.functional
             val changeColor = when {
@@ -571,6 +591,8 @@ private fun MetricBarRow(
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
                 color = changeColor,
+                modifier = Modifier.width(36.dp),
+                textAlign = androidx.compose.ui.text.style.TextAlign.End,
             )
         }
     }
@@ -584,22 +606,47 @@ private fun AiSummaryCard(
 ) {
     val spacing = MaterialTheme.spacing
 
-    // Gradient background card matching design spec
+    // Gradient background card matching design spec (dark-mode-aware)
+    val isDark = isSystemInDarkTheme()
+    val aiCardGradient = if (isDark) {
+        Brush.linearGradient(
+            listOf(
+                Color(0xFF153E32).copy(alpha = 0.5f),
+                Color(0xFF1E1830).copy(alpha = 0.3f),
+            ),
+        )
+    } else {
+        Brush.linearGradient(
+            listOf(
+                Color(0xFFF0FAF6),
+                Color(0xFFF5F0FF),
+            ),
+        )
+    }
+    val aiHighlightGradient = if (isDark) {
+        Brush.linearGradient(
+            listOf(
+                Color(0xFF58CAA5).copy(alpha = 0.06f),
+                Color(0xFF58CAA5).copy(alpha = 0.06f),
+            ),
+        )
+    } else {
+        Brush.linearGradient(
+            listOf(
+                Color(0x142D9F7F),
+                Color(0x0FA78BFA),
+            ),
+        )
+    }
+
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.extraLarge,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(
-                            Color(0xFFF0FAF6),
-                            Color(0xFFF5F0FF),
-                        ),
-                    ),
-                )
+                .background(brush = aiCardGradient)
                 .padding(spacing.md),
             verticalArrangement = Arrangement.spacedBy(spacing.sm),
         ) {
@@ -628,20 +675,15 @@ private fun AiSummaryCard(
             }
 
             if (recommendations.isNotEmpty()) {
-                // Highlight box
+                // Highlight box (10px 12px padding per design)
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(
-                            brush = Brush.linearGradient(
-                                colors = listOf(
-                                    Color(0x142D9F7F),
-                                    Color(0x0FA78BFA),
-                                ),
-                            ),
+                            brush = aiHighlightGradient,
                             shape = MaterialTheme.shapes.small,
                         )
-                        .padding(spacing.sm),
+                        .padding(horizontal = 12.dp, vertical = 10.dp),
                     verticalArrangement = Arrangement.spacedBy(spacing.xs),
                 ) {
                     recommendations.forEach { rec ->
@@ -693,14 +735,14 @@ private fun DailyProductsCard(
                 products.forEach { product ->
                     Text(
                         text = product.name,
-                        style = MaterialTheme.typography.bodySmall,
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier
                             .background(
                                 color = MaterialTheme.colorScheme.surfaceVariant,
                                 shape = FullRoundedShape,
                             )
-                            .padding(horizontal = spacing.sm + spacing.xs, vertical = spacing.sm),
+                            .padding(horizontal = 14.dp, vertical = 7.dp),
                     )
                 }
             }

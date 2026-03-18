@@ -91,10 +91,14 @@ body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content
 .pwd-str .bars { display: flex; gap: 4px; margin-bottom: 4px; }
 .pwd-str .bar-seg { flex: 1; height: 4px; border-radius: 2px; background: var(--outline-variant); }
 .pwd-str .bar-seg.filled { background: var(--primary); }
+.pwd-str .bar-seg.filled.weak { background: var(--rose-400); }
+.pwd-str .bar-seg.filled.medium { background: var(--apricot-400); }
 .pwd-str .label { font-size: 12px; font-weight: 600; color: var(--primary); }
+.pwd-str .label.weak { color: var(--rose-400); }
+.pwd-str .label.medium { color: var(--apricot-400); }
 .pwd-reqs { margin: -6px 0 14px; display: flex; flex-direction: column; gap: 4px; }
 .pwd-req { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; }
-.pwd-req.met { color: #10B981; }
+.pwd-req.met { color: var(--mint-400); }
 .pwd-req.unmet { color: var(--on-surface-variant); }
 .pwd-req svg { width: 14px; height: 14px; flex-shrink: 0; }
 </style>
@@ -111,7 +115,7 @@ body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content
         <svg viewBox="0 0 38 38"><path d="M19 5C13 5 9 11 9 17c0 4.5 2.5 8.5 6.5 10.5 1-2.5 2-4.5 3.5-4.5s2.5 2 3.5 4.5C26.5 25.5 29 21.5 29 17 29 11 25 5 19 5z" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width="1.2"/><ellipse cx="19" cy="15.5" rx="5" ry="6" fill="none" stroke="white" stroke-width="0.8" opacity="0.5"/><path d="M14 20c2 1 8 1 10 0" stroke="white" stroke-width="0.6" opacity="0.3"/></svg>
       </div>
       <h1>SkinTrack</h1>
-      <p>AI 驱动的肌肤管理助手</p>
+      <p>开启你的美丽旅程</p>
     </div>
     <div class="auth-form">
       <div class="tabs"><div class="tab on">登录</div><div class="tab">注册</div></div>
@@ -169,7 +173,7 @@ body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content
         <svg viewBox="0 0 38 38"><path d="M19 5C13 5 9 11 9 17c0 4.5 2.5 8.5 6.5 10.5 1-2.5 2-4.5 3.5-4.5s2.5 2 3.5 4.5C26.5 25.5 29 21.5 29 17 29 11 25 5 19 5z" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width="1.2"/><ellipse cx="19" cy="15.5" rx="5" ry="6" fill="none" stroke="white" stroke-width="0.8" opacity="0.5"/><path d="M14 20c2 1 8 1 10 0" stroke="white" stroke-width="0.6" opacity="0.3"/></svg>
       </div>
       <h1>SkinTrack</h1>
-      <p>AI 驱动的肌肤管理助手</p>
+      <p>开启你的美丽旅程</p>
     </div>
     <div class="auth-form">
       <div class="tabs"><div class="tab">登录</div><div class="tab on">注册</div></div>
@@ -229,7 +233,7 @@ body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content
         </div>
       </div>
 
-      <button class="btn btn-primary" style="margin-top:4px">创建账号</button>
+      <button class="btn btn-primary" style="margin-top:4px">开始护肤之旅</button>
 
       <div class="terms">注册即表示同意 <a href="#">服务条款</a> 和 <a href="#">隐私政策</a></div>
 
@@ -254,7 +258,7 @@ body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content
         <svg viewBox="0 0 40 40"><rect x="6" y="16" width="28" height="20" rx="4" fill="none"/><path d="M12 16V11a8 8 0 0 1 16 0v5"/><circle cx="20" cy="27" r="2.5" fill="currentColor" stroke="none"/><path d="M20 29.5V33"/><path d="M14 16v-3a6 6 0 0 1 12 0" stroke-dasharray="3,3" opacity="0.4"/></svg>
       </div>
       <h2>重置密码</h2>
-      <p class="desc">输入你注册时使用的邮箱地址，我们将发送一封包含密码重置链接的邮件给你。</p>
+      <p class="desc">别担心，输入你的注册邮箱，我们马上帮你找回账号。</p>
 
       <div class="field">
         <label>注册邮箱</label>

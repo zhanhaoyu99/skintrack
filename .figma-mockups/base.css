@@ -35,7 +35,13 @@
   --grad-hero: linear-gradient(145deg, #1A7A63 0%, #2D9F7F 35%, #3DBFA0 70%, #58CAA5 100%);
   --grad-surface: linear-gradient(180deg, #F7FAF9 0%, #FFFFFF 100%);
   --grad-glass: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+  --grad-rose-warm: linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 50%, #FFF8F5 100%);
+  --grad-lavender-soft: linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 50%, #F8F5FF 100%);
+  --grad-tri-warm: linear-gradient(135deg, #F0FAF6 0%, #FFF5F6 50%, #F5F0FF 100%);
   --skin-placeholder: linear-gradient(135deg, #E8CFC0 0%, #D4B8A8 25%, #C8A898 50%, #DCC4B4 75%, #E8D0C0 100%);
+  /* Card refinement tokens */
+  --card-border: 0.5px solid rgba(0,0,0,0.04);
+  --card-border-accent: 0.5px solid rgba(45,159,127,0.06);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: var(--font); background: #DFE3E8; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; -webkit-font-smoothing: antialiased; }
@@ -96,6 +102,7 @@ body { font-family: var(--font); background: #DFE3E8; display: flex; justify-con
 .section-card {
   background: var(--surface); border-radius: var(--r-lg); padding: var(--md);
   margin-bottom: 12px; box-shadow: var(--shadow-sm);
+  border: var(--card-border);
 }
 .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .section-header .title { font-size: 17px; font-weight: 700; color: var(--on-surface); letter-spacing: -0.3px; }
@@ -123,8 +130,9 @@ body { font-family: var(--font); background: #DFE3E8; display: flex; justify-con
   font-family: var(--font);
 }
 .btn-primary {
-  background: var(--primary); color: #FFFFFF;
+  background: linear-gradient(180deg, #31A887 0%, var(--primary) 100%); color: #FFFFFF;
   box-shadow: 0 4px 14px rgba(45,159,127,0.3), 0 1px 3px rgba(45,159,127,0.2);
+  border: 0.5px solid rgba(255,255,255,0.15);
 }
 .btn-outlined { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); }
 .btn-tonal { background: var(--primary-container); color: var(--on-primary-container); }

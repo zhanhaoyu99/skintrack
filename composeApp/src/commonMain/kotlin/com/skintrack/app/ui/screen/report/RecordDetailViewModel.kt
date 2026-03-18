@@ -61,6 +61,32 @@ class RecordDetailViewModel(
                 record.overallScore - previousScore
             } else null
 
+            // Calculate per-metric diffs from previous record
+            val previousRecord = if (currentIndex >= 0 && currentIndex < sortedRecords.lastIndex) {
+                sortedRecords[currentIndex + 1]
+            } else null
+            val metricDiffs = if (previousRecord != null) {
+                RecordDetailUiState.MetricDiffs(
+                    acne = computeAcneDiff(record.acneCount, previousRecord.acneCount),
+                    pore = diffOrNull(record.poreScore, previousRecord.poreScore),
+                    evenness = diffOrNull(record.evenScore, previousRecord.evenScore),
+                    redness = diffOrNull(record.rednessScore, previousRecord.rednessScore),
+                    hydration = diffOrNull(record.blackheadDensity, previousRecord.blackheadDensity),
+                )
+            } else RecordDetailUiState.MetricDiffs()
+
+            // Estimate percentile from score (simple heuristic)
+            val percentile = record.overallScore?.let { score ->
+                when {
+                    score >= 90 -> 95
+                    score >= 80 -> 78
+                    score >= 70 -> 60
+                    score >= 60 -> 40
+                    score >= 50 -> 25
+                    else -> 10
+                }
+            }
+
             _uiState.value = RecordDetailUiState.Content(
                 record = record,
                 summary = summary,
@@ -68,8 +94,21 @@ class RecordDetailViewModel(
                 usedProducts = products,
                 isPremium = isPremium,
                 scoreDiff = scoreDiff,
+                metricDiffs = metricDiffs,
+                percentile = percentile,
             )
         }
+    }
+
+    private fun diffOrNull(current: Int?, previous: Int?): Int? =
+        if (current != null && previous != null) current - previous else null
+
+    private fun computeAcneDiff(currentAcne: Int?, previousAcne: Int?): Int? {
+        if (currentAcne == null || previousAcne == null) return null
+        // Convert to normalized score (lower acne = higher score)
+        val currentNorm = (100 - currentAcne * 5).coerceIn(0, 100)
+        val previousNorm = (100 - previousAcne * 5).coerceIn(0, 100)
+        return currentNorm - previousNorm
     }
 
     private fun parseAnalysisJson(json: String?): Pair<String?, List<String>> {
@@ -97,5 +136,15 @@ sealed interface RecordDetailUiState {
         val usedProducts: List<SkincareProduct>,
         val isPremium: Boolean = true,
         val scoreDiff: Int? = null,
+        val metricDiffs: MetricDiffs = MetricDiffs(),
+        val percentile: Int? = null,
     ) : RecordDetailUiState
+
+    data class MetricDiffs(
+        val acne: Int? = null,
+        val pore: Int? = null,
+        val evenness: Int? = null,
+        val redness: Int? = null,
+        val hydration: Int? = null,
+    )
 }

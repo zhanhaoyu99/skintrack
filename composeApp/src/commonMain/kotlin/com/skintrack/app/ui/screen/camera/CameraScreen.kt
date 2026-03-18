@@ -26,6 +26,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -45,6 +46,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.skintrack.app.platform.CameraPreview
@@ -380,10 +382,10 @@ private fun PermissionRequestContent(onRequest: () -> Unit) {
             )
         }
 
-        Spacer(modifier = Modifier.height(spacing.lg))
+        Spacer(modifier = Modifier.height(28.dp))
 
         Text(
-            text = "来拍张自拍吧",
+            text = "来记录你的美丽吧",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.ExtraBold,
         )
@@ -391,21 +393,21 @@ private fun PermissionRequestContent(onRequest: () -> Unit) {
         Spacer(modifier = Modifier.height(spacing.sm))
 
         Text(
-            text = "我们需要使用相机来帮你记录肌肤状态，\n所有照片仅保存在你的设备上。",
+            text = "使用相机记录你的肌肤变化，所有照片仅保存在你的设备上，安全又私密。",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = spacing.sm),
+            textAlign = TextAlign.Center,
         )
 
-        Spacer(modifier = Modifier.height(spacing.lg))
+        Spacer(modifier = Modifier.height(28.dp))
 
         // Feature list with colored dots
         Column(
-            verticalArrangement = Arrangement.spacedBy(spacing.sm),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxWidth(),
         ) {
             FeatureBullet(
-                text = "AI 智能分析五大肌肤指标",
+                text = "AI 智能解读五大肌肤维度",
                 dotBg = Mint50,
                 dotColor = MaterialTheme.colorScheme.primary,
             )
@@ -441,7 +443,7 @@ private fun PermissionRequestContent(onRequest: () -> Unit) {
         ) {
             Text(
                 text = "下次再说",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.primary,
             )
         }
     }
@@ -453,10 +455,9 @@ private fun FeatureBullet(
     dotBg: Color,
     dotColor: Color,
 ) {
-    val spacing = MaterialTheme.spacing
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Box(
             modifier = Modifier
@@ -491,7 +492,7 @@ private fun PermissionDeniedContent() {
         verticalArrangement = Arrangement.Center,
     ) {
         Icon(
-            imageVector = Icons.Default.CheckCircle,
+            imageVector = Icons.Default.Close,
             contentDescription = null,
             modifier = Modifier.size(spacing.section),
             tint = MaterialTheme.colorScheme.error,

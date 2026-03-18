@@ -25,7 +25,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Share
+
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -55,11 +55,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.skintrack.app.ui.theme.Mint50
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.skintrack.app.ui.component.DeleteAccountDialog
 import com.skintrack.app.ui.component.MenuItem
+import androidx.compose.foundation.layout.PaddingValues
 import com.skintrack.app.ui.component.SectionCard
 import com.skintrack.app.ui.component.animateCardEntrance
 import com.skintrack.app.ui.screen.auth.AuthScreen
@@ -174,6 +176,8 @@ class SettingsScreen : Screen {
             },
             snackbarHost = { SnackbarHost(snackbarHostState) },
         ) { padding ->
+            val menuPadding = PaddingValues(horizontal = MaterialTheme.spacing.md, vertical = 2.dp)
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -186,10 +190,10 @@ class SettingsScreen : Screen {
                 SettingsSectionTitle(
                     title = "账户",
                     modifier = Modifier
-                        .padding(top = MaterialTheme.spacing.sm)
+                        .padding(top = MaterialTheme.spacing.xs)
                         .animateCardEntrance(0),
                 )
-                SectionCard(modifier = Modifier.animateCardEntrance(1)) {
+                SectionCard(modifier = Modifier.animateCardEntrance(1), contentPadding = menuPadding) {
                     MenuItem(
                         title = "编辑资料",
                         subtitle = "头像、昵称、肤质",
@@ -219,9 +223,11 @@ class SettingsScreen : Screen {
                 // ── Notification section ─────────────────────────────────
                 SettingsSectionTitle(
                     title = "通知",
-                    modifier = Modifier.animateCardEntrance(2),
+                    modifier = Modifier
+                        .padding(top = MaterialTheme.spacing.xs)
+                        .animateCardEntrance(2),
                 )
-                SectionCard(modifier = Modifier.animateCardEntrance(3)) {
+                SectionCard(modifier = Modifier.animateCardEntrance(3), contentPadding = menuPadding) {
                     MenuItem(
                         title = "打卡提醒",
                         subtitle = "每天 $reminderTime",
@@ -241,7 +247,7 @@ class SettingsScreen : Screen {
                     MenuItem(
                         title = "周报通知",
                         subtitle = "每周日发送肌肤周报",
-                        leading = { MenuIcon(Icons.Default.Info, Color(0xFFDBEAFE), Color(0xFF3B82F6)) },
+                        leading = { EmojiMenuIcon("\uD83D\uDCCA", Color(0xFFDBEAFE)) },
                         onClick = { viewModel.toggleWeeklyReport() },
                         trailing = {
                             Switch(
@@ -257,7 +263,7 @@ class SettingsScreen : Screen {
                     MenuItem(
                         title = "AI 分析完成通知",
                         subtitle = "分析完成后推送提醒",
-                        leading = { MenuIcon(Icons.Default.Notifications, Rose50, Rose400) },
+                        leading = { EmojiMenuIcon("\uD83D\uDCAC", Rose50) },
                         onClick = { viewModel.toggleAiNotification() },
                         trailing = {
                             Switch(
@@ -272,14 +278,17 @@ class SettingsScreen : Screen {
                 // ── Data & Privacy section ─────────────────────────────────
                 SettingsSectionTitle(
                     title = "数据与隐私",
-                    modifier = Modifier.animateCardEntrance(4),
+                    modifier = Modifier
+                        .padding(top = MaterialTheme.spacing.xs)
+                        .animateCardEntrance(4),
                 )
-                SectionCard(modifier = Modifier.animateCardEntrance(5)) {
+                SectionCard(modifier = Modifier.animateCardEntrance(5), contentPadding = menuPadding) {
                     MenuItem(
                         title = "数据同步",
                         subtitle = "最后同步：今天 09:30",
                         leading = { MenuIcon(Icons.Default.Refresh, Mint100, MaterialTheme.colorScheme.primary) },
                         onClick = { viewModel.manualSync() },
+                        trailing = { SyncBadge() },
                     )
                     HorizontalDivider(
                         modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md),
@@ -287,7 +296,7 @@ class SettingsScreen : Screen {
                     MenuItem(
                         title = "导出数据",
                         subtitle = "导出为 JSON / CSV",
-                        leading = { MenuIcon(Icons.Default.Share, MaterialTheme.colorScheme.surfaceVariant) },
+                        leading = { EmojiMenuIcon("\uD83D\uDCE5", MaterialTheme.colorScheme.surfaceVariant) },
                         onClick = { viewModel.exportData() },
                     )
                     HorizontalDivider(
@@ -304,9 +313,11 @@ class SettingsScreen : Screen {
                 // ── About section ────────────────────────────────────────
                 SettingsSectionTitle(
                     title = "关于",
-                    modifier = Modifier.animateCardEntrance(6),
+                    modifier = Modifier
+                        .padding(top = MaterialTheme.spacing.xs)
+                        .animateCardEntrance(6),
                 )
-                SectionCard(modifier = Modifier.animateCardEntrance(7)) {
+                SectionCard(modifier = Modifier.animateCardEntrance(7), contentPadding = menuPadding) {
                     MenuItem(
                         title = "版本信息",
                         subtitle = "v1.0.0 (Build 42)",
@@ -319,7 +330,7 @@ class SettingsScreen : Screen {
                     )
                     MenuItem(
                         title = "隐私政策",
-                        leading = { MenuIcon(Icons.Default.Lock, MaterialTheme.colorScheme.surfaceVariant) },
+                        leading = { EmojiMenuIcon("\uD83D\uDEE1\uFE0F", MaterialTheme.colorScheme.surfaceVariant) },
                         onClick = {
                             viewModel.showSnackbar("隐私政策将在正式版中提供")
                         },
@@ -329,7 +340,7 @@ class SettingsScreen : Screen {
                     )
                     MenuItem(
                         title = "用户协议",
-                        leading = { MenuIcon(Icons.Default.Info, MaterialTheme.colorScheme.surfaceVariant) },
+                        leading = { EmojiMenuIcon("\uD83D\uDCC4", MaterialTheme.colorScheme.surfaceVariant) },
                         onClick = {
                             viewModel.showSnackbar("用户协议将在正式版中提供")
                         },
@@ -337,7 +348,7 @@ class SettingsScreen : Screen {
                 }
 
                 // ── Bottom actions ───────────────────────────────────────
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
                 OutlinedButton(
                     onClick = { viewModel.logout() },
@@ -351,12 +362,21 @@ class SettingsScreen : Screen {
                         color = MaterialTheme.colorScheme.outlineVariant,
                     ),
                 ) {
-                    Text(
-                        text = "退出登录",
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold,
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = "\uD83D\uDEAA",
+                            fontSize = 16.sp,
+                        )
+                        Text(
+                            text = "退出登录",
+                            color = MaterialTheme.colorScheme.onSurface,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
                 }
 
                 Box(
@@ -424,7 +444,7 @@ private fun MenuIcon(
     Box(
         modifier = Modifier
             .size(38.dp)
-            .clip(RoundedCornerShape(10.dp))
+            .clip(RoundedCornerShape(11.dp))
             .background(backgroundColor),
         contentAlignment = Alignment.Center,
     ) {
@@ -433,6 +453,39 @@ private fun MenuIcon(
             contentDescription = null,
             tint = tintColor,
             modifier = Modifier.size(MaterialTheme.dimens.iconSmall),
+        )
+    }
+}
+
+@Composable
+private fun EmojiMenuIcon(
+    emoji: String,
+    backgroundColor: Color,
+) {
+    Box(
+        modifier = Modifier
+            .size(38.dp)
+            .clip(RoundedCornerShape(11.dp))
+            .background(backgroundColor),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(text = emoji, fontSize = 16.sp)
+    }
+}
+
+@Composable
+private fun SyncBadge() {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(50))
+            .background(Mint50)
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+    ) {
+        Text(
+            text = "已同步",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.primary,
+            fontSize = 11.sp,
         )
     }
 }

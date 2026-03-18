@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.skintrack.app.domain.model.SkinRecord
 import com.skintrack.app.domain.repository.AuthRepository
+import com.skintrack.app.domain.repository.ProductRepository
 import com.skintrack.app.domain.repository.SkinRecordRepository
 import com.skintrack.app.domain.usecase.UpdateCheckInStreak
 import com.skintrack.app.ui.screen.timeline.ChartRecord
@@ -26,6 +27,7 @@ import kotlin.time.Duration.Companion.days
 class DashboardViewModel(
     private val authRepository: AuthRepository,
     private val skinRecordRepository: SkinRecordRepository,
+    private val productRepository: ProductRepository,
     private val updateCheckInStreak: UpdateCheckInStreak,
 ) : ViewModel() {
 
@@ -40,6 +42,12 @@ class DashboardViewModel(
             val user = authRepository.currentUser()
             val userId = user?.userId ?: "local-user"
             val username = user?.displayName ?: user?.email?.substringBefore('@') ?: "用户"
+
+            val productCount = try {
+                productRepository.countByUser(userId)
+            } catch (_: Exception) {
+                0
+            }
 
             combine(
                 skinRecordRepository.getRecordsByUser(userId),
@@ -109,6 +117,7 @@ class DashboardViewModel(
                         currentStreak = streak?.currentStreak ?: 0,
                         totalRecords = records.size,
                         weekCheckIns = weekCheckIns,
+                        productCount = productCount,
                     )
                 }
             }.collect { _uiState.value = it }
@@ -137,5 +146,6 @@ sealed interface DashboardUiState {
         val currentStreak: Int,
         val totalRecords: Int,
         val weekCheckIns: List<DayCheckIn> = emptyList(),
+        val productCount: Int = 0,
     ) : DashboardUiState
 }

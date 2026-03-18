@@ -12,12 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.skintrack.app.ui.theme.Motion
 import com.skintrack.app.ui.theme.gradients
 
@@ -25,9 +26,10 @@ import com.skintrack.app.ui.theme.gradients
 fun ScoreRing(
     score: Int,
     maxScore: Int = 100,
-    label: String = "综合评分",
+    label: String = "总评分",
     size: Dp = 160.dp,
     strokeWidth: Dp = 10.dp,
+    scoreColor: Color? = null,
     modifier: Modifier = Modifier,
 ) {
     val fraction = (score.toFloat() / maxScore).coerceIn(0f, 1f)
@@ -71,18 +73,33 @@ fun ScoreRing(
             )
         }
 
+        // Adapt text size based on ring size
+        val isCompact = size <= 100.dp
+        val isMini = size <= 50.dp
+        val resolvedScoreColor = scoreColor ?: MaterialTheme.colorScheme.onSurface
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = score.toString(),
-                style = MaterialTheme.typography.displayMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
+                style = when {
+                    isMini -> MaterialTheme.typography.labelLarge.copy(
+                        letterSpacing = (-0.3).sp,
+                    )
+                    isCompact -> MaterialTheme.typography.titleLarge.copy(
+                        fontSize = 24.sp,
+                        letterSpacing = (-0.5).sp,
+                    )
+                    else -> MaterialTheme.typography.displayMedium
+                },
+                fontWeight = FontWeight.ExtraBold,
+                color = resolvedScoreColor,
             )
-            Text(
-                text = label,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            if (!isCompact) {
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }

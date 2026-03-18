@@ -62,6 +62,9 @@ class ComponentSnapshotTest : SnapshotTestBase() {
             message = "升级会员解锁 AI 详细分析报告",
             onUpgrade = {},
             modifier = Modifier.padding(16.dp),
+            title = "解锁完整分析报告",
+            subtitle = "AI 智能分析 · 多维雷达图 · 个性化建议",
+            tags = listOf("AI 深度分析", "雷达图", "趋势预测"),
         )
     }
 

@@ -1,10 +1,10 @@
-<!-- Last updated: 2026-03-16 -->
+<!-- Last updated: 2026-03-18 -->
 # SkinTrack 开发进度
 
 ## 当前状态（新session必读5行）
 - **阶段**: M3 测试上线 95% 进行中
-- **当前里程碑**: M3 视觉还原完成（6组并行agent逐页pixel-perfect对齐HTML设计稿）
-- **当前工作**: 全部16页视觉还原 + 42个快照测试通过 + Release APK 构建通过
+- **当前里程碑**: M3 视觉还原审查（Dashboard/Timeline 对比HTML设计稿修复中）
+- **当前工作**: RecordDetail+Attribution 设计稿像素对齐 — RecordDetail(评分卡标题改人性化文案19sp/13sp/18dp间距, 浮动卡overlap36dp, 照片按钮42dp/0.2alpha, 分数标签14sp/18dp*7dp, 雷达图"综合"→"整体", 指标行10dp间距+divider+13sp标签+15sp分数+36dp变化宽度, AI卡圆角extraLarge, 高亮区12dp*10dp填充, 产品芯片13sp/14dp*7dp), Attribution(对比区8dp上+20dp下+6dp标签间距, delta文字18sp, 影响分18sp+10sp标签, 产品名15sp, 统计卡14dp垂直, 建议图标渐变bg, 产品图标渐变bg, 排名1渐变bg), ScoreRing(compact模式24sp/ExtraBold/mini模式分离)
 - **阻塞问题**: 部署服务器到国内云（需要云服务器），真实支付/FCM为V2范围
 - **下一步**: 部署到国内云 → 服务端联调 → 内测20-30人 → Bug修复 → 发布
 - **产品文档**: `.dev/product/README.md`（索引）— 含全部 16 页设计规格
@@ -290,6 +290,31 @@
   - Profile+Settings: VIP pill形状 / 统计卡extraLarge圆角 / 目标pill颜色准确 / 菜单图标RoundedCorner(10dp) / Settings副标题(缓存大小/同步时间) / EditProfile Rose头像+相机覆盖
   - Product+Camera: 搜索栏pill形 / 进度卡Mint50 / AM/PM图标头 / 打卡指示器圆环 / 权限页3利益点+渐变按钮 / 打卡徽章Apricot渐变
   - Attribution+Paywall+Share+Locked: 金银铜排名徽章 / 80dp金色皇冠圆 / 社会证明头像 / 省钱浮动badge / 56dp Apricot锁图标 / 品牌头Row布局
+- [x] 视觉还原二次对齐 — 逐页对比HTML设计稿+快照, 修复21文件~2000行:
+  - Dashboard: 趋势图SectionCard包裹+X轴日期 / 迷你指标卡14dp圆角 / 趋势周期自定义pill替代FilterChip / 护肤品动态数量
+  - Attribution: Before/After对比圆圈(70→82) / 概览卡片3统计子卡 / AI洞察卡片(渐变背景) / 排行金银铜编号徽章+品类图标 / 改善建议区块
+  - Paywall快照: Hero皇冠+变美潜力标题 / 试用badge+社交证明 / 5权益双行+云端同步 / 浮动省钱标签+原价删除线 / 信任信号
+  - RecordDetail: 评分卡Row布局+74dp ScoreRing / 百分位文案 / 指标变化值计算 / ScoreRing小尺寸自适应
+  - Profile: emoji菜单图标(🧴📊👑) / 总记录数值onSurface色 / 用户卡右箭头
+  - Auth: 输入框leadingIcon / 创建账号文案 / 信任标记emoji(🛡️✅)
+  - Camera: 权限拒绝Close图标 / "下次再说"primary色
+  - Product: 56dp打卡进度圆环 / 产品频率标签 / 提醒横幅加粗变色
+  - Settings: emoji图标(📊💬📥🛡️📄) / 数据同步"已同步"badge / 退出登录图标
+  - LockedFeatureCard: 👑皇冠+title/subtitle参数 / tags标签pills
+  - Timeline: 区块排列顺序调整(对比卡→趋势图) / 标题"肌肤记录"
+- [x] 视觉还原三次对齐 — 5组并行agent全面审查HTML设计稿+快照+代码三方比对:
+  - ScoreRing: 数字颜色primary→onSurface / Dashboard传scoreColor=White
+  - RecordDetail: 雷达图标签"黑头"→"水润"+顺序修正 / AI卡暗色模式渐变 / 快照测试完全重写(渐变条+变化值)
+  - Attribution: StatSubCard单色→渐变背景 / AI洞察暗色渐变 / Rank1暗色适配 / 快照同步
+  - Paywall: TopAppBar Close图标+去标题 / 购买按钮高度52dp
+  - Camera: 快照测试"下次再说"颜色修正(onSurfaceVariant→primary)
+  - Dashboard: 快照迷你指标圆角+趋势图trailing+周期选择器pill
+  - Timeline: 记录卡内padding 8→12dp / 快照测试完全重写(结构性偏差10处)
+  - Profile: Footer版本号+letterSpacing / 菜单SectionCard紧凑padding / 快照emoji图标同步
+  - Settings: 菜单紧凑padding / 快照emoji图标同步
+  - SectionCard: 圆角12→20dp+新增contentPadding参数 / MenuItem: 箭头20dp+outline色
+  - LockedFeatureCard: 皇冠金色渐变背景+卡片暖色渐变+标签阴影样式
+  - Product: 快照ProgressRing布局+提醒文本加粗颜色+频率标签
 - [ ] 真实支付集成 (微信支付 + StoreKit 2)
 - [ ] Firebase FCM 推送
 - [ ] 部署 Ktor Server 到国内云

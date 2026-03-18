@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.skintrack.app.ui.theme.spacing
 
@@ -34,9 +35,9 @@ fun MenuItem(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(MaterialTheme.spacing.md),
+            .padding(vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         leading?.invoke()
 
@@ -44,6 +45,7 @@ fun MenuItem(
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
                 color = textColor,
             )
             if (subtitle != null) {
@@ -61,8 +63,8 @@ fun MenuItem(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.outline,
+                modifier = Modifier.size(18.dp),
             )
         }
     }

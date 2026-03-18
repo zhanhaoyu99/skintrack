@@ -30,7 +30,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -77,6 +76,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -259,7 +259,7 @@ class AuthScreen : Screen {
                         },
                     )
                     Text(
-                        text = "AI 驱动的肌肤管理助手",
+                        text = "开启你的美丽旅程",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -307,6 +307,9 @@ class AuthScreen : Screen {
                         label = { Text("邮箱") },
                         singleLine = true,
                         isError = showEmailError,
+                        leadingIcon = {
+                            Text(text = "\u2709\uFE0F", modifier = Modifier.padding(start = 4.dp))
+                        },
                         supportingText = if (showEmailError) {
                             { Text("请输入有效邮箱") }
                         } else {
@@ -334,6 +337,13 @@ class AuthScreen : Screen {
                         label = { Text("密码") },
                         singleLine = true,
                         isError = showPasswordError,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Lock,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp),
+                            )
+                        },
                         supportingText = if (showPasswordError) {
                             { Text("密码至少需要6个字符") }
                         } else {
@@ -485,7 +495,7 @@ class AuthScreen : Screen {
                                 )
                             } else {
                                 Text(
-                                    text = if (uiState.isLoginMode) "登录" else "注册",
+                                    text = if (uiState.isLoginMode) "登录" else "开始护肤之旅",
                                     color = MaterialTheme.colorScheme.onPrimary,
                                     style = MaterialTheme.typography.labelLarge,
                                 )
@@ -621,12 +631,12 @@ class AuthScreen : Screen {
                         ),
                     ) {
                         if (uiState.isLoginMode) {
-                            TrustBadge(icon = Icons.Default.Lock, label = "隐私安全")
-                            TrustBadge(icon = Icons.Default.Person, label = "10万+用户")
+                            TrustBadge(emoji = "\uD83D\uDEE1\uFE0F", label = "隐私安全")
+                            TrustBadge(emoji = "\u2705", label = "10万+用户")
                             TrustBadge(icon = Icons.Default.Star, label = "4.8分好评")
                         } else {
-                            TrustBadge(icon = Icons.Default.Lock, label = "数据加密")
-                            TrustBadge(icon = Icons.Default.Person, label = "随时注销")
+                            TrustBadge(emoji = "\uD83D\uDD12", label = "数据加密")
+                            TrustBadge(emoji = "\uD83D\uDEE1\uFE0F", label = "随时注销")
                         }
                     }
                 }
@@ -736,19 +746,24 @@ private fun SocialLoginButton(
 
 @Composable
 private fun TrustBadge(
-    icon: ImageVector,
     label: String,
+    icon: ImageVector? = null,
+    emoji: String? = null,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs),
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(14.dp),
-        )
+        if (emoji != null) {
+            Text(text = emoji, fontSize = 13.sp)
+        } else if (icon != null) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(14.dp),
+            )
+        }
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,

@@ -99,7 +99,7 @@ private fun AuthScreenPreview(isLoginMode: Boolean) {
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
-                    text = "AI \u9A71\u52A8\u7684\u808C\u80A4\u7BA1\u7406\u52A9\u624B",
+                    text = "\u5F00\u542F\u4F60\u7684\u7F8E\u4E3D\u65C5\u7A0B",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -195,7 +195,7 @@ private fun AuthScreenPreview(isLoginMode: Boolean) {
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = if (isLoginMode) "\u767B\u5F55" else "\u6CE8\u518C",
+                        text = if (isLoginMode) "\u767B\u5F55" else "\u5F00\u59CB\u62A4\u80A4\u4E4B\u65C5",
                         color = MaterialTheme.colorScheme.onPrimary,
                         style = MaterialTheme.typography.labelLarge,
                     )

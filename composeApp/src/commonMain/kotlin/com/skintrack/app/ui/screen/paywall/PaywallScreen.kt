@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -54,6 +54,7 @@ import com.skintrack.app.ui.theme.FullRoundedShape
 import com.skintrack.app.ui.theme.Lavender50
 import com.skintrack.app.ui.theme.Mint50
 import com.skintrack.app.ui.theme.Rose50
+import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.spacing
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -73,10 +74,10 @@ class PaywallScreen : Screen {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("升级会员") },
+                    title = {},
                     navigationIcon = {
                         IconButton(onClick = { navigator.pop() }) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
+                            Icon(Icons.Default.Close, contentDescription = "关闭")
                         }
                     },
                 )
@@ -123,7 +124,7 @@ private fun PaywallContent(
                             ),
                         ),
                     )
-                    .padding(spacing.xl),
+                    .padding(start = spacing.xl, end = spacing.xl, top = spacing.md, bottom = spacing.lg),
                 contentAlignment = Alignment.Center,
             ) {
                 Column(
@@ -163,20 +164,20 @@ private fun PaywallContent(
                         )
                     }
                     Text(
-                        text = "解锁你的\n变美潜力",
+                        text = "开启你的\n变美之旅",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.ExtraBold,
                         color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center,
                     )
                     Text(
-                        text = "科学护肤，让每一分投入都看得见效果",
+                        text = "科学护肤，让每一天的努力都被看见",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
                     )
 
-                    // Trial badge (green pill)
+                    // Trial badge (green pill with gradient)
                     Text(
                         text = "\u24D8 新用户享 14 天免费试用",
                         style = MaterialTheme.typography.labelLarge,
@@ -184,7 +185,9 @@ private fun PaywallContent(
                         color = Color(0xFF059669),
                         modifier = Modifier
                             .background(
-                                color = Color(0xFFECFDF5),
+                                brush = Brush.linearGradient(
+                                    listOf(Color(0xFFECFDF5), Color(0xFFD1FAE5)),
+                                ),
                                 shape = FullRoundedShape,
                             )
                             .padding(horizontal = spacing.md, vertical = spacing.sm),
@@ -252,7 +255,7 @@ private fun PaywallContent(
                 enabled = !uiState.isPurchasing,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(MaterialTheme.spacing.section),
+                    .height(MaterialTheme.dimens.buttonHeight),
                 shape = FullRoundedShape,
             ) {
                 Text(
@@ -311,8 +314,8 @@ private fun BenefitItem(title: String, subtitle: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = MaterialTheme.spacing.sm),
-        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
+            .padding(vertical = 11.dp),
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
         verticalAlignment = Alignment.Top,
     ) {
         // Green check circle (26dp)
@@ -386,7 +389,7 @@ private fun PlanCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = spacing.sm, vertical = spacing.lg),
+                    .padding(horizontal = 12.dp, vertical = 18.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(spacing.xs),
             ) {

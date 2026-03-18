@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,7 +26,6 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -87,6 +87,8 @@ private fun SettingsPreview() {
             )
         },
     ) { padding ->
+        val menuPadding = PaddingValues(horizontal = MaterialTheme.spacing.md, vertical = 2.dp)
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -98,9 +100,9 @@ private fun SettingsPreview() {
             // Account section
             SettingsSectionTitle(
                 title = "\u8D26\u6237",
-                modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
+                modifier = Modifier.padding(top = MaterialTheme.spacing.xs),
             )
-            SectionCard {
+            SectionCard(contentPadding = menuPadding) {
                 MenuItem(
                     title = "\u7F16\u8F91\u8D44\u6599",
                     subtitle = "\u5934\u50CF\u3001\u6635\u79F0\u3001\u80A4\u8D28",
@@ -128,8 +130,11 @@ private fun SettingsPreview() {
             }
 
             // Notification section
-            SettingsSectionTitle(title = "\u901A\u77E5")
-            SectionCard {
+            SettingsSectionTitle(
+                title = "\u901A\u77E5",
+                modifier = Modifier.padding(top = MaterialTheme.spacing.xs),
+            )
+            SectionCard(contentPadding = menuPadding) {
                 MenuItem(
                     title = "\u6253\u5361\u63D0\u9192",
                     subtitle = "\u6BCF\u5929 20:00",
@@ -144,7 +149,7 @@ private fun SettingsPreview() {
                 MenuItem(
                     title = "\u5468\u62A5\u901A\u77E5",
                     subtitle = "\u6BCF\u5468\u65E5\u53D1\u9001\u808C\u80A4\u5468\u62A5",
-                    leading = { SettingsMenuIcon(Icons.Default.Info, Color(0xFFDBEAFE), Color(0xFF3B82F6)) },
+                    leading = { SettingsEmojiMenuIcon("\uD83D\uDCCA", Color(0xFFDBEAFE)) },
                     onClick = {},
                     trailing = { Switch(checked = false, onCheckedChange = {}) },
                     showArrow = false,
@@ -155,7 +160,7 @@ private fun SettingsPreview() {
                 MenuItem(
                     title = "AI \u5206\u6790\u5B8C\u6210\u901A\u77E5",
                     subtitle = "\u5206\u6790\u5B8C\u6210\u540E\u63A8\u9001\u63D0\u9192",
-                    leading = { SettingsMenuIcon(Icons.Default.Notifications, Rose50, Rose400) },
+                    leading = { SettingsEmojiMenuIcon("\uD83D\uDCAC", Rose50) },
                     onClick = {},
                     trailing = { Switch(checked = true, onCheckedChange = {}) },
                     showArrow = false,
@@ -163,8 +168,11 @@ private fun SettingsPreview() {
             }
 
             // Data & Privacy section
-            SettingsSectionTitle(title = "\u6570\u636E\u4E0E\u9690\u79C1")
-            SectionCard {
+            SettingsSectionTitle(
+                title = "\u6570\u636E\u4E0E\u9690\u79C1",
+                modifier = Modifier.padding(top = MaterialTheme.spacing.xs),
+            )
+            SectionCard(contentPadding = menuPadding) {
                 MenuItem(
                     title = "\u6570\u636E\u540C\u6B65",
                     subtitle = "\u6700\u540E\u540C\u6B65\uFF1A\u4ECA\u5929 09:30",
@@ -177,7 +185,7 @@ private fun SettingsPreview() {
                 MenuItem(
                     title = "\u5BFC\u51FA\u6570\u636E",
                     subtitle = "\u5BFC\u51FA\u4E3A JSON / CSV",
-                    leading = { SettingsMenuIcon(Icons.Default.Share, MaterialTheme.colorScheme.surfaceVariant) },
+                    leading = { SettingsEmojiMenuIcon("\uD83D\uDCE5", MaterialTheme.colorScheme.surfaceVariant) },
                     onClick = {},
                 )
                 HorizontalDivider(
@@ -192,8 +200,11 @@ private fun SettingsPreview() {
             }
 
             // About section
-            SettingsSectionTitle(title = "\u5173\u4E8E")
-            SectionCard {
+            SettingsSectionTitle(
+                title = "\u5173\u4E8E",
+                modifier = Modifier.padding(top = MaterialTheme.spacing.xs),
+            )
+            SectionCard(contentPadding = menuPadding) {
                 MenuItem(
                     title = "\u7248\u672C\u4FE1\u606F",
                     subtitle = "v1.0.0 (Build 42)",
@@ -206,7 +217,7 @@ private fun SettingsPreview() {
                 )
                 MenuItem(
                     title = "\u9690\u79C1\u653F\u7B56",
-                    leading = { SettingsMenuIcon(Icons.Default.Lock, MaterialTheme.colorScheme.surfaceVariant) },
+                    leading = { SettingsEmojiMenuIcon("\uD83D\uDEE1\uFE0F", MaterialTheme.colorScheme.surfaceVariant) },
                     onClick = {},
                 )
                 HorizontalDivider(
@@ -214,13 +225,13 @@ private fun SettingsPreview() {
                 )
                 MenuItem(
                     title = "\u7528\u6237\u534F\u8BAE",
-                    leading = { SettingsMenuIcon(Icons.Default.Info, MaterialTheme.colorScheme.surfaceVariant) },
+                    leading = { SettingsEmojiMenuIcon("\uD83D\uDCC4", MaterialTheme.colorScheme.surfaceVariant) },
                     onClick = {},
                 )
             }
 
             // Bottom actions
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
             OutlinedButton(
                 onClick = {},
@@ -233,12 +244,21 @@ private fun SettingsPreview() {
                     color = MaterialTheme.colorScheme.outlineVariant,
                 ),
             ) {
-                Text(
-                    text = "\u9000\u51FA\u767B\u5F55",
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold,
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = "\uD83D\uDEAA",
+                        fontSize = 16.sp,
+                    )
+                    Text(
+                        text = "\u9000\u51FA\u767B\u5F55",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
             }
 
             Box(
@@ -300,7 +320,7 @@ private fun SettingsMenuIcon(
     Box(
         modifier = Modifier
             .size(38.dp)
-            .clip(RoundedCornerShape(10.dp))
+            .clip(RoundedCornerShape(11.dp))
             .background(backgroundColor),
         contentAlignment = Alignment.Center,
     ) {
@@ -310,6 +330,22 @@ private fun SettingsMenuIcon(
             tint = tintColor,
             modifier = Modifier.size(MaterialTheme.dimens.iconSmall),
         )
+    }
+}
+
+@Composable
+private fun SettingsEmojiMenuIcon(
+    emoji: String,
+    backgroundColor: Color,
+) {
+    Box(
+        modifier = Modifier
+            .size(38.dp)
+            .clip(RoundedCornerShape(11.dp))
+            .background(backgroundColor),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(text = emoji, fontSize = 16.sp)
     }
 }
 

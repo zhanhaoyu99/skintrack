@@ -22,11 +22,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -56,6 +56,7 @@ import com.skintrack.app.domain.model.AuthUser
 import com.skintrack.app.ui.component.LoadingContent
 import com.skintrack.app.ui.component.MenuItem
 import com.skintrack.app.ui.component.ScoreRing
+import androidx.compose.foundation.layout.PaddingValues
 import com.skintrack.app.ui.component.SectionCard
 import com.skintrack.app.ui.component.animateListItem
 import com.skintrack.app.ui.screen.attribution.AttributionReportScreen
@@ -170,18 +171,18 @@ private fun ProfileHeader(
             .drawBehind {
                 // Decorative semi-transparent circles
                 drawCircle(
-                    color = Color.White.copy(alpha = 0.08f),
-                    radius = 120.dp.toPx(),
+                    color = Color.White.copy(alpha = 0.06f),
+                    radius = 110.dp.toPx(),
                     center = Offset(size.width * 0.85f, size.height * 0.2f),
                 )
                 drawCircle(
-                    color = Color.White.copy(alpha = 0.05f),
+                    color = Color.White.copy(alpha = 0.04f),
                     radius = 80.dp.toPx(),
                     center = Offset(size.width * 0.1f, size.height * 0.7f),
                 )
             }
             .background(brush = MaterialTheme.gradients.hero)
-            .padding(bottom = 48.dp), // Extra bottom padding for floating card overlap
+            .padding(bottom = 52.dp), // Extra bottom padding for floating card overlap
     ) {
         Column(
             modifier = Modifier
@@ -216,6 +217,7 @@ private fun ProfileHeader(
                 horizontalArrangement = Arrangement.spacedBy(spacing.md),
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
+                    .fillMaxWidth()
                     .padding(bottom = spacing.md)
                     .clip(MaterialTheme.shapes.medium)
                     .clickable(onClick = onProfileClick),
@@ -224,7 +226,7 @@ private fun ProfileHeader(
                 Box(
                     modifier = Modifier
                         .size(MaterialTheme.dimens.avatarExtraLarge)
-                        .border(3.dp, Color.White, CircleShape)
+                        .border(3.dp, Color.White.copy(alpha = 0.35f), CircleShape)
                         .padding(3.dp)
                         .clip(CircleShape)
                         .background(
@@ -244,6 +246,7 @@ private fun ProfileHeader(
                 }
 
                 Column(
+                    modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(spacing.xs),
                 ) {
                     // Username + VIP badge
@@ -312,6 +315,14 @@ private fun ProfileHeader(
                         }
                     }
                 }
+
+                // Chevron right arrow
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = Color.White.copy(alpha = 0.6f),
+                    modifier = Modifier.size(20.dp),
+                )
             }
         }
     }
@@ -361,7 +372,7 @@ private fun StatsCard(state: ProfileUiState.Content, modifier: Modifier = Modifi
                 value = "${state.totalRecords}",
                 iconBg = Mint50,
                 iconEmoji = "\uD83D\uDCCB",
-                valueColor = MaterialTheme.colorScheme.primary,
+                valueColor = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
             )
             VerticalDivider(
@@ -494,7 +505,10 @@ private fun SkinGoalsSection(
     val spacing = MaterialTheme.spacing
     val primary = MaterialTheme.colorScheme.primary
 
-    SectionCard(modifier = modifier) {
+    SectionCard(
+        modifier = modifier,
+        contentPadding = PaddingValues(horizontal = spacing.md, vertical = 14.dp),
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -504,11 +518,14 @@ private fun SkinGoalsSection(
                 text = "我的护肤目标",
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
+                fontSize = 15.sp,
             )
             Text(
                 text = "编辑",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 13.sp,
             )
         }
 
@@ -529,16 +546,12 @@ private fun SkinGoalsSection(
                     GoalPill(label, bg, textColor ?: primary)
                 }
             }
-            // "+ 添加" pill with dashed border
+            // "+ 添加" pill
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(50))
-                    .border(
-                        1.dp,
-                        MaterialTheme.colorScheme.outlineVariant,
-                        RoundedCornerShape(50),
-                    )
-                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .padding(horizontal = 14.dp, vertical = 6.dp),
             ) {
                 Text(
                     text = "+ 添加",
@@ -586,32 +599,34 @@ private fun MenuSection(
 ) {
     val spacing = MaterialTheme.spacing
 
+    val menuPadding = PaddingValues(horizontal = spacing.md, vertical = 2.dp)
+
     // Function group
-    SectionCard(modifier = modifier) {
+    SectionCard(modifier = modifier, contentPadding = menuPadding) {
         MenuItem(
             title = "护肤品管理",
             subtitle = "管理你的护肤品清单",
-            leading = { MenuIcon(Icons.Default.Star, Apricot50, Apricot400) },
+            leading = { EmojiMenuIcon("\uD83E\uDDF4", Apricot50) },
             onClick = onProductManage,
         )
         HorizontalDivider(modifier = Modifier.padding(horizontal = spacing.md))
         MenuItem(
             title = "归因分析报告",
             subtitle = "查看护肤品效果分析",
-            leading = { MenuIcon(Icons.Default.Star, Color(0xFFEDE9FE), Color(0xFF7C3AED)) },
+            leading = { EmojiMenuIcon("\uD83D\uDCCA", Color(0xFFEDE9FE)) },
             onClick = onAttributionReport,
         )
         HorizontalDivider(modifier = Modifier.padding(horizontal = spacing.md))
         MenuItem(
             title = "会员中心",
             subtitle = "Pro 会员 · 2026.12.14 到期",
-            leading = { MenuIcon(Icons.Default.Star, Color(0xFFFEF3C7), Color(0xFFD97706)) },
+            leading = { EmojiMenuIcon("\uD83D\uDC51", Color(0xFFFEF3C7)) },
             onClick = onMemberCenter,
         )
     }
 
     // System group
-    SectionCard {
+    SectionCard(contentPadding = menuPadding) {
         MenuItem(
             title = "打卡提醒",
             subtitle = "每天 20:00 提醒",
@@ -627,7 +642,7 @@ private fun MenuSection(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50))
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))
+                        .background(Mint50)
                         .padding(horizontal = 8.dp, vertical = 4.dp),
                 ) {
                     Text(
@@ -650,7 +665,7 @@ private fun MenuSection(
     }
 
     // Logout
-    Card(modifier = Modifier.fillMaxWidth()) {
+    SectionCard(contentPadding = menuPadding) {
         MenuItem(
             title = "退出登录",
             onClick = onLogout,
@@ -668,8 +683,8 @@ private fun MenuIcon(
 ) {
     Box(
         modifier = Modifier
-            .size(40.dp)
-            .clip(RoundedCornerShape(10.dp))
+            .size(38.dp)
+            .clip(RoundedCornerShape(11.dp))
             .background(backgroundColor),
         contentAlignment = Alignment.Center,
     ) {
@@ -677,8 +692,24 @@ private fun MenuIcon(
             imageVector = icon,
             contentDescription = null,
             tint = tintColor,
-            modifier = Modifier.size(20.dp),
+            modifier = Modifier.size(MaterialTheme.dimens.iconSmall),
         )
+    }
+}
+
+@Composable
+private fun EmojiMenuIcon(
+    emoji: String,
+    backgroundColor: Color,
+) {
+    Box(
+        modifier = Modifier
+            .size(38.dp)
+            .clip(RoundedCornerShape(11.dp))
+            .background(backgroundColor),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(text = emoji, fontSize = 16.sp)
     }
 }
 
@@ -713,10 +744,10 @@ private fun AppFooter(modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            letterSpacing = 2.sp,
+            letterSpacing = 0.5.sp,
         )
         Text(
-            text = "v1.0.0",
+            text = "v1.0.0 (Build 42)",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
         )

@@ -24,6 +24,11 @@
   --grad-warm: linear-gradient(135deg, #2E2418, #0D2E24);
   --grad-surface: linear-gradient(180deg, #1C1E20, #131517);
   --grad-glass: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  --grad-rose-warm: linear-gradient(135deg, rgba(46,24,32,0.4) 0%, rgba(62,32,40,0.3) 50%, rgba(46,24,32,0.2) 100%);
+  --grad-lavender-soft: linear-gradient(135deg, rgba(30,24,48,0.4) 0%, rgba(46,32,64,0.3) 50%, rgba(30,24,48,0.2) 100%);
+  --grad-tri-warm: linear-gradient(135deg, rgba(21,62,50,0.3) 0%, rgba(46,24,32,0.2) 50%, rgba(30,24,48,0.2) 100%);
+  --card-border: 0.5px solid rgba(255,255,255,0.04);
+  --card-border-accent: 0.5px solid rgba(88,202,165,0.06);
 }
 
 /* Phone frame */
@@ -41,7 +46,7 @@
 .dark .section-header .action { color: var(--primary); }
 
 /* Buttons */
-.dark .btn-primary { background: var(--primary); color: var(--on-primary); box-shadow: 0 4px 14px rgba(88,202,165,0.2); }
+.dark .btn-primary { background: linear-gradient(180deg, #62D4AE 0%, var(--primary) 100%); color: var(--on-primary); box-shadow: 0 4px 14px rgba(88,202,165,0.2); border: 0.5px solid rgba(255,255,255,0.1); }
 .dark .btn-outlined { border-color: var(--primary); color: var(--primary); }
 .dark .btn-tonal { background: var(--primary-container); color: var(--on-primary-container); }
 .dark .btn-text { color: var(--primary); }

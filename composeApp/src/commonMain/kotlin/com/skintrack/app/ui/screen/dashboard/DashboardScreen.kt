@@ -2,6 +2,7 @@ package com.skintrack.app.ui.screen.dashboard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,9 +24,6 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -65,9 +63,11 @@ import com.skintrack.app.ui.theme.Apricot50
 import com.skintrack.app.ui.theme.FullRoundedShape
 import com.skintrack.app.ui.theme.Lavender50
 import com.skintrack.app.ui.theme.Lavender100
+import com.skintrack.app.ui.theme.Lavender200
 import com.skintrack.app.ui.theme.Lavender300
 import com.skintrack.app.ui.theme.Mint50
 import com.skintrack.app.ui.theme.Mint100
+import com.skintrack.app.ui.theme.Mint200
 import com.skintrack.app.ui.theme.Rose50
 import com.skintrack.app.ui.theme.Rose100
 import com.skintrack.app.ui.theme.Rose200
@@ -339,7 +339,7 @@ private fun DashboardEmptyContent(
 
                 // Title
                 Text(
-                    text = "开启你的变美日记",
+                    text = "开启你的变美旅程",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 24.sp,
@@ -347,43 +347,43 @@ private fun DashboardEmptyContent(
                     modifier = Modifier.animateFadeIn(100),
                 )
 
-                Spacer(modifier = Modifier.height(spacing.sm))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 // Subtitle
                 Text(
-                    text = "拍一张自拍，AI 帮你分析肌肤状态\n见证皮肤一天天变好~",
+                    text = "只需一张素颜自拍，AI 帮你解读肌肤密码\n见证皮肤一天天变好~",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
-                    lineHeight = 22.sp,
+                    fontSize = 15.sp,
+                    lineHeight = 24.sp,
                     modifier = Modifier.animateFadeIn(150),
                 )
 
-                Spacer(modifier = Modifier.height(spacing.xl))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 // 3-step guide — horizontal layout with colored border circles
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .animateFadeIn(200),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    horizontalArrangement = Arrangement.spacedBy(spacing.lg),
                 ) {
                     EmptyStepItem(
                         emoji = "\uD83D\uDCF7",
                         label = "拍照",
-                        borderColor = MaterialTheme.colorScheme.primary,
+                        borderColor = Mint200,
                         bgColor = Mint50,
                     )
                     EmptyStepItem(
                         emoji = "\uD83D\uDD2C",
                         label = "AI 分析",
-                        borderColor = Lavender300,
+                        borderColor = Lavender200,
                         bgColor = Lavender50,
                     )
                     EmptyStepItem(
                         emoji = "\uD83D\uDCC8",
                         label = "追踪",
-                        borderColor = Rose300,
+                        borderColor = Rose200,
                         bgColor = roseBackground(),
                     )
                 }
@@ -515,6 +515,7 @@ private fun DashboardContent(
             // 4. Quick Actions Grid
             item(key = "quick_actions") {
                 QuickActionsGrid(
+                    productCount = state.productCount,
                     onNavigateTimeline = onNavigateTimeline,
                     onNavigateProduct = onNavigateProduct,
                     onNavigateAttribution = onNavigateAttribution,
@@ -546,6 +547,7 @@ private fun DashboardContent(
                         state = state,
                         selectedPeriod = selectedPeriod,
                         onPeriodChange = onPeriodChange,
+                        onNavigateTimeline = onNavigateTimeline,
                         modifier = Modifier.animateListItem(6),
                     )
                 }
@@ -612,6 +614,7 @@ private fun HeroCard(
                             label = "总评分",
                             size = 84.dp,
                             strokeWidth = 6.5.dp,
+                            scoreColor = Color.White,
                         )
                     }
 
@@ -751,7 +754,7 @@ private fun MiniMetricCard(
 ) {
     Card(
         modifier = modifier,
-        shape = MaterialTheme.shapes.small,
+        shape = MaterialTheme.shapes.medium,
     ) {
         Column(
             modifier = Modifier
@@ -842,13 +845,13 @@ private fun CameraReminderCard(
                 modifier = Modifier.weight(1f),
             ) {
                 Text(
-                    text = "今天还没拍照哦~",
+                    text = "今天还没拍照哦，别忘了记录~",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
-                    text = "坚持记录，看见皮肤的变化",
+                    text = "每天一拍，见证蜕变的美好",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 2.dp),
@@ -878,6 +881,7 @@ private fun CameraReminderCard(
 
 @Composable
 private fun QuickActionsGrid(
+    productCount: Int,
     onNavigateTimeline: () -> Unit,
     onNavigateProduct: () -> Unit,
     onNavigateAttribution: () -> Unit,
@@ -904,7 +908,7 @@ private fun QuickActionsGrid(
             )
             QuickActionCard(
                 title = "护肤品",
-                subtitle = "在用产品",
+                subtitle = if (productCount > 0) "$productCount 个在用" else "在用产品",
                 iconEmoji = "\uD83E\uDDF4",
                 iconBgColor = Apricot100,
                 onClick = onNavigateProduct,
@@ -1125,7 +1129,7 @@ private fun CheckInCard(
             val milestoneMessage = when {
                 streak >= 30 -> "\uD83C\uDFC6 坚持一个月! 连续打卡 $streak 天，达成月度成就"
                 streak >= 14 -> "\uD83C\uDF1F 太厉害了! 连续打卡 $streak 天，达成两周成就"
-                else -> "\u2B50 太棒了! 连续打卡 $streak 天，达成一周成就"
+                else -> "\u2B50 太棒了! 连续打卡 $streak 天，你的坚持正在改变肌肤~"
             }
             Row(
                 modifier = Modifier
@@ -1213,39 +1217,60 @@ data class DayCheckIn(
 
 // region Trend Chart Card
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TrendChartCard(
     state: DashboardUiState.Content,
     selectedPeriod: Int,
     onPeriodChange: (Int) -> Unit,
+    onNavigateTimeline: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val spacing = MaterialTheme.spacing
-    val periods = listOf(7 to "7天", 30 to "30天", 90 to "90天")
+    val periods = listOf(7 to "7 天", 30 to "30 天", 90 to "90 天")
 
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(spacing.sm),
-    ) {
-        SectionHeader(title = "肌肤趋势")
+    SectionCard(modifier = modifier) {
+        SectionHeader(
+            title = "肌肤趋势",
+            trailing = {
+                Text(
+                    text = "查看全部",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            },
+        )
 
-        // Period chips
+        Spacer(modifier = Modifier.height(spacing.sm))
+
+        // Period pill selector
         Row(
-            horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             periods.forEach { (days, label) ->
-                FilterChip(
-                    selected = selectedPeriod == days,
-                    onClick = { onPeriodChange(days) },
-                    label = { Text(label) },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = MaterialTheme.colorScheme.primary,
-                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                    ),
-                )
+                val isSelected = selectedPeriod == days
+                Box(
+                    modifier = Modifier
+                        .clip(FullRoundedShape)
+                        .background(
+                            if (isSelected) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.surfaceVariant,
+                        )
+                        .clickable { onPeriodChange(days) }
+                        .padding(horizontal = 14.dp, vertical = 5.dp),
+                ) {
+                    Text(
+                        text = label,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = if (isSelected) MaterialTheme.colorScheme.onPrimary
+                        else MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
         }
+
+        Spacer(modifier = Modifier.height(spacing.sm))
 
         // Chart
         TrendChart(
@@ -1253,15 +1278,31 @@ private fun TrendChartCard(
             modifier = Modifier.fillMaxWidth(),
         )
 
-        // Latest value annotation
+        // X-axis date labels
         if (state.chartPoints.isNotEmpty()) {
-            val latestScore = state.chartPoints.last().overallScore
-            Text(
-                text = "最新评分: $latestScore",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.align(Alignment.End),
-            )
+            val tz = TimeZone.currentSystemDefault()
+            val today = Clock.System.now().toLocalDateTime(tz).date
+            val dateLabels = state.chartPoints.map { point ->
+                val date = point.date.toLocalDateTime(tz).date
+                if (date == today) "今天"
+                else "${date.monthNumber}/${date.dayOfMonth}"
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 6.dp, start = 8.dp, end = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                dateLabels.forEach { label ->
+                    Text(
+                        text = label,
+                        fontSize = 11.sp,
+                        fontWeight = if (label == "今天") FontWeight.Bold else FontWeight.Medium,
+                        color = if (label == "今天") MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
         }
     }
 }

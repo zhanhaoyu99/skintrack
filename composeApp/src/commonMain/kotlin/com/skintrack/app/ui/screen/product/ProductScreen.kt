@@ -20,6 +20,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
+import androidx.compose.foundation.Canvas
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -50,9 +58,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.skintrack.app.domain.model.ProductCategory
@@ -66,11 +77,11 @@ import com.skintrack.app.ui.component.showTyped
 import com.skintrack.app.ui.theme.Apricot300
 import com.skintrack.app.ui.theme.Lavender300
 import com.skintrack.app.ui.theme.Lavender50
-import com.skintrack.app.ui.theme.Apricot50
-import com.skintrack.app.ui.theme.Mint300
+import com.skintrack.app.ui.theme.Mint400
 import com.skintrack.app.ui.theme.Mint50
 import com.skintrack.app.ui.theme.Rose50
 import com.skintrack.app.ui.theme.Rose400
+import com.skintrack.app.ui.theme.Rose500
 import com.skintrack.app.ui.theme.spacing
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -247,68 +258,90 @@ private fun ProductContent(
         // -- Progress Section --
         item(key = "progress") {
             Card(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(
+                        width = 1.dp,
+                        color = Mint400.copy(alpha = 0.08f),
+                        shape = MaterialTheme.shapes.extraLarge,
+                    ),
                 colors = CardDefaults.cardColors(
-                    containerColor = Mint50,
+                    containerColor = Color.Transparent,
                 ),
                 shape = MaterialTheme.shapes.extraLarge,
             ) {
-                Column(
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .background(
+                            brush = Brush.linearGradient(
+                                colorStops = arrayOf(
+                                    0f to Mint50,
+                                    0.5f to Color(0xFFF0FAF6),
+                                    1f to Lavender50,
+                                ),
+                            ),
+                        )
                         .padding(spacing.md),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(spacing.md),
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
+                    // Progress ring
+                    ProgressRing(
+                        checked = state.checkedCount,
+                        total = state.totalCount,
+                    )
+
+                    Column(
+                        modifier = Modifier.weight(1f),
                     ) {
                         Text(
                             text = "今日打卡进度",
-                            style = MaterialTheme.typography.titleSmall,
+                            fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            letterSpacing = (-0.2).sp,
                         )
-                        Text(
-                            text = "${state.checkedCount}/${state.totalCount}",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-                    if (state.uncheckedCount > 0) {
-                        Text(
-                            text = "还有 ${state.uncheckedCount} 个产品等待记录",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(top = 2.dp),
-                        )
-                    }
-                    LinearProgressIndicator(
-                        progress = { progress },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = spacing.sm)
-                            .height(6.dp)
-                            .clip(RoundedCornerShape(percent = 50)),
-                        trackColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-                    )
-                    // Progress dots
-                    Row(
-                        modifier = Modifier.padding(top = spacing.sm),
-                        horizontalArrangement = Arrangement.spacedBy(spacing.sm),
-                    ) {
-                        repeat(state.totalCount.coerceAtMost(10)) { index ->
-                            Box(
-                                modifier = Modifier
-                                    .size(10.dp)
-                                    .clip(CircleShape)
-                                    .background(
-                                        if (index < state.checkedCount)
-                                            MaterialTheme.colorScheme.primary
-                                        else
-                                            MaterialTheme.colorScheme.outlineVariant,
-                                    ),
+                        if (state.uncheckedCount > 0) {
+                            Text(
+                                text = "还有 ${state.uncheckedCount} 个产品等待记录",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(top = 2.dp),
                             )
+                        }
+                        LinearProgressIndicator(
+                            progress = { progress },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = spacing.sm)
+                                .height(6.dp)
+                                .clip(RoundedCornerShape(percent = 50)),
+                            trackColor = Color.Black.copy(alpha = 0.06f),
+                        )
+                        // Progress dots
+                        Row(
+                            modifier = Modifier.padding(top = spacing.sm),
+                            horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+                        ) {
+                            repeat(state.totalCount.coerceAtMost(10)) { index ->
+                                Box(
+                                    modifier = Modifier
+                                        .size(10.dp)
+                                        .clip(CircleShape)
+                                        .then(
+                                            if (index < state.checkedCount) {
+                                                Modifier.background(MaterialTheme.colorScheme.primary)
+                                            } else {
+                                                Modifier.border(
+                                                    2.dp,
+                                                    MaterialTheme.colorScheme.outlineVariant,
+                                                    CircleShape,
+                                                )
+                                            },
+                                        ),
+                                )
+                            }
                         }
                     }
                 }
@@ -319,16 +352,27 @@ private fun ProductContent(
         if (state.uncheckedCount > 0) {
             item(key = "reminder") {
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(
+                            width = 1.dp,
+                            color = Rose400.copy(alpha = 0.12f),
+                            shape = MaterialTheme.shapes.large,
+                        ),
                     colors = CardDefaults.cardColors(
-                        containerColor = Rose50,
+                        containerColor = Color.Transparent,
                     ),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.large,
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = spacing.md, vertical = spacing.sm),
+                            .background(
+                                brush = Brush.linearGradient(
+                                    colors = listOf(Rose50, Color(0xFFFFF8F5)),
+                                ),
+                            )
+                            .padding(horizontal = 14.dp, vertical = spacing.sm),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(spacing.sm),
                     ) {
@@ -345,8 +389,14 @@ private fun ProductContent(
                             )
                         }
                         Text(
-                            text = "今天还有 ${state.uncheckedCount} 个护肤品没记录哦~",
-                            style = MaterialTheme.typography.bodySmall,
+                            text = buildAnnotatedString {
+                                append("今天还有 ")
+                                withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Rose500)) {
+                                    append("${state.uncheckedCount} 个")
+                                }
+                                append(" 护肤品没记录哦~")
+                            },
+                            style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.weight(1f),
                         )
@@ -387,7 +437,7 @@ private fun ProductContent(
                     iconBg = Lavender300.copy(alpha = 0.12f),
                     label = "PM 晚间护肤",
                     count = "$pmChecked/${state.pmProducts.size} 已打卡",
-                    modifier = Modifier.padding(top = spacing.sm),
+                    modifier = Modifier.padding(top = 14.dp),
                 )
             }
 
@@ -429,13 +479,15 @@ private fun RoutineSectionHeader(
         }
         Text(
             text = label,
-            style = MaterialTheme.typography.titleSmall,
+            fontSize = 15.sp,
             fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(1f),
         )
         Text(
             text = count,
-            style = MaterialTheme.typography.labelMedium,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
@@ -445,13 +497,13 @@ private fun RoutineSectionHeader(
  * Returns category-specific color pair (foreground, background).
  */
 private fun categoryColors(category: ProductCategory): Pair<Color, Color> = when (category) {
-    ProductCategory.CLEANSER -> Pair(Color(0xFF007AFF), Color(0xFFE3F2FD)) // Info blue
-    ProductCategory.SERUM -> Pair(Lavender300, Lavender50)
-    ProductCategory.CREAM -> Pair(Mint300, Mint50)
-    ProductCategory.SUNSCREEN -> Pair(Apricot300, Apricot50)
-    ProductCategory.TONER -> Pair(Color(0xFF00838F), Color(0xFFE0F7FA)) // Cyan
-    ProductCategory.MASK -> Pair(Lavender300, Lavender50)
-    ProductCategory.EYE_CREAM -> Pair(Color(0xFF8B5CF6), Color(0xFFF3E8FF)) // Secondary purple
+    ProductCategory.CLEANSER -> Pair(Color(0xFF2563EB), Color(0xFFDBEAFE))
+    ProductCategory.SERUM -> Pair(Color(0xFF7B1FA2), Color(0xFFF3E5F5))
+    ProductCategory.CREAM -> Pair(Color(0xFF2E7D32), Color(0xFFE8F5E9))
+    ProductCategory.SUNSCREEN -> Pair(Color(0xFFE65100), Color(0xFFFFF3E0))
+    ProductCategory.TONER -> Pair(Color(0xFF00838F), Color(0xFFE0F7FA))
+    ProductCategory.MASK -> Pair(Color(0xFFF57F17), Color(0xFFFFF8E1))
+    ProductCategory.EYE_CREAM -> Pair(Color(0xFF8B5CF6), Color(0xFFF3E8FF))
     else -> Pair(Color(0xFF6B7B73), Color(0xFFF1F5F2))
 }
 
@@ -470,23 +522,49 @@ private fun ProductCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .then(
+                if (checked) {
+                    Modifier.border(
+                        width = 1.5.dp,
+                        color = Mint400.copy(alpha = 0.15f),
+                        shape = MaterialTheme.shapes.large,
+                    )
+                } else {
+                    Modifier.border(
+                        width = 0.5.dp,
+                        color = Color.Black.copy(alpha = 0.03f),
+                        shape = MaterialTheme.shapes.large,
+                    )
+                },
+            )
             .combinedClickable(
                 onClick = onToggle,
                 onLongClick = onLongClick,
             ),
         colors = CardDefaults.cardColors(
             containerColor = if (checked) {
-                Mint50
+                Color.Transparent
             } else {
                 MaterialTheme.colorScheme.surface
             },
         ),
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.large,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = spacing.md, vertical = spacing.sm),
+                .then(
+                    if (checked) {
+                        Modifier.background(
+                            brush = Brush.linearGradient(
+                                colors = listOf(Color(0xFFF0FAF6), Color(0xFFF5FFFA)),
+                            ),
+                        )
+                    } else {
+                        Modifier
+                    },
+                )
+                .padding(horizontal = 14.dp, vertical = spacing.sm),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(spacing.sm),
         ) {
@@ -507,31 +585,52 @@ private fun ProductCard(
             // Product info
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(spacing.xs),
             ) {
                 Text(
                     text = product.name,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp,
+                    letterSpacing = (-0.1).sp,
                 )
                 product.brand?.let { brand ->
                     Text(
                         text = brand,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 1.dp),
                     )
                 }
-                // Category pill
-                Text(
-                    text = product.category.displayName,
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.SemiBold,
-                    color = categoryFg,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(categoryBg)
-                        .padding(horizontal = spacing.sm, vertical = 2.dp),
-                )
+                // Category pill + frequency pill
+                Row(
+                    modifier = Modifier.padding(top = spacing.xs),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = product.category.displayName,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = categoryFg,
+                        fontSize = 10.sp,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(categoryBg)
+                            .padding(horizontal = spacing.sm, vertical = 2.dp),
+                    )
+                    // Frequency pill
+                    Text(
+                        text = "\u23F0 ${product.usagePeriod.displayName}",
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 10.sp,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                            .padding(horizontal = 7.dp, vertical = 2.dp),
+                    )
+                }
             }
 
             // Check-in indicator
@@ -539,6 +638,12 @@ private fun ProductCard(
                 Box(
                     modifier = Modifier
                         .size(26.dp)
+                        .shadow(
+                            elevation = 6.dp,
+                            shape = CircleShape,
+                            ambientColor = Mint400.copy(alpha = 0.3f),
+                            spotColor = Mint400.copy(alpha = 0.3f),
+                        )
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.primary),
                     contentAlignment = Alignment.Center,
@@ -557,6 +662,64 @@ private fun ProductCard(
                         .border(2.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape),
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun ProgressRing(
+    checked: Int,
+    total: Int,
+    modifier: Modifier = Modifier,
+) {
+    val progress = if (total > 0) checked.toFloat() / total else 0f
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val trackColor = Color.Black.copy(alpha = 0.06f)
+
+    Box(
+        modifier = modifier.size(56.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Canvas(modifier = Modifier.size(56.dp)) {
+            val strokeWidth = 4.dp.toPx()
+            val arcSize = size.width - strokeWidth
+            val topLeft = Offset(strokeWidth / 2f, strokeWidth / 2f)
+            // Track
+            drawArc(
+                color = trackColor,
+                startAngle = -90f,
+                sweepAngle = 360f,
+                useCenter = false,
+                topLeft = topLeft,
+                size = Size(arcSize, arcSize),
+                style = Stroke(width = strokeWidth, cap = StrokeCap.Round),
+            )
+            // Progress
+            drawArc(
+                color = primaryColor,
+                startAngle = -90f,
+                sweepAngle = 360f * progress,
+                useCenter = false,
+                topLeft = topLeft,
+                size = Size(arcSize, arcSize),
+                style = Stroke(width = strokeWidth, cap = StrokeCap.Round),
+            )
+        }
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "$checked",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.onSurface,
+                lineHeight = 16.sp,
+            )
+            Text(
+                text = "/$total",
+                fontSize = 9.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                lineHeight = 10.sp,
+            )
         }
     }
 }

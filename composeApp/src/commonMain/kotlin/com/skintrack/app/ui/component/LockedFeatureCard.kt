@@ -27,9 +27,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.skintrack.app.ui.theme.Apricot50
 import com.skintrack.app.ui.theme.FullRoundedShape
 import com.skintrack.app.ui.theme.dimens
+import com.skintrack.app.ui.theme.gradients
 import com.skintrack.app.ui.theme.spacing
 
 // Gold/Amber gradient for upgrade button (matching design spec)
@@ -42,47 +42,92 @@ fun LockedFeatureCard(
     message: String,
     onUpgrade: () -> Unit,
     modifier: Modifier = Modifier,
+    title: String? = null,
+    subtitle: String? = null,
     tags: List<String> = emptyList(),
     showTrialHint: Boolean = true,
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = Color(0xFFD97706).copy(alpha = 0.1f),
+                shape = MaterialTheme.shapes.extraLarge,
+            ),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = Color.Transparent,
         ),
         shape = MaterialTheme.shapes.extraLarge,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(MaterialTheme.spacing.lg),
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            Color(0xFFFFF9F0),
+                            Color(0xFFFFF3E0),
+                            Color(0xFFFEF3C7),
+                        ),
+                    ),
+                )
+                .padding(horizontal = 20.dp, vertical = MaterialTheme.spacing.lg),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
         ) {
-            // Lock icon: 56dp circle with Apricot-50 background
+            // Crown icon: 56dp circle with golden gradient background
             Box(
                 modifier = Modifier
                     .size(56.dp)
+                    .shadow(
+                        elevation = 16.dp,
+                        shape = CircleShape,
+                        ambientColor = Color(0xFFFFD700).copy(alpha = 0.2f),
+                        spotColor = Color(0xFFFFAA00).copy(alpha = 0.3f),
+                    )
                     .background(
-                        color = Apricot50,
+                        brush = MaterialTheme.gradients.vipBadge,
                         shape = CircleShape,
                     ),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = "\uD83D\uDD12",
+                    text = "\uD83D\uDC51",
                     fontSize = 24.sp,
+                )
+            }
+
+            // Title (large bold text)
+            if (title != null) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 19.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    letterSpacing = (-0.3).sp,
                 )
             }
 
             // Message text
             Text(
                 text = message,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
+                fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
-            // Tag pills with outline border
+            // Subtitle description
+            if (subtitle != null) {
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
+            // Tag pills with white background and shadow
             if (tags.isNotEmpty()) {
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(
@@ -99,13 +144,14 @@ fun LockedFeatureCard(
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier
+                                .shadow(
+                                    elevation = 2.dp,
+                                    shape = FullRoundedShape,
+                                    ambientColor = Color.Black.copy(alpha = 0.06f),
+                                    spotColor = Color.Black.copy(alpha = 0.06f),
+                                )
                                 .background(
                                     color = Color.White,
-                                    shape = FullRoundedShape,
-                                )
-                                .border(
-                                    width = 1.dp,
-                                    color = MaterialTheme.colorScheme.outlineVariant,
                                     shape = FullRoundedShape,
                                 )
                                 .padding(
@@ -124,14 +170,14 @@ fun LockedFeatureCard(
                     .fillMaxWidth()
                     .height(MaterialTheme.dimens.buttonHeight)
                     .shadow(
-                        elevation = 8.dp,
+                        elevation = 16.dp,
                         shape = buttonShape,
                         ambientColor = UpgradeGradientEnd.copy(alpha = 0.35f),
                         spotColor = UpgradeGradientEnd.copy(alpha = 0.35f),
                     )
                     .clip(buttonShape)
                     .background(
-                        brush = Brush.horizontalGradient(
+                        brush = Brush.linearGradient(
                             listOf(UpgradeGradientStart, UpgradeGradientEnd),
                         ),
                         shape = buttonShape,

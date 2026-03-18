@@ -24,8 +24,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -50,8 +48,10 @@ import com.skintrack.app.ui.theme.Apricot100
 import com.skintrack.app.ui.theme.Apricot50
 import com.skintrack.app.ui.theme.FullRoundedShape
 import com.skintrack.app.ui.theme.Lavender100
+import com.skintrack.app.ui.theme.Lavender200
 import com.skintrack.app.ui.theme.Lavender50
 import com.skintrack.app.ui.theme.Mint100
+import com.skintrack.app.ui.theme.Mint200
 import com.skintrack.app.ui.theme.Mint50
 import com.skintrack.app.ui.theme.Rose100
 import com.skintrack.app.ui.theme.Rose200
@@ -212,7 +212,7 @@ private fun DashboardEmptyPreview() {
 
                 // Title
                 Text(
-                    text = "开启你的变美日记",
+                    text = "开启你的变美旅程",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = (-0.5).sp,
@@ -222,37 +222,36 @@ private fun DashboardEmptyPreview() {
 
                 // Subtitle
                 Text(
-                    text = "拍一张自拍，AI 帮你分析肌肤状态\n见证皮肤一天天变好~",
+                    text = "只需一张素颜自拍，AI 帮你解读肌肤密码\n见证皮肤一天天变好~",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                     fontSize = 15.sp,
-                    lineHeight = 22.sp,
+                    lineHeight = 24.sp,
                 )
 
-                Spacer(modifier = Modifier.height(spacing.xl))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 // 3-step guide — horizontal layout with colored border circles
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    horizontalArrangement = Arrangement.spacedBy(24.dp),
                 ) {
                     EmptyStepItemPreview(
                         emoji = "\uD83D\uDCF7",
                         label = "拍照",
-                        borderColor = MaterialTheme.colorScheme.primary,
+                        borderColor = Mint200,
                         bgColor = Mint50,
                     )
                     EmptyStepItemPreview(
                         emoji = "\uD83D\uDD2C",
                         label = "AI 分析",
-                        borderColor = Color(0xFFA78BFA),
+                        borderColor = Lavender200,
                         bgColor = Lavender50,
                     )
                     EmptyStepItemPreview(
                         emoji = "\uD83D\uDCC8",
                         label = "追踪",
-                        borderColor = Rose300,
+                        borderColor = Rose200,
                         bgColor = Rose50,
                     )
                 }
@@ -328,7 +327,6 @@ private fun EmptyStepItemPreview(
 
 // region Content State
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DashboardContentPreview() {
     val spacing = MaterialTheme.spacing
@@ -428,6 +426,7 @@ private fun HeroCardPreview() {
                         label = "总评分",
                         size = 84.dp,
                         strokeWidth = 6.5.dp,
+                        scoreColor = Color.White,
                     )
 
                     Column(
@@ -531,7 +530,7 @@ private fun MiniMetricCardPreview(
 ) {
     Card(
         modifier = modifier,
-        shape = MaterialTheme.shapes.small,
+        shape = MaterialTheme.shapes.medium,
     ) {
         Column(
             modifier = Modifier
@@ -609,13 +608,13 @@ private fun CameraReminderCardPreview() {
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "今天还没拍照哦~",
+                    text = "今天还没拍照哦，别忘了记录~",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
-                    text = "坚持记录，看见皮肤的变化",
+                    text = "每天一拍，见证蜕变的美好",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 2.dp),
@@ -658,7 +657,7 @@ private fun QuickActionsGridPreview() {
             )
             QuickActionCardPreview(
                 title = "护肤品",
-                subtitle = "在用产品",
+                subtitle = "6 个在用",
                 iconEmoji = "\uD83E\uDDF4",
                 iconBgColor = Apricot100,
                 modifier = Modifier.weight(1f),
@@ -901,7 +900,7 @@ private fun CheckInCardPreview(streak: Int) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "\u2B50 太棒了! 连续打卡 $streak 天，达成一周成就",
+                    text = "\u2B50 太棒了! 连续打卡 $streak 天，你的坚持正在改变肌肤~",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -915,39 +914,59 @@ private fun CheckInCardPreview(streak: Int) {
 
 // region Trend Chart Card
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TrendChartCardPreview() {
     val spacing = MaterialTheme.spacing
-    val periods = listOf(7 to "7天", 30 to "30天", 90 to "90天")
+    val periods = listOf(7 to "7 天", 30 to "30 天", 90 to "90 天")
     val selectedPeriod = 7
 
     SectionCard {
-        SectionHeader(title = "肌肤趋势")
+        SectionHeader(
+            title = "肌肤趋势",
+            trailing = {
+                Text(
+                    text = "查看全部",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            },
+        )
 
-        // Period chips
+        Spacer(modifier = Modifier.height(spacing.sm))
+
+        // Period pill selector (Box pills matching real code)
         Row(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
-            modifier = Modifier.padding(top = spacing.sm),
         ) {
             periods.forEach { (days, label) ->
-                FilterChip(
-                    selected = selectedPeriod == days,
-                    onClick = {},
-                    label = { Text(label, fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = MaterialTheme.colorScheme.primary,
-                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                    ),
-                )
+                val isSelected = selectedPeriod == days
+                Box(
+                    modifier = Modifier
+                        .clip(FullRoundedShape)
+                        .background(
+                            if (isSelected) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.surfaceVariant,
+                        )
+                        .padding(horizontal = 14.dp, vertical = 5.dp),
+                ) {
+                    Text(
+                        text = label,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = if (isSelected) MaterialTheme.colorScheme.onPrimary
+                        else MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
         }
+
+        Spacer(modifier = Modifier.height(spacing.sm))
 
         // Placeholder chart area
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = spacing.sm)
                 .height(100.dp)
                 .clip(MaterialTheme.shapes.small)
                 .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)),

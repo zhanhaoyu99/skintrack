@@ -71,6 +71,7 @@ class AttributionReportViewModel(
             val productsUsed = attributions.size
 
             val suggestions = buildSuggestions(attributions, overallTrend)
+            val aiInsight = buildAiInsight(firstScore, lastScore, analysisDays, attributions)
 
             _uiState.value = AttributionUiState.Content(
                 totalRecords = scoredRecords.size,
@@ -82,6 +83,9 @@ class AttributionReportViewModel(
                 productsUsed = productsUsed,
                 analysisDays = analysisDays,
                 suggestions = suggestions,
+                firstScore = firstScore,
+                lastScore = lastScore,
+                aiInsight = aiInsight,
             )
         }
     }
@@ -151,6 +155,34 @@ class AttributionReportViewModel(
         return suggestions.take(3)
     }
 
+    private fun buildAiInsight(
+        firstScore: Int,
+        lastScore: Int,
+        analysisDays: Int,
+        attributions: List<ProductAttribution>,
+    ): String {
+        val delta = lastScore - firstScore
+        val direction = when {
+            delta > 0 -> "提升"
+            delta < 0 -> "下降"
+            else -> "保持稳定"
+        }
+        val pct = if (firstScore > 0) {
+            (kotlin.math.abs(delta) * 100 / firstScore)
+        } else {
+            0
+        }
+        val topProducts = attributions.filter { it.impact > 0 }.take(2)
+        val productPart = if (topProducts.isNotEmpty()) {
+            topProducts.joinToString("和") { it.product.name } + "的组合对你很有效。"
+        } else {
+            ""
+        }
+        return "过去 $analysisDays 天你的皮肤整体评分从 $firstScore ${direction}到了 $lastScore，" +
+            "变化了 ${pct}%。$productPart" +
+            "建议保持当前的护肤方案，持续记录观察变化。"
+    }
+
     private fun formatDate(date: kotlinx.datetime.LocalDate): String {
         val year = date.year
         val month = date.monthNumber.toString().padStart(2, '0')
@@ -172,5 +204,8 @@ sealed interface AttributionUiState {
         val productsUsed: Int = 0,
         val analysisDays: Int = 14,
         val suggestions: List<String> = emptyList(),
+        val firstScore: Int = 0,
+        val lastScore: Int = 0,
+        val aiInsight: String = "",
     ) : AttributionUiState
 }
