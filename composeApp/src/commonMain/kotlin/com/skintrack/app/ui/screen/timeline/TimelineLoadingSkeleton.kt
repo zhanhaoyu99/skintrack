@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.skintrack.app.ui.component.SkeletonBox
-import com.skintrack.app.ui.component.SkeletonCard
 import com.skintrack.app.ui.component.SkeletonCircle
 import com.skintrack.app.ui.component.SkeletonPill
 import com.skintrack.app.ui.component.shimmer
@@ -27,106 +26,70 @@ fun TimelineLoadingSkeleton(modifier: Modifier = Modifier) {
     val spacing = MaterialTheme.spacing
 
     Column(
-        modifier = modifier.padding(spacing.md),
-        verticalArrangement = Arrangement.spacedBy(spacing.md),
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(spacing.listGap),
     ) {
-        // Filter chips row
-        Row(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
-            SkeletonPill(width = 48.dp, height = 32.dp)
-            SkeletonPill(width = 48.dp, height = 32.dp)
-            SkeletonPill(width = 48.dp, height = 32.dp)
-            SkeletonPill(width = 56.dp, height = 32.dp)
+        // Filter chips row: gap=6dp, height=30dp, padding 4/16/12
+        Row(
+            modifier = Modifier.padding(
+                start = spacing.md,
+                end = spacing.md,
+                top = spacing.xs,
+                bottom = spacing.listGap,
+            ),
+            horizontalArrangement = Arrangement.spacedBy(spacing.iconGap),
+        ) {
+            SkeletonPill(width = 48.dp, height = 30.dp)
+            SkeletonPill(width = 48.dp, height = 30.dp)
+            SkeletonPill(width = 56.dp, height = 30.dp)
+            SkeletonPill(width = 56.dp, height = 30.dp)
         }
 
-        // Compare card
-        SkeletonCard {
-            Column(verticalArrangement = Arrangement.spacedBy(spacing.sm)) {
-                // Header row: title + action
+        // Compare card: single 200dp shimmer box with radius-lg
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = spacing.md)
+                .height(200.dp)
+                .clip(MaterialTheme.shapes.large)
+                .shimmer(),
+        )
+
+        // Record list items (4 items matching HTML)
+        Column(
+            modifier = Modifier.padding(horizontal = spacing.md),
+        ) {
+            repeat(4) { index ->
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = spacing.listGap),
+                    horizontalArrangement = Arrangement.spacedBy(spacing.listGap),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    SkeletonBox(width = 72.dp, height = 16.dp)
-                    SkeletonBox(width = 48.dp, height = 14.dp)
-                }
-
-                // Two side-by-side image skeletons
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(spacing.sm),
-                ) {
+                    // Thumbnail: 56dp, radius-md=12dp
                     Box(
                         modifier = Modifier
-                            .weight(1f)
-                            .height(140.dp)
-                            .clip(MaterialTheme.shapes.large)
+                            .size(56.dp)
+                            .clip(MaterialTheme.shapes.medium)
                             .shimmer(),
                     )
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(140.dp)
-                            .clip(MaterialTheme.shapes.large)
-                            .shimmer(),
-                    )
-                }
 
-                // Centered score skeleton
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    SkeletonBox(width = 80.dp, height = 24.dp)
-                }
-            }
-        }
-
-        // Section header
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            SkeletonBox(width = 72.dp, height = 16.dp)
-            SkeletonBox(width = 32.dp, height = 14.dp)
-        }
-
-        // Record list card (3 items)
-        SkeletonCard {
-            Column {
-                repeat(3) { index ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = spacing.sm),
-                        horizontalArrangement = Arrangement.spacedBy(spacing.sm),
-                        verticalAlignment = Alignment.CenterVertically,
+                    // Two text lines with gap=6dp
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(spacing.iconGap),
                     ) {
-                        // Thumbnail
-                        Box(
-                            modifier = Modifier
-                                .size(56.dp)
-                                .clip(MaterialTheme.shapes.medium)
-                                .shimmer(),
-                        )
-
-                        // Two text lines
-                        Column(
-                            modifier = Modifier.weight(1f),
-                            verticalArrangement = Arrangement.spacedBy(spacing.xs),
-                        ) {
-                            SkeletonBox(width = 120.dp, height = 15.dp)
-                            SkeletonBox(width = 160.dp, height = 12.dp)
-                        }
-
-                        // Score circle
-                        SkeletonCircle(size = 46.dp)
+                        SkeletonBox(width = 120.dp, height = 14.dp)
+                        SkeletonBox(width = 180.dp, height = 12.dp)
                     }
 
-                    if (index < 2) {
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                    }
+                    // Score circle: 44dp
+                    SkeletonCircle(size = 44.dp)
+                }
+
+                if (index < 3) {
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 }
             }
         }

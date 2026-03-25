@@ -1,79 +1,847 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>SkinTrack Design System</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #F8FAFB; color: #111827; -webkit-font-smoothing: antialiased; }
-.header { background: linear-gradient(145deg, #1A7A63 0%, #2D9F7F 35%, #3DBFA0 70%, #58CAA5 100%); color: white; padding: 48px 40px 40px; }
-.header h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.8px; margin-bottom: 8px; }
-.header p { font-size: 15px; opacity: 0.8; font-weight: 500; }
-.header .stats { display: flex; gap: 32px; margin-top: 24px; }
-.header .stat { text-align: center; }
-.header .stat .num { font-size: 28px; font-weight: 800; }
-.header .stat .label { font-size: 12px; opacity: 0.7; margin-top: 2px; }
-.container { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
-.section-title { font-size: 13px; font-weight: 700; color: #6B7280; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-.section-title::before { content: ''; width: 3px; height: 14px; border-radius: 2px; background: #2D9F7F; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 40px; }
-.card { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: white; border-radius: 14px; text-decoration: none; color: #111827; box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.04); transition: all 0.2s; border: 0.5px solid rgba(0,0,0,0.04); }
-.card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-1px); }
-.card .icon { width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.card .info .name { font-size: 14px; font-weight: 700; letter-spacing: -0.1px; }
-.card .info .desc { font-size: 11px; color: #6B7280; margin-top: 1px; font-weight: 500; }
-.badge { display: inline-flex; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; margin-left: 6px; }
-.badge-new { background: #ECFDF5; color: #059669; }
-.footer { text-align: center; padding: 24px; font-size: 12px; color: #9CA3AF; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=390, initial-scale=1">
+  <title>SkinTrack Design System v6 — "Morning Garden"</title>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+  <link rel="stylesheet" href="base.css">
+  <style>
+    body {
+      background: var(--neutral-50);
+      display: block;
+      padding: var(--space-48) var(--space-32);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .ds-hero {
+      text-align: center;
+      margin-bottom: var(--space-64);
+      padding: var(--space-48) var(--space-32);
+      background: var(--grad-warm);
+      border-radius: var(--radius-xl);
+      border: var(--card-border-width) solid var(--border-subtle);
+    }
+    .ds-hero h1 {
+      font-size: 40px; font-weight: 800; color: var(--content-primary);
+      letter-spacing: -1px; margin-bottom: var(--space-8);
+    }
+    .ds-hero .tagline {
+      font-size: var(--font-b1-size); color: var(--content-secondary);
+      max-width: 500px; margin: 0 auto; line-height: var(--font-b1-lh);
+    }
+    .ds-hero .version {
+      display: inline-block; margin-top: var(--space-16);
+      padding: var(--space-4) var(--space-16);
+      background: var(--surface-brand-subtle); color: var(--content-brand);
+      font-size: var(--font-c1-size); font-weight: 600; border-radius: var(--radius-full);
+    }
+
+    .ds-section { margin-bottom: var(--space-64); }
+    .ds-section-title {
+      font-size: var(--font-h2-size); font-weight: var(--font-h2-weight);
+      color: var(--content-primary); letter-spacing: var(--font-h2-ls); margin-bottom: var(--space-8);
+    }
+    .ds-section-desc {
+      font-size: var(--font-b2-size); color: var(--content-secondary);
+      margin-bottom: var(--space-24); line-height: var(--font-b2-lh);
+    }
+    .ds-subsection { margin-bottom: var(--space-32); }
+    .ds-subsection-title {
+      font-size: var(--font-h4-size); font-weight: var(--font-h4-weight);
+      color: var(--content-secondary); letter-spacing: 0.5px;
+      text-transform: uppercase; margin-bottom: var(--space-16);
+    }
+
+    /* Color swatches */
+    .color-row { display: flex; gap: var(--space-4); margin-bottom: var(--space-16); align-items: flex-end; }
+    .color-swatch { flex: 1; min-width: 0; }
+    .color-swatch .swatch-box {
+      height: 60px; border-radius: var(--radius-sm);
+      border: var(--card-border-width) solid rgba(0,0,0,0.06); margin-bottom: var(--space-4);
+    }
+    .color-swatch .swatch-box.large { height: 80px; }
+    .color-swatch .swatch-name { font-size: 9px; font-weight: 600; color: var(--content-tertiary); letter-spacing: 0.3px; }
+    .color-swatch .swatch-hex { font-size: 9px; color: var(--content-disabled); font-family: 'SF Mono', monospace; }
+
+    /* Semantic grid */
+    .semantic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-8); }
+    .semantic-item {
+      background: var(--surface-primary); border-radius: var(--radius-md);
+      border: var(--card-border-width) solid var(--border-subtle);
+      padding: var(--space-12); box-shadow: var(--shadow-xs);
+    }
+    .semantic-item .preview {
+      width: 100%; height: 40px; border-radius: var(--radius-sm);
+      margin-bottom: var(--space-8); border: var(--card-border-width) solid rgba(0,0,0,0.04);
+    }
+    .semantic-item .token-name { font-size: 10px; font-weight: 600; color: var(--content-primary); word-break: break-all; line-height: 1.3; }
+    .semantic-item .token-maps { font-size: 9px; color: var(--content-tertiary); margin-top: 2px; }
+
+    /* Typography */
+    .type-row {
+      display: flex; align-items: baseline; gap: var(--space-24);
+      padding: var(--space-12) 0; border-bottom: var(--card-border-width) solid var(--border-subtle);
+    }
+    .type-row:last-child { border-bottom: none; }
+    .type-meta { width: 120px; flex-shrink: 0; }
+    .type-meta .token { font-size: 11px; font-weight: 600; color: var(--content-brand); font-family: 'SF Mono', monospace; }
+    .type-meta .specs { font-size: 10px; color: var(--content-tertiary); margin-top: 2px; line-height: 1.4; }
+    .type-sample { flex: 1; color: var(--content-primary); }
+
+    /* Spacing */
+    .spacing-row { display: flex; align-items: center; gap: var(--space-16); margin-bottom: var(--space-8); }
+    .spacing-bar { height: 24px; background: var(--primary-100); border-radius: var(--radius-xs); border: 1px solid var(--primary-200); }
+    .spacing-label { width: 80px; flex-shrink: 0; font-size: 11px; font-weight: 600; color: var(--content-secondary); font-family: 'SF Mono', monospace; }
+    .spacing-value { font-size: 11px; color: var(--content-tertiary); width: 40px; }
+
+    /* Radius */
+    .radius-row { display: flex; gap: var(--space-16); flex-wrap: wrap; }
+    .radius-item { display: flex; flex-direction: column; align-items: center; gap: var(--space-8); }
+    .radius-box { width: 64px; height: 64px; background: var(--primary-50); border: 2px solid var(--primary-300); }
+    .radius-name { font-size: 10px; font-weight: 600; color: var(--content-secondary); font-family: 'SF Mono', monospace; }
+
+    /* Shadows */
+    .shadow-row { display: flex; gap: var(--space-24); flex-wrap: wrap; }
+    .shadow-item { display: flex; flex-direction: column; align-items: center; gap: var(--space-12); }
+    .shadow-box { width: 100px; height: 72px; background: var(--surface-primary); border-radius: var(--radius-lg); }
+    .shadow-name { font-size: 10px; font-weight: 600; color: var(--content-secondary); font-family: 'SF Mono', monospace; }
+
+    /* Gradients */
+    .gradient-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-12); }
+    .gradient-card {
+      border-radius: var(--radius-lg); height: 80px;
+      display: flex; align-items: flex-end; padding: var(--space-8) var(--space-12);
+    }
+    .gradient-card .name {
+      font-size: 10px; font-weight: 600; color: rgba(0,0,0,0.5);
+      background: rgba(255,255,255,0.6); padding: 2px 8px; border-radius: var(--radius-xs);
+    }
+    .gradient-card.dark-text .name { color: rgba(255,255,255,0.7); background: rgba(0,0,0,0.3); }
+
+    /* Components */
+    .component-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-24); }
+    .component-card {
+      background: var(--surface-primary); border-radius: var(--radius-lg);
+      padding: var(--space-24); box-shadow: var(--shadow-sm);
+      border: var(--card-border-width) solid var(--border-subtle);
+    }
+    .component-card .card-title {
+      font-size: var(--font-c1-size); font-weight: 700; color: var(--content-tertiary);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--space-16);
+    }
+    .component-card .card-items { display: flex; flex-direction: column; gap: var(--space-12); }
+
+    /* Metrics */
+    .metric-row { display: flex; gap: var(--space-12); flex-wrap: wrap; }
+    .metric-item {
+      display: flex; align-items: center; gap: var(--space-8);
+      padding: var(--space-8) var(--space-16);
+      background: var(--surface-primary); border-radius: var(--radius-full);
+      border: var(--card-border-width) solid var(--border-subtle); box-shadow: var(--shadow-xs);
+    }
+    .metric-dot { width: 12px; height: 12px; border-radius: var(--radius-full); }
+    .metric-label { font-size: var(--font-c1-size); font-weight: 600; color: var(--content-primary); }
+
+    /* Page navigator cards */
+    .nav-card {
+      display: flex; flex-direction: column; gap: var(--space-4);
+      padding: var(--space-12) var(--space-16); border-radius: var(--radius-md);
+      background: var(--surface-primary); border: var(--card-border-width) solid var(--border-subtle);
+      box-shadow: var(--shadow-xs); cursor: pointer;
+      transition: all var(--duration-fast) var(--easing-standard);
+    }
+    .nav-card:hover {
+      box-shadow: var(--shadow-sm); border-color: var(--border-brand);
+      transform: translateY(-2px);
+    }
+    .nav-card.nav-dark {
+      background: #171D1A; border-color: rgba(255,255,255,0.06);
+    }
+    .nav-card.nav-dark:hover {
+      border-color: var(--primary-600); box-shadow: var(--shadow-brand-sm);
+    }
+    .nav-card.nav-dark .nav-title { color: #EAEFEC; }
+    .nav-card.nav-dark .nav-desc { color: #7A857F; }
+    .nav-badge {
+      display: inline-flex; align-self: flex-start;
+      padding: 1px var(--space-8); border-radius: var(--radius-full);
+      font-size: 9px; font-weight: 700; letter-spacing: 0.3px;
+    }
+    .nav-title {
+      font-size: var(--font-b2-size); font-weight: 700; color: var(--content-primary);
+    }
+    .nav-desc {
+      font-size: var(--font-c1-size); color: var(--content-tertiary); line-height: 1.3;
+    }
+
+    /* Dark preview */
+    .dark-preview { background: #0F1412; border-radius: var(--radius-xl); padding: var(--space-32); color: #EAEFEC; }
+    .dark-preview .dp-title { font-size: var(--font-h3-size); font-weight: 700; margin-bottom: var(--space-16); }
+    .dark-preview .dp-colors { display: flex; gap: var(--space-8); flex-wrap: wrap; }
+    .dark-preview .dp-chip { padding: var(--space-6) var(--space-12); border-radius: var(--radius-full); font-size: var(--font-c1-size); font-weight: 500; }
+  </style>
 </head>
 <body>
-<div class="header">
-  <h1>SkinTrack Design System</h1>
-  <p>AI 驱动的肌肤管理助手 · 设计稿 v3</p>
-  <div class="stats">
-    <div class="stat"><div class="num">20</div><div class="label">设计文件</div></div>
-    <div class="stat"><div class="num">50+</div><div class="label">屏幕状态</div></div>
-    <div class="stat"><div class="num">2</div><div class="label">主题模式</div></div>
-  </div>
-</div>
-<div class="container">
-  <div class="section-title">核心流程</div>
-  <div class="grid">
-    <a class="card" href="01-onboarding.html"><div class="icon" style="background:linear-gradient(135deg,#E8F7F3,#D1F0E4)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary,#2D9F7F)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20.5C7 14 12 8 20 6c0 0-2.5 10-13 14.5"/><path d="M7 20.5c0 0-1.5-5 4-10"/></svg></div><div class="info"><div class="name">引导页</div><div class="desc">4 屏引导 + 肤质选择</div></div></a>
-    <a class="card" href="02-auth.html"><div class="icon" style="background:linear-gradient(135deg,#EDE9FE,#DDD6FE)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="info"><div class="name">登录/注册</div><div class="desc">3 屏 含密码强度</div></div></a>
-    <a class="card" href="03-dashboard.html"><div class="icon" style="background:linear-gradient(135deg,#FFF1F2,#FFE4E6)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#FB7185" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="info"><div class="name">首页仪表盘</div><div class="desc">内容态 + 空状态</div></div></a>
-    <a class="card" href="04-timeline.html"><div class="icon" style="background:linear-gradient(135deg,#FFF4EA,#FFE4C8)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#F4A261" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div><div class="info"><div class="name">肌肤记录</div><div class="desc">列表 + 趋势 + 空状态</div></div></a>
+
+  <!-- HERO -->
+  <div class="ds-hero">
+    <h1>SkinTrack Design System</h1>
+    <p class="tagline">Calm Tech + Warm Data. A design language that makes users feel cared for, not inspected.</p>
+    <span class="version">v6 — "Morning Garden"</span>
   </div>
 
-  <div class="section-title">功能页面</div>
-  <div class="grid">
-    <a class="card" href="05-camera.html"><div class="icon" style="background:linear-gradient(135deg,#111,#222)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div><div class="info"><div class="name">拍照页</div><div class="desc">取景器 + 结果 + 权限</div></div></a>
-    <a class="card" href="06-record-detail.html"><div class="icon" style="background:linear-gradient(135deg,#E8F7F3,#D1F0E4)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary,#2D9F7F)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></div><div class="info"><div class="name">记录详情</div><div class="desc">雷达图 + AI 分析</div></div></a>
-    <a class="card" href="07-profile.html"><div class="icon" style="background:linear-gradient(135deg,#FFF1F2,#FFE4E6)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#FB7185" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="info"><div class="name">个人中心</div><div class="desc">渐变头部 + VIP</div></div></a>
-    <a class="card" href="08-product.html"><div class="icon" style="background:linear-gradient(135deg,#FFF4EA,#FFE4C8)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#F4A261" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8v6a4 4 0 0 1-4 4 4 4 0 0 1-4-4V2z"/><path d="M8 2h8"/><path d="M12 12v4"/><path d="M7 16h10v2a4 4 0 0 1-4 4 4 4 0 0 1-4-4v-2h-2z"/></svg></div><div class="info"><div class="name">护肤品管理</div><div class="desc">产品列表 + 添加弹窗</div></div></a>
-    <a class="card" href="09-attribution.html"><div class="icon" style="background:linear-gradient(135deg,#EDE9FE,#DDD6FE)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="info"><div class="name">归因分析</div><div class="desc">产品排行 + AI 洞察</div></div></a>
-    <a class="card" href="10-paywall.html"><div class="icon" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg></div><div class="info"><div class="name">会员订阅</div><div class="desc">订阅方案 + 社会证明</div></div></a>
-    <a class="card" href="11-settings.html"><div class="icon" style="background:linear-gradient(135deg,#F3F4F6,#E5E7EB)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div><div class="info"><div class="name">设置</div><div class="desc">设置 + 删除账号弹窗</div></div></a>
-    <a class="card" href="12-share.html"><div class="icon" style="background:linear-gradient(135deg,#DBEAFE,#BFDBFE)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div><div class="info"><div class="name">分享卡片</div><div class="desc">对比卡 + 模板选择</div></div></a>
+  <!-- PAGE NAVIGATOR -->
+  <div class="ds-section" id="pages">
+    <h2 class="ds-section-title">Page Mockups</h2>
+    <p class="ds-section-desc">Click to open any page mockup. All files are self-contained HTML — open directly in browser.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:var(--space-10)">
+      <!-- Light -->
+      <a href="01-onboarding.html" style="text-decoration:none" class="nav-card">
+        <div class="nav-badge" style="background:var(--primary-50);color:var(--primary-600)">4 屏</div>
+        <div class="nav-title">01 引导页</div>
+        <div class="nav-desc">欢迎 → 功能 → 肤质选择</div>
+      </a>
+      <a href="02-auth.html" style="text-decoration:none" class="nav-card">
+        <div class="nav-badge" style="background:var(--primary-50);color:var(--primary-600)">3 屏</div>
+        <div class="nav-title">02 认证</div>
+        <div class="nav-desc">登录 + 注册 + 忘记密码</div>
+      </a>
+      <a href="03-dashboard.html" style="text-decoration:none" class="nav-card">
+        <div class="nav-badge" style="background:var(--primary-50);color:var(--primary-600)">2 屏</div>
+        <div class="nav-title">03 首页</div>
+        <div class="nav-desc">内容态 + 空状态</div>
+      </a>
+      <a href="04-timeline.html" style="text-decoration:none" class="nav-card">
+        <div class="nav-badge" style="background:var(--primary-50);color:var(--primary-600)">2 屏</div>
+        <div class="nav-title">04 时间线</div>
+        <div class="nav-desc">记录列表 + 空状态</div>
+      </a>
+      <a href="05-camera.html" style="text-decoration:none" class="nav-card">
+        <div class="nav-badge" style="background:var(--primary-50);color:var(--primary-600)">3 屏</div>
+        <div class="nav-title">05 拍照</div>
+        <div class="nav-desc">取景器 + 结果 + 权限</div>
+      </a>
+      <a href="06-record-detail.html" style="text-decoration:none" class="nav-card">
+        <div class="nav-badge" style="background:var(--primary-50);color:var(--primary-600)">1 屏</div>
+        <div class="nav-title">06 记录详情</div>
+        <div class="nav-desc">雷达图 + AI + 指标条</div>
+      </a>
+      <a href="07-profile.html" style="text-decoration:none" class="nav-card">
+        <div class="nav-badge" style="background:var(--primary-50);color:var(--primary-600)">1 屏</div>
+        <div class="nav-title">07 个人中心</div>
+        <div class="nav-desc">渐变头部 + VIP + 菜单</div>
+      </a>
+      <a href="08-product.html" style="text-decoration:none" class="nav-card">
+        <div class="nav-badge" style="background:var(--primary-50);color:var(--primary-600)">2 屏</div>
+        <div class="nav-title">08 护肤品</div>
+        <div class="nav-desc">产品列表 + 添加弹出</div>
+      </a>
+      <a href="09-attribution.html" style="text-decoration:none" class="nav-card">
+        <div class="nav-badge" style="background:var(--primary-50);color:var(--primary-600)">1 屏</div>
+        <div class="nav-title">09 归因分析</div>
+        <div class="nav-desc">AI 归因报告</div>
+      </a>
+      <a href="10-paywall.html" style="text-decoration:none" class="nav-card">
+        <div class="nav-badge" style="background:var(--primary-50);color:var(--primary-600)">1 屏</div>
+        <div class="nav-title">10 付费墙</div>
+        <div class="nav-desc">会员订阅页</div>
+      </a>
+      <a href="11-settings.html" style="text-decoration:none" class="nav-card">
+        <div class="nav-badge" style="background:var(--primary-50);color:var(--primary-600)">2 屏</div>
+        <div class="nav-title">11 设置</div>
+        <div class="nav-desc">设置页 + 删除弹窗</div>
+      </a>
+      <a href="12-share.html" style="text-decoration:none" class="nav-card">
+        <div class="nav-badge" style="background:var(--primary-50);color:var(--primary-600)">1 屏</div>
+        <div class="nav-title">12 分享卡片</div>
+        <div class="nav-desc">对比卡 + 模板选择</div>
+      </a>
+      <a href="13-locked-states.html" style="text-decoration:none" class="nav-card">
+        <div class="nav-badge" style="background:var(--secondary-50);color:var(--secondary-600)">4 屏</div>
+        <div class="nav-title">13 门控4态</div>
+        <div class="nav-desc">试用到期 / 限额 / 高级 / 已订阅</div>
+      </a>
+
+      <!-- Dark -->
+      <a href="14-dark-core.html" style="text-decoration:none" class="nav-card nav-dark">
+        <div class="nav-badge" style="background:rgba(42,157,124,0.12);color:var(--primary-300)">3 屏</div>
+        <div class="nav-title">14 暗色核心</div>
+        <div class="nav-desc">首页 + 时间线 + 个人中心</div>
+      </a>
+      <a href="15-dark-screens.html" style="text-decoration:none" class="nav-card nav-dark">
+        <div class="nav-badge" style="background:rgba(42,157,124,0.12);color:var(--primary-300)">4 屏</div>
+        <div class="nav-title">15 暗色功能</div>
+        <div class="nav-desc">认证 + 详情 + 产品 + 归因</div>
+      </a>
+      <a href="16-dark-utility.html" style="text-decoration:none" class="nav-card nav-dark">
+        <div class="nav-badge" style="background:rgba(42,157,124,0.12);color:var(--primary-300)">4 屏</div>
+        <div class="nav-title">16 暗色工具</div>
+        <div class="nav-desc">引导 + 付费 + 设置 + 分享</div>
+      </a>
+      <a href="17-dark-locked.html" style="text-decoration:none" class="nav-card nav-dark">
+        <div class="nav-badge" style="background:rgba(42,157,124,0.12);color:var(--primary-300)">4 屏</div>
+        <div class="nav-title">17 暗色门控</div>
+        <div class="nav-desc">暗色下4种门控态</div>
+      </a>
+
+      <!-- Utility -->
+      <a href="18-loading-states.html" style="text-decoration:none" class="nav-card">
+        <div class="nav-badge" style="background:var(--surface-tertiary);color:var(--content-tertiary)">3 屏</div>
+        <div class="nav-title">18 加载态</div>
+        <div class="nav-desc">骨架屏 (首页/详情/列表)</div>
+      </a>
+      <a href="19-toast-states.html" style="text-decoration:none" class="nav-card">
+        <div class="nav-badge" style="background:var(--surface-tertiary);color:var(--content-tertiary)">3 屏</div>
+        <div class="nav-title">19 Toast</div>
+        <div class="nav-desc">成功 / 错误 / 警告</div>
+      </a>
+      <a href="20-edit-profile.html" style="text-decoration:none" class="nav-card">
+        <div class="nav-badge" style="background:var(--surface-tertiary);color:var(--content-tertiary)">2 屏</div>
+        <div class="nav-title">20 编辑资料</div>
+        <div class="nav-desc">编辑资料 + 修改密码</div>
+      </a>
+    </div>
   </div>
 
-  <div class="section-title">状态变体</div>
-  <div class="grid">
-    <a class="card" href="13-locked-states.html"><div class="icon" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="info"><div class="name">VIP 锁定态</div><div class="desc">4 屏门控设计</div></div></a>
-    <a class="card" href="18-loading-states.html"><div class="icon" style="background:linear-gradient(135deg,#F3F4F6,#E5E7EB)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="info"><div class="name">加载骨架屏</div><div class="desc">3 屏骨架loading</div></div></a>
-    <a class="card" href="19-toast-states.html"><div class="icon" style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary,#2D9F7F)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div class="info"><div class="name">通知状态<span class="badge badge-new">NEW</span></div><div class="desc">Toast + 错误 + 空状态</div></div></a>
-    <a class="card" href="20-edit-profile.html"><div class="icon" style="background:linear-gradient(135deg,#FFF1F2,#FFE4E6)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#FB7185" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg></div><div class="info"><div class="name">编辑资料<span class="badge badge-new">NEW</span></div><div class="desc">资料编辑 + 改密码</div></div></a>
+  <!-- §1 COLOR PALETTE -->
+  <div class="ds-section">
+    <h2 class="ds-section-title">Color Palette</h2>
+    <p class="ds-section-desc">Complete color scales from 50 (lightest) to 900 (darkest). Raw values — use semantic tokens in components.</p>
+
+    <div class="ds-subsection">
+      <h3 class="ds-subsection-title">Primary — Sage Mint</h3>
+      <div class="color-row">
+        <div class="color-swatch"><div class="swatch-box large" style="background:#E6F5F0"></div><div class="swatch-name">50</div><div class="swatch-hex">#E6F5F0</div></div>
+        <div class="color-swatch"><div class="swatch-box large" style="background:#C0E8DA"></div><div class="swatch-name">100</div><div class="swatch-hex">#C0E8DA</div></div>
+        <div class="color-swatch"><div class="swatch-box large" style="background:#96D9C2"></div><div class="swatch-name">200</div><div class="swatch-hex">#96D9C2</div></div>
+        <div class="color-swatch"><div class="swatch-box large" style="background:#6BCAAA"></div><div class="swatch-name">300</div><div class="swatch-hex">#6BCAAA</div></div>
+        <div class="color-swatch"><div class="swatch-box large" style="background:#4BBE97"></div><div class="swatch-name">400</div><div class="swatch-hex">#4BBE97</div></div>
+        <div class="color-swatch"><div class="swatch-box large" style="background:#2A9D7C"></div><div class="swatch-name">500</div><div class="swatch-hex">#2A9D7C</div></div>
+        <div class="color-swatch"><div class="swatch-box large" style="background:#258F71"></div><div class="swatch-name">600</div><div class="swatch-hex">#258F71</div></div>
+        <div class="color-swatch"><div class="swatch-box large" style="background:#1D7D63"></div><div class="swatch-name">700</div><div class="swatch-hex">#1D7D63</div></div>
+        <div class="color-swatch"><div class="swatch-box large" style="background:#166B55"></div><div class="swatch-name">800</div><div class="swatch-hex">#166B55</div></div>
+        <div class="color-swatch"><div class="swatch-box large" style="background:#0B4D3C"></div><div class="swatch-name">900</div><div class="swatch-hex">#0B4D3C</div></div>
+      </div>
+    </div>
+
+    <div class="ds-subsection">
+      <h3 class="ds-subsection-title">Secondary — Warm Apricot</h3>
+      <div class="color-row">
+        <div class="color-swatch"><div class="swatch-box" style="background:#FFF5ED"></div><div class="swatch-name">50</div><div class="swatch-hex">#FFF5ED</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#FFE6D0"></div><div class="swatch-name">100</div><div class="swatch-hex">#FFE6D0</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#FFD0A8"></div><div class="swatch-name">200</div><div class="swatch-hex">#FFD0A8</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#FFB87D"></div><div class="swatch-name">300</div><div class="swatch-hex">#FFB87D</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#F4A261"></div><div class="swatch-name">400</div><div class="swatch-hex">#F4A261</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#E8925B"></div><div class="swatch-name">500</div><div class="swatch-hex">#E8925B</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#D47E46"></div><div class="swatch-name">600</div><div class="swatch-hex">#D47E46</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#B86A38"></div><div class="swatch-name">700</div><div class="swatch-hex">#B86A38</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#96542E"></div><div class="swatch-name">800</div><div class="swatch-hex">#96542E</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#6B3B1F"></div><div class="swatch-name">900</div><div class="swatch-hex">#6B3B1F</div></div>
+      </div>
+    </div>
+
+    <div class="ds-subsection">
+      <h3 class="ds-subsection-title">Accent 1 — Petal Rose</h3>
+      <div class="color-row">
+        <div class="color-swatch"><div class="swatch-box" style="background:#FFF1F3"></div><div class="swatch-name">50</div><div class="swatch-hex">#FFF1F3</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#FFE0E5"></div><div class="swatch-name">100</div><div class="swatch-hex">#FFE0E5</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#FFCAD3"></div><div class="swatch-name">200</div><div class="swatch-hex">#FFCAD3</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#FFA8B6"></div><div class="swatch-name">300</div><div class="swatch-hex">#FFA8B6</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#F27A8E"></div><div class="swatch-name">400</div><div class="swatch-hex">#F27A8E</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#E85D75"></div><div class="swatch-name">500</div><div class="swatch-hex">#E85D75</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#D44460"></div><div class="swatch-name">600</div><div class="swatch-hex">#D44460</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#B2334D"></div><div class="swatch-name">700</div><div class="swatch-hex">#B2334D</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#942942"></div><div class="swatch-name">800</div><div class="swatch-hex">#942942</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#7D263D"></div><div class="swatch-name">900</div><div class="swatch-hex">#7D263D</div></div>
+      </div>
+    </div>
+
+    <div class="ds-subsection">
+      <h3 class="ds-subsection-title">Accent 2 — Soft Lavender</h3>
+      <div class="color-row">
+        <div class="color-swatch"><div class="swatch-box" style="background:#F4F2FE"></div><div class="swatch-name">50</div><div class="swatch-hex">#F4F2FE</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#EAE5FD"></div><div class="swatch-name">100</div><div class="swatch-hex">#EAE5FD</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#D8D0FB"></div><div class="swatch-name">200</div><div class="swatch-hex">#D8D0FB</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#BFB2F7"></div><div class="swatch-name">300</div><div class="swatch-hex">#BFB2F7</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#A694F0"></div><div class="swatch-name">400</div><div class="swatch-hex">#A694F0</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#9B8ADB"></div><div class="swatch-name">500</div><div class="swatch-hex">#9B8ADB</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#7E6EC4"></div><div class="swatch-name">600</div><div class="swatch-hex">#7E6EC4</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#6558A6"></div><div class="swatch-name">700</div><div class="swatch-hex">#6558A6</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#4F4587"></div><div class="swatch-name">800</div><div class="swatch-hex">#4F4587</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#3B336A"></div><div class="swatch-name">900</div><div class="swatch-hex">#3B336A</div></div>
+      </div>
+    </div>
+
+    <div class="ds-subsection">
+      <h3 class="ds-subsection-title">Neutral — Warm Gray</h3>
+      <div class="color-row">
+        <div class="color-swatch"><div class="swatch-box" style="background:#FFFFFF"></div><div class="swatch-name">0</div><div class="swatch-hex">#FFFFFF</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#F8FAF9"></div><div class="swatch-name">50</div><div class="swatch-hex">#F8FAF9</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#F1F4F3"></div><div class="swatch-name">100</div><div class="swatch-hex">#F1F4F3</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#E4E8E6"></div><div class="swatch-name">200</div><div class="swatch-hex">#E4E8E6</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#CED4D1"></div><div class="swatch-name">300</div><div class="swatch-hex">#CED4D1</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#ABB3AE"></div><div class="swatch-name">400</div><div class="swatch-hex">#ABB3AE</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#8A948E"></div><div class="swatch-name">500</div><div class="swatch-hex">#8A948E</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#6B756F"></div><div class="swatch-name">600</div><div class="swatch-hex">#6B756F</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#515A55"></div><div class="swatch-name">700</div><div class="swatch-hex">#515A55</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#343B37"></div><div class="swatch-name">800</div><div class="swatch-hex">#343B37</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#1A1F1C"></div><div class="swatch-name">900</div><div class="swatch-hex">#1A1F1C</div></div>
+        <div class="color-swatch"><div class="swatch-box" style="background:#0F1412"></div><div class="swatch-name">950</div><div class="swatch-hex">#0F1412</div></div>
+      </div>
+    </div>
+
+    <div class="ds-subsection">
+      <h3 class="ds-subsection-title">Functional Colors</h3>
+      <div style="display:flex;gap:var(--space-24);flex-wrap:wrap">
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--content-secondary);margin-bottom:var(--space-8)">Success</div>
+          <div class="color-row" style="margin-bottom:0">
+            <div class="color-swatch"><div class="swatch-box" style="background:#ECFDF5;height:40px"></div><div class="swatch-hex">#ECFDF5</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#10B981;height:40px"></div><div class="swatch-hex">#10B981</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#064E3B;height:40px"></div><div class="swatch-hex">#064E3B</div></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--content-secondary);margin-bottom:var(--space-8)">Warning</div>
+          <div class="color-row" style="margin-bottom:0">
+            <div class="color-swatch"><div class="swatch-box" style="background:#FFFBEB;height:40px"></div><div class="swatch-hex">#FFFBEB</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#F59E0B;height:40px"></div><div class="swatch-hex">#F59E0B</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#78350F;height:40px"></div><div class="swatch-hex">#78350F</div></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--content-secondary);margin-bottom:var(--space-8)">Error</div>
+          <div class="color-row" style="margin-bottom:0">
+            <div class="color-swatch"><div class="swatch-box" style="background:#FEF2F2;height:40px"></div><div class="swatch-hex">#FEF2F2</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#EF4444;height:40px"></div><div class="swatch-hex">#EF4444</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#7F1D1D;height:40px"></div><div class="swatch-hex">#7F1D1D</div></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--content-secondary);margin-bottom:var(--space-8)">Info</div>
+          <div class="color-row" style="margin-bottom:0">
+            <div class="color-swatch"><div class="swatch-box" style="background:#EFF6FF;height:40px"></div><div class="swatch-hex">#EFF6FF</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#3B82F6;height:40px"></div><div class="swatch-hex">#3B82F6</div></div>
+            <div class="color-swatch"><div class="swatch-box" style="background:#1E3A8A;height:40px"></div><div class="swatch-hex">#1E3A8A</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-subsection">
+      <h3 class="ds-subsection-title">Skin Metric Colors</h3>
+      <div class="metric-row">
+        <div class="metric-item"><div class="metric-dot" style="background:#F27A8E"></div><span class="metric-label">Acne</span></div>
+        <div class="metric-item"><div class="metric-dot" style="background:#4ECDC4"></div><span class="metric-label">Pore</span></div>
+        <div class="metric-item"><div class="metric-dot" style="background:#F5C542"></div><span class="metric-label">Evenness</span></div>
+        <div class="metric-item"><div class="metric-dot" style="background:#45B7D1"></div><span class="metric-label">Hydration</span></div>
+        <div class="metric-item"><div class="metric-dot" style="background:#E87878"></div><span class="metric-label">Redness</span></div>
+      </div>
+    </div>
+
+    <div class="ds-subsection">
+      <h3 class="ds-subsection-title">Semantic Tokens — Light</h3>
+      <div class="semantic-grid">
+        <div class="semantic-item"><div class="preview" style="background:var(--content-primary)"></div><div class="token-name">content-primary</div><div class="token-maps">neutral-900</div></div>
+        <div class="semantic-item"><div class="preview" style="background:var(--content-secondary)"></div><div class="token-name">content-secondary</div><div class="token-maps">neutral-600</div></div>
+        <div class="semantic-item"><div class="preview" style="background:var(--content-tertiary)"></div><div class="token-name">content-tertiary</div><div class="token-maps">neutral-500</div></div>
+        <div class="semantic-item"><div class="preview" style="background:var(--content-brand)"></div><div class="token-name">content-brand</div><div class="token-maps">primary-500</div></div>
+        <div class="semantic-item"><div class="preview" style="background:var(--surface-primary)"></div><div class="token-name">surface-primary</div><div class="token-maps">neutral-0</div></div>
+        <div class="semantic-item"><div class="preview" style="background:var(--surface-secondary)"></div><div class="token-name">surface-secondary</div><div class="token-maps">neutral-50</div></div>
+        <div class="semantic-item"><div class="preview" style="background:var(--surface-tertiary)"></div><div class="token-name">surface-tertiary</div><div class="token-maps">neutral-100</div></div>
+        <div class="semantic-item"><div class="preview" style="background:var(--surface-brand-subtle)"></div><div class="token-name">surface-brand-subtle</div><div class="token-maps">primary-50</div></div>
+        <div class="semantic-item"><div class="preview" style="background:var(--border-default)"></div><div class="token-name">border-default</div><div class="token-maps">neutral-200</div></div>
+        <div class="semantic-item"><div class="preview" style="background:var(--border-subtle)"></div><div class="token-name">border-subtle</div><div class="token-maps">neutral-100</div></div>
+        <div class="semantic-item"><div class="preview" style="background:var(--interactive-primary)"></div><div class="token-name">interactive-primary</div><div class="token-maps">primary-500</div></div>
+        <div class="semantic-item"><div class="preview" style="background:var(--interactive-on-primary)"></div><div class="token-name">interactive-on-primary</div><div class="token-maps">neutral-0</div></div>
+      </div>
+    </div>
+
+    <div class="ds-subsection">
+      <h3 class="ds-subsection-title">Dark Mode Atmosphere</h3>
+      <div class="dark-preview">
+        <div class="dp-title">Deep Warm Charcoal</div>
+        <p style="font-size:var(--font-b2-size);color:#A0AAA5;margin-bottom:var(--space-16);line-height:1.5">
+          Not pure black — a cozy deep charcoal with subtle green warmth (#0F1412). Elevated surfaces use progressively lighter tones. Brand colors gain saturation for vibrancy.
+        </p>
+        <div class="dp-colors">
+          <span class="dp-chip" style="background:#0F1412;border:1px solid rgba(255,255,255,0.1)">surface-primary</span>
+          <span class="dp-chip" style="background:#171D1A;border:1px solid rgba(255,255,255,0.08)">surface-secondary</span>
+          <span class="dp-chip" style="background:#1E2522;border:1px solid rgba(255,255,255,0.06)">surface-tertiary</span>
+          <span class="dp-chip" style="background:rgba(42,157,124,0.12);color:#6BCAAA">brand-subtle</span>
+          <span class="dp-chip" style="background:#4BBE97;color:#0F1412">interactive-primary</span>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="section-title">暗色模式</div>
-  <div class="grid">
-    <a class="card" href="14-dark-core.html"><div class="icon" style="background:#1C1E20;color:white"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div><div class="info"><div class="name">暗色核心页</div><div class="desc">Dashboard + Timeline + Profile</div></div></a>
-    <a class="card" href="15-dark-screens.html"><div class="icon" style="background:#1C1E20;color:white"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div><div class="info"><div class="name">暗色功能页</div><div class="desc">Auth + Detail + Product + Attribution</div></div></a>
-    <a class="card" href="16-dark-utility.html"><div class="icon" style="background:#1C1E20;color:white"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div><div class="info"><div class="name">暗色辅助页</div><div class="desc">Onboarding + Paywall + Settings + Share</div></div></a>
-    <a class="card" href="17-dark-locked.html"><div class="icon" style="background:#1C1E20;color:white"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div><div class="info"><div class="name">暗色锁定态</div><div class="desc">详情锁定 + 拍照限额</div></div></a>
+  <!-- §2 TYPOGRAPHY -->
+  <div class="ds-section">
+    <h2 class="ds-section-title">Typography</h2>
+    <p class="ds-section-desc">SF Pro Display with clear hierarchy. Each token defines size, weight, line-height, and letter-spacing.</p>
+
+    <div style="background:var(--surface-primary);border-radius:var(--radius-lg);padding:var(--space-24);box-shadow:var(--shadow-sm);border:var(--card-border-width) solid var(--border-subtle)">
+      <div class="type-row">
+        <div class="type-meta"><span class="token">h1</span><div class="specs">30 / 700<br>lh 1.20 / ls -0.5</div></div>
+        <div class="type-sample" style="font-size:30px;font-weight:700;line-height:1.2;letter-spacing:-0.5px">Your Skin Journey</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><span class="token">h2</span><div class="specs">24 / 700<br>lh 1.25 / ls -0.4</div></div>
+        <div class="type-sample" style="font-size:24px;font-weight:700;line-height:1.25;letter-spacing:-0.4px">Weekly Report</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><span class="token">h3</span><div class="specs">19 / 600<br>lh 1.30 / ls -0.2</div></div>
+        <div class="type-sample" style="font-size:19px;font-weight:600;line-height:1.3;letter-spacing:-0.2px">Skin Score Overview</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><span class="token">h4</span><div class="specs">16 / 600<br>lh 1.35 / ls -0.1</div></div>
+        <div class="type-sample" style="font-size:16px;font-weight:600;line-height:1.35;letter-spacing:-0.1px">Hydration Level</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><span class="token">b1</span><div class="specs">16 / 400<br>lh 1.50 / ls 0</div></div>
+        <div class="type-sample" style="font-size:16px;font-weight:400;line-height:1.5">Your skin shows consistent improvement over the past two weeks.</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><span class="token">b2</span><div class="specs">14 / 400<br>lh 1.45 / ls 0.05</div></div>
+        <div class="type-sample" style="font-size:14px;font-weight:400;line-height:1.45;letter-spacing:0.05px">Tracked with Niacinamide 10% serum, applied twice daily.</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><span class="token">b3</span><div class="specs">13 / 400<br>lh 1.40 / ls 0.05</div></div>
+        <div class="type-sample" style="font-size:13px;font-weight:400;line-height:1.4;letter-spacing:0.05px">Last updated 3 hours ago</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><span class="token">c1</span><div class="specs">12 / 500<br>lh 1.35 / ls 0.2</div></div>
+        <div class="type-sample" style="font-size:12px;font-weight:500;line-height:1.35;letter-spacing:0.2px">SKIN SCORE</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><span class="token">c2</span><div class="specs">10 / 600<br>lh 1.30 / ls 0.3</div></div>
+        <div class="type-sample" style="font-size:10px;font-weight:600;line-height:1.3;letter-spacing:0.3px">PREMIUM</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><span class="token">btn</span><div class="specs">16 / 600<br>lh 1.0 / ls -0.1</div></div>
+        <div class="type-sample" style="font-size:16px;font-weight:600;line-height:1;letter-spacing:-0.1px">Start Analysis</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><span class="token">num-xl</span><div class="specs">38 / 800<br>lh 1.10 / ls -1</div></div>
+        <div class="type-sample" style="font-size:38px;font-weight:800;line-height:1.1;letter-spacing:-1px;color:var(--content-brand)">86</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><span class="token">num-lg</span><div class="specs">26 / 700<br>lh 1.15 / ls -0.5</div></div>
+        <div class="type-sample" style="font-size:26px;font-weight:700;line-height:1.15;letter-spacing:-0.5px">+12%</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><span class="token">num-md</span><div class="specs">18 / 600<br>lh 1.20 / ls -0.2</div></div>
+        <div class="type-sample" style="font-size:18px;font-weight:600;line-height:1.2;letter-spacing:-0.2px">72/100</div>
+      </div>
+    </div>
   </div>
-</div>
-<div class="footer">SkinTrack Design System v3 · 2026 · 共 20 个文件 · 50+ 屏幕状态</div>
+
+  <!-- §3 SPACING -->
+  <div class="ds-section">
+    <h2 class="ds-section-title">Spacing</h2>
+    <p class="ds-section-desc">Consistent spatial rhythm using a base-4 scale. Generous whitespace for breathing room.</p>
+    <div style="background:var(--surface-primary);border-radius:var(--radius-lg);padding:var(--space-24);box-shadow:var(--shadow-sm);border:var(--card-border-width) solid var(--border-subtle)">
+      <div class="spacing-row"><span class="spacing-label">space-2</span><div class="spacing-bar" style="width:2px"></div><span class="spacing-value">2px</span></div>
+      <div class="spacing-row"><span class="spacing-label">space-4</span><div class="spacing-bar" style="width:4px"></div><span class="spacing-value">4px</span></div>
+      <div class="spacing-row"><span class="spacing-label">space-6</span><div class="spacing-bar" style="width:6px"></div><span class="spacing-value">6px</span></div>
+      <div class="spacing-row"><span class="spacing-label">space-8</span><div class="spacing-bar" style="width:8px"></div><span class="spacing-value">8px</span></div>
+      <div class="spacing-row"><span class="spacing-label">space-10</span><div class="spacing-bar" style="width:10px"></div><span class="spacing-value">10px</span></div>
+      <div class="spacing-row"><span class="spacing-label">space-12</span><div class="spacing-bar" style="width:12px"></div><span class="spacing-value">12px</span></div>
+      <div class="spacing-row"><span class="spacing-label">space-16</span><div class="spacing-bar" style="width:16px"></div><span class="spacing-value">16px</span></div>
+      <div class="spacing-row"><span class="spacing-label">space-20</span><div class="spacing-bar" style="width:20px"></div><span class="spacing-value">20px</span></div>
+      <div class="spacing-row"><span class="spacing-label">space-24</span><div class="spacing-bar" style="width:24px"></div><span class="spacing-value">24px</span></div>
+      <div class="spacing-row"><span class="spacing-label">space-32</span><div class="spacing-bar" style="width:32px"></div><span class="spacing-value">32px</span></div>
+      <div class="spacing-row"><span class="spacing-label">space-40</span><div class="spacing-bar" style="width:40px"></div><span class="spacing-value">40px</span></div>
+      <div class="spacing-row"><span class="spacing-label">space-48</span><div class="spacing-bar" style="width:48px"></div><span class="spacing-value">48px</span></div>
+      <div class="spacing-row"><span class="spacing-label">space-64</span><div class="spacing-bar" style="width:64px"></div><span class="spacing-value">64px</span></div>
+    </div>
+  </div>
+
+  <!-- §4 RADIUS -->
+  <div class="ds-section">
+    <h2 class="ds-section-title">Border Radius</h2>
+    <p class="ds-section-desc">Soft, organic corners. Larger radii for bigger containers.</p>
+    <div class="radius-row">
+      <div class="radius-item"><div class="radius-box" style="border-radius:var(--radius-xs)"></div><span class="radius-name">xs / 4px</span></div>
+      <div class="radius-item"><div class="radius-box" style="border-radius:var(--radius-sm)"></div><span class="radius-name">sm / 8px</span></div>
+      <div class="radius-item"><div class="radius-box" style="border-radius:var(--radius-md)"></div><span class="radius-name">md / 12px</span></div>
+      <div class="radius-item"><div class="radius-box" style="border-radius:var(--radius-lg)"></div><span class="radius-name">lg / 16px</span></div>
+      <div class="radius-item"><div class="radius-box" style="border-radius:var(--radius-xl)"></div><span class="radius-name">xl / 24px</span></div>
+      <div class="radius-item"><div class="radius-box" style="border-radius:var(--radius-xxl)"></div><span class="radius-name">xxl / 32px</span></div>
+      <div class="radius-item"><div class="radius-box" style="border-radius:var(--radius-full);width:64px"></div><span class="radius-name">full</span></div>
+    </div>
+  </div>
+
+  <!-- §5 ELEVATION -->
+  <div class="ds-section">
+    <h2 class="ds-section-title">Elevation</h2>
+    <p class="ds-section-desc">Progressive depth. Shadows use warm green-tinted black for cohesion.</p>
+    <div class="shadow-row">
+      <div class="shadow-item"><div class="shadow-box" style="box-shadow:var(--shadow-xs)"></div><span class="shadow-name">xs</span></div>
+      <div class="shadow-item"><div class="shadow-box" style="box-shadow:var(--shadow-sm)"></div><span class="shadow-name">sm</span></div>
+      <div class="shadow-item"><div class="shadow-box" style="box-shadow:var(--shadow-md)"></div><span class="shadow-name">md</span></div>
+      <div class="shadow-item"><div class="shadow-box" style="box-shadow:var(--shadow-lg)"></div><span class="shadow-name">lg</span></div>
+      <div class="shadow-item"><div class="shadow-box" style="box-shadow:var(--shadow-xl)"></div><span class="shadow-name">xl</span></div>
+      <div class="shadow-item"><div class="shadow-box" style="box-shadow:var(--shadow-brand-sm)"></div><span class="shadow-name">brand-sm</span></div>
+      <div class="shadow-item"><div class="shadow-box" style="box-shadow:var(--shadow-brand-md)"></div><span class="shadow-name">brand-md</span></div>
+      <div class="shadow-item"><div class="shadow-box" style="box-shadow:var(--shadow-rose-sm)"></div><span class="shadow-name">rose-sm</span></div>
+    </div>
+  </div>
+
+  <!-- §6 GRADIENTS -->
+  <div class="ds-section">
+    <h2 class="ds-section-title">Gradients</h2>
+    <p class="ds-section-desc">Warm, organic gradients. Light and breathable for backgrounds, bolder for actions.</p>
+    <div class="gradient-grid">
+      <div class="gradient-card" style="background:var(--grad-primary)"><span class="name">primary</span></div>
+      <div class="gradient-card dark-text" style="background:var(--grad-primary-bold)"><span class="name">primary-bold</span></div>
+      <div class="gradient-card dark-text" style="background:var(--grad-hero)"><span class="name">hero</span></div>
+      <div class="gradient-card" style="background:var(--grad-button)"><span class="name">button</span></div>
+      <div class="gradient-card" style="background:var(--grad-warm)"><span class="name">warm</span></div>
+      <div class="gradient-card" style="background:var(--grad-surface)"><span class="name">surface</span></div>
+      <div class="gradient-card" style="background:var(--grad-score)"><span class="name">score</span></div>
+      <div class="gradient-card" style="background:var(--grad-glass);backdrop-filter:blur(10px)"><span class="name">glass</span></div>
+      <div class="gradient-card" style="background:var(--grad-rose-warm)"><span class="name">rose-warm</span></div>
+      <div class="gradient-card" style="background:var(--grad-lavender-soft)"><span class="name">lavender-soft</span></div>
+      <div class="gradient-card" style="background:var(--grad-tri-warm)"><span class="name">tri-warm</span></div>
+      <div class="gradient-card" style="background:var(--grad-skin)"><span class="name">skin placeholder</span></div>
+      <div class="gradient-card dark-text" style="background:var(--grad-profile)"><span class="name">profile</span></div>
+      <div class="gradient-card dark-text" style="background:var(--grad-paywall)"><span class="name">paywall</span></div>
+    </div>
+  </div>
+
+  <!-- §7 COMPONENTS -->
+  <div class="ds-section">
+    <h2 class="ds-section-title">Components</h2>
+    <p class="ds-section-desc">Reusable building blocks. All values reference design tokens — zero hardcoded values.</p>
+
+    <div class="component-grid">
+
+      <div class="component-card">
+        <div class="card-title">Buttons</div>
+        <div class="card-items">
+          <button class="btn btn-primary">Primary Action</button>
+          <button class="btn btn-outlined">Outlined</button>
+          <button class="btn btn-tonal">Tonal</button>
+          <div style="display:flex;gap:var(--space-12)">
+            <button class="btn btn-primary btn-sm">Small</button>
+            <button class="btn btn-outlined btn-sm">Small</button>
+          </div>
+          <button class="btn btn-primary disabled">Disabled</button>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-title">Text Fields</div>
+        <div class="card-items">
+          <div class="text-field">
+            <label>Email</label>
+            <input type="email" placeholder="you@example.com">
+          </div>
+          <div class="text-field error">
+            <label>Username</label>
+            <input type="text" value="a" style="border-color:var(--content-error)">
+            <div class="helper">Username must be at least 3 characters</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-title">Chips</div>
+        <div style="display:flex;gap:var(--space-8);flex-wrap:wrap">
+          <span class="chip active">All</span>
+          <span class="chip">Acne</span>
+          <span class="chip">Hydration</span>
+          <span class="chip">Pores</span>
+          <span class="chip">Redness</span>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-title">Badges</div>
+        <div style="display:flex;gap:var(--space-8);flex-wrap:wrap">
+          <span class="badge badge-success">Improved</span>
+          <span class="badge badge-warning">Needs care</span>
+          <span class="badge badge-error">Declined</span>
+          <span class="badge badge-info">New</span>
+          <span class="badge badge-brand">PRO</span>
+          <span class="badge badge-rose">Sensitive</span>
+          <span class="badge badge-lavender">AI Insight</span>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-title">Score Bars</div>
+        <div class="card-items" style="gap:var(--space-16)">
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-4)">
+              <span style="font-size:var(--font-b3-size);font-weight:600;color:var(--content-primary)">Hydration</span>
+              <span style="font-size:var(--font-b3-size);font-weight:700;color:var(--metric-hydration)">82</span>
+            </div>
+            <div class="score-bar"><div class="fill" style="width:82%;background:var(--metric-hydration)"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-4)">
+              <span style="font-size:var(--font-b3-size);font-weight:600;color:var(--content-primary)">Acne</span>
+              <span style="font-size:var(--font-b3-size);font-weight:700;color:var(--metric-acne)">35</span>
+            </div>
+            <div class="score-bar"><div class="fill" style="width:35%;background:var(--metric-acne)"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-4)">
+              <span style="font-size:var(--font-b3-size);font-weight:600;color:var(--content-primary)">Evenness</span>
+              <span style="font-size:var(--font-b3-size);font-weight:700;color:var(--metric-evenness)">68</span>
+            </div>
+            <div class="score-bar"><div class="fill" style="width:68%;background:var(--metric-evenness)"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-title">Avatars</div>
+        <div style="display:flex;align-items:center;gap:var(--space-16)">
+          <div class="avatar avatar-sm">L</div>
+          <div class="avatar avatar-md">Li</div>
+          <div class="avatar-ring"><div class="avatar avatar-lg">Lisa</div></div>
+          <div class="avatar avatar-xl" style="background:var(--grad-hero);font-size:var(--font-h3-size)">M</div>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-title">Trends</div>
+        <div style="display:flex;gap:var(--space-24);align-items:center">
+          <span class="trend trend-up">&#8593; +12%</span>
+          <span class="trend trend-down">&#8595; -5%</span>
+          <span class="trend trend-flat">&#8594; 0%</span>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-title">Tab Bars</div>
+        <div class="card-items">
+          <div class="tab-bar">
+            <button class="tab active">Week</button>
+            <button class="tab">Month</button>
+            <button class="tab">Year</button>
+          </div>
+          <div>
+            <div class="tab-bar-inline" style="padding:0">
+              <button class="tab active">Overview</button>
+              <button class="tab">Details</button>
+              <button class="tab">History</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-title">Toggles</div>
+        <div style="display:flex;gap:var(--space-16);align-items:center">
+          <div class="toggle active"></div>
+          <span style="font-size:var(--font-b2-size);color:var(--content-primary)">On</span>
+          <div class="toggle"></div>
+          <span style="font-size:var(--font-b2-size);color:var(--content-secondary)">Off</span>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-title">Toasts</div>
+        <div class="card-items">
+          <div class="toast toast-success">
+            <svg width="20" height="20" viewBox="0 0 24 24" style="stroke:white"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Photo saved successfully
+          </div>
+          <div class="toast toast-error">
+            <svg width="20" height="20" viewBox="0 0 24 24" style="stroke:white"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+            Analysis failed
+          </div>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-title">Section Card</div>
+        <div class="section-card accent-mint" style="margin-bottom:var(--space-12)">
+          <div class="section-header">
+            <span class="title">Weekly Summary</span>
+            <span class="action">See all</span>
+          </div>
+          <p style="font-size:var(--font-b2-size);color:var(--content-secondary);line-height:var(--font-b2-lh)">Your skin improved 8% this week!</p>
+        </div>
+        <div class="section-card accent-rose">
+          <div class="section-header">
+            <span class="title">Product Impact</span>
+            <span class="action">Details</span>
+          </div>
+          <p style="font-size:var(--font-b2-size);color:var(--content-secondary);line-height:var(--font-b2-lh)">Niacinamide shows positive results.</p>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-title">Empty State</div>
+        <div class="empty-state" style="padding:var(--space-24) var(--space-16)">
+          <svg class="icon" viewBox="0 0 24 24" style="width:48px;height:48px;stroke-width:1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+          <div class="title" style="font-size:var(--font-h4-size)">No photos yet</div>
+          <div class="description">Take your first photo to start tracking.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- §8 MOTION -->
+  <div class="ds-section">
+    <h2 class="ds-section-title">Motion</h2>
+    <p class="ds-section-desc">Gentle, purposeful animations. Never flashy — always supportive.</p>
+    <div style="background:var(--surface-primary);border-radius:var(--radius-lg);padding:var(--space-24);box-shadow:var(--shadow-sm);border:var(--card-border-width) solid var(--border-subtle)">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:var(--space-16)">
+        <div style="padding:var(--space-12);background:var(--surface-secondary);border-radius:var(--radius-md)">
+          <div style="font-size:11px;font-weight:600;color:var(--content-tertiary);margin-bottom:var(--space-4)">DURATION</div>
+          <div style="font-size:var(--font-b2-size);color:var(--content-primary);line-height:1.6">
+            <strong>fast:</strong> 150ms<br>
+            <strong>normal:</strong> 300ms<br>
+            <strong>slow:</strong> 500ms<br>
+            <strong>slower:</strong> 700ms
+          </div>
+        </div>
+        <div style="padding:var(--space-12);background:var(--surface-secondary);border-radius:var(--radius-md)">
+          <div style="font-size:11px;font-weight:600;color:var(--content-tertiary);margin-bottom:var(--space-4)">EASING</div>
+          <div style="font-size:var(--font-b2-size);color:var(--content-primary);line-height:1.6">
+            <strong>standard:</strong> (0.2, 0, 0, 1)<br>
+            <strong>decelerate:</strong> (0, 0, 0, 1)<br>
+            <strong>accelerate:</strong> (0.3, 0, 0.8, 0.15)<br>
+            <strong>bounce:</strong> (0.34, 1.56, 0.64, 1)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- §9 COMPONENT TOKENS -->
+  <div class="ds-section">
+    <h2 class="ds-section-title">Component Tokens</h2>
+    <p class="ds-section-desc">Fixed dimensions for interactive elements.</p>
+    <div style="background:var(--surface-primary);border-radius:var(--radius-lg);padding:var(--space-24);box-shadow:var(--shadow-sm);border:var(--card-border-width) solid var(--border-subtle);display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-12)">
+      <div style="padding:var(--space-8);background:var(--surface-secondary);border-radius:var(--radius-sm);font-size:11px"><div style="font-weight:600;color:var(--content-primary)">button-height</div><div style="color:var(--content-tertiary)">52px</div></div>
+      <div style="padding:var(--space-8);background:var(--surface-secondary);border-radius:var(--radius-sm);font-size:11px"><div style="font-weight:600;color:var(--content-primary)">button-height-sm</div><div style="color:var(--content-tertiary)">40px</div></div>
+      <div style="padding:var(--space-8);background:var(--surface-secondary);border-radius:var(--radius-sm);font-size:11px"><div style="font-weight:600;color:var(--content-primary)">input-height</div><div style="color:var(--content-tertiary)">52px</div></div>
+      <div style="padding:var(--space-8);background:var(--surface-secondary);border-radius:var(--radius-sm);font-size:11px"><div style="font-weight:600;color:var(--content-primary)">icon-size-sm</div><div style="color:var(--content-tertiary)">20px</div></div>
+      <div style="padding:var(--space-8);background:var(--surface-secondary);border-radius:var(--radius-sm);font-size:11px"><div style="font-weight:600;color:var(--content-primary)">icon-size-md</div><div style="color:var(--content-tertiary)">24px</div></div>
+      <div style="padding:var(--space-8);background:var(--surface-secondary);border-radius:var(--radius-sm);font-size:11px"><div style="font-weight:600;color:var(--content-primary)">icon-size-lg</div><div style="color:var(--content-tertiary)">32px</div></div>
+      <div style="padding:var(--space-8);background:var(--surface-secondary);border-radius:var(--radius-sm);font-size:11px"><div style="font-weight:600;color:var(--content-primary)">avatar-sm</div><div style="color:var(--content-tertiary)">36px</div></div>
+      <div style="padding:var(--space-8);background:var(--surface-secondary);border-radius:var(--radius-sm);font-size:11px"><div style="font-weight:600;color:var(--content-primary)">avatar-md</div><div style="color:var(--content-tertiary)">44px</div></div>
+      <div style="padding:var(--space-8);background:var(--surface-secondary);border-radius:var(--radius-sm);font-size:11px"><div style="font-weight:600;color:var(--content-primary)">avatar-lg</div><div style="color:var(--content-tertiary)">56px</div></div>
+      <div style="padding:var(--space-8);background:var(--surface-secondary);border-radius:var(--radius-sm);font-size:11px"><div style="font-weight:600;color:var(--content-primary)">fab-size</div><div style="color:var(--content-tertiary)">52px</div></div>
+      <div style="padding:var(--space-8);background:var(--surface-secondary);border-radius:var(--radius-sm);font-size:11px"><div style="font-weight:600;color:var(--content-primary)">bottom-nav</div><div style="color:var(--content-tertiary)">84px</div></div>
+      <div style="padding:var(--space-8);background:var(--surface-secondary);border-radius:var(--radius-sm);font-size:11px"><div style="font-weight:600;color:var(--content-primary)">status-bar</div><div style="color:var(--content-tertiary)">54px</div></div>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:var(--space-48) 0;color:var(--content-tertiary);font-size:var(--font-c1-size)">
+    SkinTrack Design System v6 "Morning Garden" &mdash; Built with care.
+  </div>
+
 </body>
 </html>

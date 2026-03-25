@@ -69,7 +69,7 @@ fun SkeletonBox(
     Box(
         modifier = modifier
             .size(width, height)
-            .clip(RoundedCornerShape(MaterialTheme.spacing.xs))
+            .clip(RoundedCornerShape(MaterialTheme.spacing.sm))
             .shimmer(),
     )
 }

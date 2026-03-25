@@ -36,6 +36,9 @@ interface UserPreferencesDao {
     @Query("UPDATE user_preferences SET weeklyReportEnabled = :enabled WHERE id = 1")
     suspend fun setWeeklyReportEnabled(enabled: Boolean)
 
+    @Query("UPDATE user_preferences SET aiNotificationEnabled = :enabled WHERE id = 1")
+    suspend fun setAiNotificationEnabled(enabled: Boolean)
+
     @Query("UPDATE user_preferences SET lastSyncTimestamp = :timestamp WHERE id = 1")
     suspend fun setLastSyncTimestamp(timestamp: String)
 

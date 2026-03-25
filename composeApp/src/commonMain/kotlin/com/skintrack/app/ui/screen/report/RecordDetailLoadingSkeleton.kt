@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -37,7 +36,7 @@ fun RecordDetailLoadingSkeleton(modifier: Modifier = Modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(260.dp)
+                .height(280.dp)
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
@@ -49,17 +48,10 @@ fun RecordDetailLoadingSkeleton(modifier: Modifier = Modifier) {
         ) {
             // Back button circle - top left
             SkeletonCircle(
-                size = 42.dp,
+                size = 40.dp,
                 modifier = Modifier
-                    .padding(start = spacing.md, top = 54.dp)
+                    .padding(start = spacing.sm, top = 54.dp)
                     .align(Alignment.TopStart),
-            )
-            // Share button circle - top right
-            SkeletonCircle(
-                size = 42.dp,
-                modifier = Modifier
-                    .padding(end = spacing.md, top = 54.dp)
-                    .align(Alignment.TopEnd),
             )
             // Bottom center pill
             SkeletonPill(
@@ -71,23 +63,23 @@ fun RecordDetailLoadingSkeleton(modifier: Modifier = Modifier) {
             )
         }
 
-        // Score floating card - overlaps photo by -36dp
+        // Score floating card - overlaps photo by -32dp
         SkeletonCard(
             modifier = Modifier
                 .padding(horizontal = spacing.md)
-                .offset(y = (-36).dp),
+                .offset(y = (-32).dp),
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(spacing.md),
+                horizontalArrangement = Arrangement.spacedBy(spacing.listGap),
             ) {
-                SkeletonCircle(size = 74.dp)
+                SkeletonCircle(size = 64.dp)
                 Column(
                     verticalArrangement = Arrangement.spacedBy(spacing.sm),
                 ) {
-                    SkeletonBox(width = 160.dp, height = 18.dp, modifier = Modifier.fillMaxWidth(0.65f))
-                    SkeletonBox(width = 110.dp, height = 13.dp, modifier = Modifier.fillMaxWidth(0.45f))
-                    SkeletonPill(width = 80.dp, height = 22.dp)
+                    SkeletonBox(width = 140.dp, height = 18.dp, modifier = Modifier.fillMaxWidth(0.65f))
+                    SkeletonBox(width = 100.dp, height = 12.dp, modifier = Modifier.fillMaxWidth(0.45f))
+                    SkeletonPill(width = 80.dp, height = 20.dp)
                 }
             }
         }
@@ -96,37 +88,37 @@ fun RecordDetailLoadingSkeleton(modifier: Modifier = Modifier) {
         SkeletonCard(
             modifier = Modifier.padding(horizontal = spacing.md),
         ) {
-            SkeletonBox(width = 72.dp, height = 16.dp)
-            Spacer(modifier = Modifier.height(spacing.md))
+            SkeletonBox(width = 70.dp, height = 14.dp)
+            Spacer(modifier = Modifier.height(spacing.listGap))
             SkeletonCircle(
-                size = 180.dp,
+                size = 160.dp,
                 modifier = Modifier.align(Alignment.CenterHorizontally),
             )
         }
 
-        Spacer(modifier = Modifier.height(spacing.md))
+        Spacer(modifier = Modifier.height(spacing.listGap))
 
         // Score bars card
         SkeletonCard(
             modifier = Modifier.padding(horizontal = spacing.md),
         ) {
-            SkeletonBox(width = 72.dp, height = 16.dp)
+            SkeletonBox(width = 70.dp, height = 14.dp)
             Spacer(modifier = Modifier.height(spacing.md))
-            Column(verticalArrangement = Arrangement.spacedBy(spacing.sm)) {
+            Column(verticalArrangement = Arrangement.spacedBy(spacing.listGap)) {
                 repeat(5) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(spacing.sm),
                     ) {
-                        SkeletonBox(width = 40.dp, height = 13.dp)
+                        SkeletonBox(width = 36.dp, height = 12.dp)
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .height(7.dp)
+                                .height(8.dp)
                                 .shimmer(),
                         )
-                        SkeletonBox(width = 24.dp, height = 15.dp)
+                        SkeletonBox(width = 24.dp, height = 12.dp)
                     }
                 }
             }

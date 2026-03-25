@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,7 +32,7 @@ import com.skintrack.app.ui.theme.gradients
 import com.skintrack.app.ui.theme.spacing
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.daysUntil
+
 import kotlinx.datetime.toLocalDateTime
 
 import androidx.compose.material3.TextButton
@@ -47,7 +48,6 @@ fun CompareCard(
     modifier: Modifier = Modifier,
     onShare: (() -> Unit)? = null,
 ) {
-    val daySpan = data.before.recordedAt.daysUntil(data.after.recordedAt, TimeZone.currentSystemDefault())
     val scoreDiff = (data.after.overallScore ?: 0) - (data.before.overallScore ?: 0)
 
     Card(modifier = modifier) {
@@ -55,7 +55,7 @@ fun CompareCard(
             modifier = Modifier
                 .background(MaterialTheme.gradients.warm)
                 .padding(MaterialTheme.spacing.md),
-            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.listGap),
         ) {
             // Title row
             Row(
@@ -65,35 +65,51 @@ fun CompareCard(
             ) {
                 Text(
                     text = "前后对比",
-                    style = MaterialTheme.typography.titleMedium,
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Bold,
                 )
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "${daySpan}天",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    if (onShare != null) {
-                        TextButton(onClick = onShare) {
-                            Text("分享", style = MaterialTheme.typography.labelMedium)
-                        }
+                if (onShare != null) {
+                    TextButton(onClick = onShare) {
+                        Text(
+                            text = "分享",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
                     }
                 }
             }
 
-            // Photo row
+            // Photo row with centered VS badge
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.listGap),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 ComparePhoto(
                     record = data.before,
                     label = formatCompareDate(data.before.recordedAt),
                     modifier = Modifier.weight(1f),
                 )
+
+                // VS badge: 32dp circle, c1 size
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .shadow(4.dp, CircleShape)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surface),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = "VS",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.primary,
+                        letterSpacing = 0.2.sp,
+                    )
+                }
+
                 ComparePhoto(
                     record = data.after,
                     label = formatCompareDate(data.after.recordedAt),
@@ -117,52 +133,31 @@ private fun ScoreComparisonRow(
     afterScore: Int?,
     scoreDiff: Int,
 ) {
-    Row(
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = "${beforeScore ?: "-"}",
-                style = MaterialTheme.typography.headlineSmall,
-            )
-            Text(
-                text = "之前",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+        // Delta score: num-lg (26px/700)
+        val diffText = if (scoreDiff >= 0) "+$scoreDiff 分" else "$scoreDiff 分"
+        val diffColor = when {
+            scoreDiff > 0 -> Color(0xFF16A34A) // success
+            scoreDiff < 0 -> MaterialTheme.colorScheme.error
+            else -> MaterialTheme.colorScheme.onSurfaceVariant
         }
-
-        // Frosted glass VS badge
-        Box(
-            modifier = Modifier
-                .size(44.dp)
-                .shadow(8.dp, CircleShape)
-                .clip(CircleShape)
-                .background(Color.White.copy(alpha = 0.92f)),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = "VS",
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.ExtraBold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 13.sp,
-            )
-        }
-
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = "${afterScore ?: "-"}",
-                style = MaterialTheme.typography.headlineSmall,
-            )
-            Text(
-                text = "之后",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+        Text(
+            text = diffText,
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold,
+            color = diffColor,
+            letterSpacing = (-0.5).sp,
+        )
+        // Description: b3 (13px)
+        Text(
+            text = if (scoreDiff > 0) "皮肤在持续变好哦，继续加油~" else "继续坚持护肤习惯吧~",
+            fontSize = 13.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            letterSpacing = 0.05.sp,
+        )
     }
 }
 
@@ -172,10 +167,11 @@ private fun ComparePhoto(
     label: String,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs),
+    // Photo with date overlay at bottom
+    Box(
+        modifier = modifier
+            .height(MaterialTheme.dimens.photoCompareHeight)
+            .clip(MaterialTheme.shapes.medium), // radius-md = 12dp
     ) {
         val imagePath = record.localImagePath
         if (imagePath != null) {
@@ -183,32 +179,45 @@ private fun ComparePhoto(
                 model = pathToImageModel(imagePath),
                 contentDescription = "皮肤照片",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(MaterialTheme.dimens.photoCompareHeight)
+                    .fillMaxSize()
                     .clip(MaterialTheme.shapes.medium),
                 contentScale = ContentScale.Crop,
             )
         } else {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(MaterialTheme.dimens.photoCompareHeight)
-                    .clip(MaterialTheme.shapes.medium)
+                    .fillMaxSize()
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = "无照片",
-                    style = MaterialTheme.typography.bodySmall,
+                    fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        // Date overlay at bottom (c2: 10px/600)
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .background(
+                    brush = androidx.compose.ui.graphics.Brush.verticalGradient(
+                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.5f)),
+                    ),
+                )
+                .padding(horizontal = 8.dp, vertical = 6.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = label,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.White,
+                letterSpacing = 0.3.sp,
+            )
+        }
     }
 }
 

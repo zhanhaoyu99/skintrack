@@ -30,7 +30,7 @@ import com.skintrack.app.data.local.entity.UserSubscriptionEntity
         SyncQueueEntity::class,
         UserPreferencesEntity::class,
     ],
-    version = 8,
+    version = 9,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {

@@ -8,42 +8,109 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 
+/**
+ * ColorScheme wired from CSS §2 (light) and §3 (dark) semantic tokens.
+ */
 private val LightColors = lightColorScheme(
-    primary = Mint400,
-    onPrimary = Color.White,
-    primaryContainer = Mint100,
-    onPrimaryContainer = Mint700,
-    secondary = Apricot300,
-    onSecondary = Color.White,
-    secondaryContainer = Apricot100,
-    onSecondaryContainer = Apricot500,
-    background = BackgroundLight,
-    onBackground = OnBackgroundLight,
-    surface = SurfaceLight,
-    onSurface = OnBackgroundLight,
-    surfaceVariant = SurfaceVariantLight,
-    onSurfaceVariant = OnSurfaceVariantLight,
-    error = ErrorLight,
-    onError = Color.White,
+    // Interactive
+    primary = Primary500,                   // --interactive-primary
+    onPrimary = Neutral0,                   // --interactive-on-primary
+    primaryContainer = Primary50,           // --surface-brand-subtle
+    onPrimaryContainer = Primary900,
+
+    // Secondary
+    secondary = Secondary500,               // --secondary-500
+    onSecondary = Neutral0,
+    secondaryContainer = Secondary50,       // --secondary-50
+    onSecondaryContainer = Secondary900,
+
+    // Tertiary (rose accent)
+    tertiary = Rose400,
+    onTertiary = Neutral0,
+    tertiaryContainer = Rose50,
+    onTertiaryContainer = Rose900,
+
+    // Error
+    error = Error500,                        // --content-error (light)
+    onError = Neutral0,
+    errorContainer = Error50,                // --surface-error
+    onErrorContainer = Error900,
+
+    // Surface
+    background = Neutral0,                   // --surface-primary
+    onBackground = Neutral900,               // --content-primary
+    surface = Neutral0,                      // --surface-primary
+    onSurface = Neutral900,                  // --content-primary
+    surfaceVariant = Neutral50,              // --surface-secondary
+    onSurfaceVariant = Neutral600,           // --content-secondary
+    surfaceContainerHighest = Neutral100,    // --surface-tertiary
+    surfaceContainerHigh = Neutral50,
+    surfaceContainer = Neutral50,
+    surfaceContainerLow = Neutral0,
+    surfaceContainerLowest = Neutral0,
+
+    // Outline
+    outline = Neutral200,                    // --border-default
+    outlineVariant = Neutral100,             // --border-subtle
+
+    // Inverse
+    inverseSurface = Neutral900,             // --surface-inverse
+    inverseOnSurface = Neutral0,             // --content-inverse
+    inversePrimary = Primary300,
+
+    // Scrim
+    scrim = Color(0xFF0F1412),
 )
 
 private val DarkColors = darkColorScheme(
-    primary = Mint300,
-    onPrimary = Mint700,
-    primaryContainer = Mint600,
-    onPrimaryContainer = Mint100,
-    secondary = Apricot200,
-    onSecondary = Apricot500,
-    secondaryContainer = Apricot400,
-    onSecondaryContainer = Apricot50,
-    background = BackgroundDark,
-    onBackground = OnBackgroundDark,
-    surface = SurfaceDark,
-    onSurface = OnBackgroundDark,
-    surfaceVariant = SurfaceVariantDark,
-    onSurfaceVariant = OnSurfaceVariantDark,
-    error = ErrorDark,
-    onError = OnErrorDark,
+    // Interactive
+    primary = Primary400,                    // --interactive-primary (dark)
+    onPrimary = Neutral950,                  // --interactive-on-primary (dark)
+    primaryContainer = Color(0xFF2A9D7C).copy(alpha = 0.12f), // --surface-brand-subtle
+    onPrimaryContainer = Primary200,
+
+    // Secondary
+    secondary = Secondary400,
+    onSecondary = Neutral950,
+    secondaryContainer = Color(0xFF6B3B1F),
+    onSecondaryContainer = Secondary100,
+
+    // Tertiary (rose accent)
+    tertiary = Rose400,
+    onTertiary = Neutral950,
+    tertiaryContainer = Color(0xFFF27A8E).copy(alpha = 0.10f),
+    onTertiaryContainer = Rose100,
+
+    // Error
+    error = Error400,                         // --content-error (dark)
+    onError = Error900,
+    errorContainer = Color(0xFFEF4444).copy(alpha = 0.12f), // --surface-error (dark)
+    onErrorContainer = Error200,
+
+    // Surface — warm charcoal progression
+    background = DarkSurfacePrimary,          // --surface-primary: #0F1412
+    onBackground = DarkContentPrimary,        // --content-primary: #EAEFEC
+    surface = DarkSurfacePrimary,             // #0F1412
+    onSurface = DarkContentPrimary,           // #EAEFEC
+    surfaceVariant = DarkSurfaceSecondary,    // --surface-secondary: #171D1A
+    onSurfaceVariant = DarkContentSecondary,  // --content-secondary: #A0AAA5
+    surfaceContainerHighest = DarkSurfaceTertiary, // #1E2522
+    surfaceContainerHigh = DarkSurfaceSecondary,
+    surfaceContainer = DarkSurfaceSecondary,
+    surfaceContainerLow = DarkSurfacePrimary,
+    surfaceContainerLowest = DarkSurfacePrimary,
+
+    // Outline — translucent white per CSS §3
+    outline = Color.White.copy(alpha = 0.10f),     // --border-default
+    outlineVariant = Color.White.copy(alpha = 0.06f), // --border-subtle
+
+    // Inverse
+    inverseSurface = Neutral100,
+    inverseOnSurface = Neutral900,
+    inversePrimary = Primary700,
+
+    // Scrim
+    scrim = Color.Black,
 )
 
 @Composable
@@ -60,6 +127,7 @@ fun SkinTrackTheme(
         LocalGradientColors provides gradients,
         LocalSpacing provides Spacing(),
         LocalDimens provides Dimens(),
+        LocalAppTypography provides AppTypography(),
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
@@ -83,3 +151,6 @@ val MaterialTheme.gradients: GradientColors
 
 val MaterialTheme.dimens: Dimens
     @Composable get() = LocalDimens.current
+
+val MaterialTheme.appTypography: AppTypography
+    @Composable get() = LocalAppTypography.current

@@ -74,11 +74,11 @@ import com.skintrack.app.ui.component.EmptyContent
 import com.skintrack.app.ui.component.LoadingContent
 import com.skintrack.app.ui.component.animateListItem
 import com.skintrack.app.ui.component.showTyped
-import com.skintrack.app.ui.theme.Apricot300
+import com.skintrack.app.ui.theme.Secondary300
 import com.skintrack.app.ui.theme.Lavender300
 import com.skintrack.app.ui.theme.Lavender50
-import com.skintrack.app.ui.theme.Mint400
-import com.skintrack.app.ui.theme.Mint50
+import com.skintrack.app.ui.theme.Primary400
+import com.skintrack.app.ui.theme.Primary50
 import com.skintrack.app.ui.theme.Rose50
 import com.skintrack.app.ui.theme.Rose400
 import com.skintrack.app.ui.theme.Rose500
@@ -161,7 +161,7 @@ fun ProductScreen(
         // Category filter chips
         LazyRow(
             contentPadding = PaddingValues(horizontal = spacing.md),
-            horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+            horizontalArrangement = Arrangement.spacedBy(spacing.iconGap),
             modifier = Modifier.padding(vertical = spacing.sm),
         ) {
             items(categoryOptions) { (category, label) ->
@@ -262,7 +262,7 @@ private fun ProductContent(
                     .fillMaxWidth()
                     .border(
                         width = 1.dp,
-                        color = Mint400.copy(alpha = 0.08f),
+                        color = Primary400.copy(alpha = 0.08f),
                         shape = MaterialTheme.shapes.extraLarge,
                     ),
                 colors = CardDefaults.cardColors(
@@ -276,7 +276,7 @@ private fun ProductContent(
                         .background(
                             brush = Brush.linearGradient(
                                 colorStops = arrayOf(
-                                    0f to Mint50,
+                                    0f to Primary50,
                                     0.5f to Color(0xFFF0FAF6),
                                     1f to Lavender50,
                                 ),
@@ -327,7 +327,7 @@ private fun ProductContent(
                             repeat(state.totalCount.coerceAtMost(10)) { index ->
                                 Box(
                                     modifier = Modifier
-                                        .size(10.dp)
+                                        .size(8.dp)
                                         .clip(CircleShape)
                                         .then(
                                             if (index < state.checkedCount) {
@@ -357,12 +357,12 @@ private fun ProductContent(
                         .border(
                             width = 1.dp,
                             color = Rose400.copy(alpha = 0.12f),
-                            shape = MaterialTheme.shapes.large,
+                            shape = MaterialTheme.shapes.medium,
                         ),
                     colors = CardDefaults.cardColors(
                         containerColor = Color.Transparent,
                     ),
-                    shape = MaterialTheme.shapes.large,
+                    shape = MaterialTheme.shapes.medium,
                 ) {
                     Row(
                         modifier = Modifier
@@ -372,7 +372,7 @@ private fun ProductContent(
                                     colors = listOf(Rose50, Color(0xFFFFF8F5)),
                                 ),
                             )
-                            .padding(horizontal = 14.dp, vertical = spacing.sm),
+                            .padding(horizontal = spacing.listGap, vertical = spacing.compact),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(spacing.sm),
                     ) {
@@ -411,7 +411,7 @@ private fun ProductContent(
             item(key = "am_header") {
                 RoutineSectionHeader(
                     icon = "\u2600\uFE0F",
-                    iconBg = Apricot300.copy(alpha = 0.12f),
+                    iconBg = Secondary300.copy(alpha = 0.12f),
                     label = "AM 早间护肤",
                     count = "$amChecked/${state.amProducts.size} 已打卡",
                 )
@@ -437,7 +437,7 @@ private fun ProductContent(
                     iconBg = Lavender300.copy(alpha = 0.12f),
                     label = "PM 晚间护肤",
                     count = "$pmChecked/${state.pmProducts.size} 已打卡",
-                    modifier = Modifier.padding(top = 14.dp),
+                    modifier = Modifier.padding(top = spacing.sm),
                 )
             }
 
@@ -479,16 +479,18 @@ private fun RoutineSectionHeader(
         }
         Text(
             text = label,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.W700,
             color = MaterialTheme.colorScheme.onSurface,
+            letterSpacing = (-0.1).sp,
             modifier = Modifier.weight(1f),
         )
         Text(
             text = count,
             fontSize = 12.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.W500,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+            letterSpacing = 0.2.sp,
         )
     }
 }
@@ -526,7 +528,7 @@ private fun ProductCard(
                 if (checked) {
                     Modifier.border(
                         width = 1.5.dp,
-                        color = Mint400.copy(alpha = 0.15f),
+                        color = Primary400.copy(alpha = 0.15f),
                         shape = MaterialTheme.shapes.large,
                     )
                 } else {
@@ -564,9 +566,9 @@ private fun ProductCard(
                         Modifier
                     },
                 )
-                .padding(horizontal = 14.dp, vertical = spacing.sm),
+                .padding(horizontal = spacing.md, vertical = spacing.listGap),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+            horizontalArrangement = Arrangement.spacedBy(spacing.listGap),
         ) {
             // Category icon with colored background
             Box(
@@ -588,15 +590,17 @@ private fun ProductCard(
             ) {
                 Text(
                     text = product.name,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp,
-                    letterSpacing = (-0.1).sp,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp,
+                    letterSpacing = 0.05.sp,
                 )
                 product.brand?.let { brand ->
                     Text(
                         text = brand,
-                        style = MaterialTheme.typography.bodySmall,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.W500,
+                        letterSpacing = 0.2.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(top = 1.dp),
                     )
@@ -612,11 +616,11 @@ private fun ProductCard(
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = categoryFg,
-                        fontSize = 10.sp,
+                        fontSize = 9.sp,
                         modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
+                            .clip(RoundedCornerShape(percent = 50))
                             .background(categoryBg)
-                            .padding(horizontal = spacing.sm, vertical = 2.dp),
+                            .padding(horizontal = spacing.sm, vertical = 1.dp),
                     )
                     // Frequency pill
                     Text(
@@ -637,12 +641,12 @@ private fun ProductCard(
             if (checked) {
                 Box(
                     modifier = Modifier
-                        .size(26.dp)
+                        .size(28.dp)
                         .shadow(
                             elevation = 6.dp,
                             shape = CircleShape,
-                            ambientColor = Mint400.copy(alpha = 0.3f),
-                            spotColor = Mint400.copy(alpha = 0.3f),
+                            ambientColor = Primary400.copy(alpha = 0.3f),
+                            spotColor = Primary400.copy(alpha = 0.3f),
                         )
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.primary),
@@ -658,7 +662,7 @@ private fun ProductCard(
             } else {
                 Box(
                     modifier = Modifier
-                        .size(26.dp)
+                        .size(28.dp)
                         .border(2.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape),
                 )
             }

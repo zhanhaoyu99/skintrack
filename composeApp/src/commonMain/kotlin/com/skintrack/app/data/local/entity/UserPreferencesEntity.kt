@@ -12,5 +12,6 @@ data class UserPreferencesEntity(
     val skinType: String? = null,
     val skinGoals: String? = null, // comma-separated: "acne,pore,brighten"
     val weeklyReportEnabled: Boolean = true,
+    val aiNotificationEnabled: Boolean = false,
     val lastSyncTimestamp: String? = null,
 )

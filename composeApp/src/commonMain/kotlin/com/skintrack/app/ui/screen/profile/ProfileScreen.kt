@@ -66,12 +66,12 @@ import com.skintrack.app.ui.screen.paywall.PaywallScreen
 import com.skintrack.app.ui.screen.product.ProductManageScreen
 import com.skintrack.app.ui.screen.settings.EditProfileScreen
 import com.skintrack.app.ui.screen.settings.SettingsScreen
-import com.skintrack.app.ui.theme.Apricot400
-import com.skintrack.app.ui.theme.Apricot50
+import com.skintrack.app.ui.theme.Secondary400
+import com.skintrack.app.ui.theme.Secondary50
 import com.skintrack.app.ui.theme.Lavender50
 import com.skintrack.app.ui.theme.Lavender300
 import com.skintrack.app.ui.theme.Lavender400
-import com.skintrack.app.ui.theme.Mint50
+import com.skintrack.app.ui.theme.Primary50
 import com.skintrack.app.ui.theme.Rose200
 import com.skintrack.app.ui.theme.Rose300
 import com.skintrack.app.ui.theme.Rose400
@@ -116,7 +116,7 @@ fun ProfileScreen(
                     StatsCard(
                         state = state,
                         modifier = Modifier
-                            .padding(horizontal = MaterialTheme.spacing.lg)
+                            .padding(horizontal = MaterialTheme.spacing.md)
                             .offset(y = (-36).dp)
                             .animateListItem(0),
                     )
@@ -124,9 +124,9 @@ fun ProfileScreen(
                     // Content below stats card
                     Column(
                         modifier = Modifier
-                            .padding(horizontal = MaterialTheme.spacing.lg)
+                            .padding(horizontal = MaterialTheme.spacing.md)
                             .offset(y = (-20).dp),
-                        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
+                        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.listGap),
                     ) {
                         // Skin Goals
                         SkinGoalsSection(
@@ -189,7 +189,7 @@ private fun ProfileHeader(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = spacing.lg),
+                .padding(horizontal = spacing.cardInner),
         ) {
             // Title bar
             Row(
@@ -201,9 +201,11 @@ private fun ProfileHeader(
             ) {
                 Text(
                     text = "我的",
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
+                    fontSize = 19.sp,
+                    letterSpacing = (-0.2).sp,
                 )
                 IconButton(onClick = onSettingsClick) {
                     Icon(
@@ -243,9 +245,10 @@ private fun ProfileHeader(
                         ?: '用'
                     Text(
                         text = initial.uppercase(),
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
+                        fontSize = 19.sp,
                     )
                 }
 
@@ -260,10 +263,11 @@ private fun ProfileHeader(
                     ) {
                         Text(
                             text = authUser?.displayName ?: authUser?.email ?: "本地用户",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.ExtraBold,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
                             color = Color.White,
-                            fontSize = 22.sp,
+                            fontSize = 19.sp,
+                            letterSpacing = (-0.2).sp,
                         )
                         // VIP badge
                         Box(
@@ -283,9 +287,9 @@ private fun ProfileHeader(
                                 Text(
                                     text = "VIP",
                                     style = MaterialTheme.typography.labelSmall,
-                                    fontWeight = FontWeight.ExtraBold,
+                                    fontWeight = FontWeight.Bold,
                                     color = Color(0xFF7B4C00),
-                                    fontSize = 11.sp,
+                                    fontSize = 10.sp,
                                     letterSpacing = 0.3.sp,
                                 )
                             }
@@ -302,7 +306,7 @@ private fun ProfileHeader(
 
                     // Tag pills
                     FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+                        horizontalArrangement = Arrangement.spacedBy(spacing.iconGap),
                         verticalArrangement = Arrangement.spacedBy(spacing.xs),
                     ) {
                         ProfilePill("Pro 会员")
@@ -337,15 +341,16 @@ private fun ProfilePill(text: String) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(50))
-            .background(Color.White.copy(alpha = 0.18f))
-            .padding(horizontal = 12.dp, vertical = 3.dp),
+            .background(Color.White.copy(alpha = 0.15f))
+            .padding(horizontal = 10.dp, vertical = 2.dp),
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.SemiBold,
-            color = Color.White,
-            fontSize = 12.sp,
+            color = Color.White.copy(alpha = 0.85f),
+            fontSize = 10.sp,
+            letterSpacing = 0.3.sp,
         )
     }
 }
@@ -367,13 +372,13 @@ private fun StatsCard(state: ProfileUiState.Content, modifier: Modifier = Modifi
             containerColor = Color.White.copy(alpha = 0.92f),
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = MaterialTheme.shapes.large,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .drawBehind {
-                    val inset = 16.dp.toPx()
+                    val inset = 20.dp.toPx()
                     drawLine(
                         brush = Brush.horizontalGradient(accentColors),
                         start = Offset(inset, 0f),
@@ -382,13 +387,13 @@ private fun StatsCard(state: ProfileUiState.Content, modifier: Modifier = Modifi
                     )
                 }
                 .height(IntrinsicSize.Min)
-                .padding(horizontal = 12.dp, vertical = 18.dp),
+                .padding(MaterialTheme.spacing.md),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             StatItem(
                 label = "总记录",
                 value = "${state.totalRecords}",
-                iconBg = Mint50,
+                iconBg = Primary50,
                 iconEmoji = "\uD83D\uDCCB",
                 valueColor = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
@@ -401,9 +406,9 @@ private fun StatsCard(state: ProfileUiState.Content, modifier: Modifier = Modifi
             StatItem(
                 label = "连续打卡",
                 value = "${state.currentStreak}",
-                iconBg = Apricot50,
+                iconBg = Secondary50,
                 iconEmoji = "\u26A1",
-                valueColor = Apricot400,
+                valueColor = Secondary400,
                 modifier = Modifier.weight(1f),
             )
             VerticalDivider(
@@ -439,19 +444,21 @@ private fun StatsCard(state: ProfileUiState.Content, modifier: Modifier = Modifi
                 } else {
                     Text(
                         text = "--",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.ExtraBold,
                         color = MaterialTheme.colorScheme.primary,
-                        fontSize = 24.sp,
+                        fontSize = 19.sp,
+                        letterSpacing = (-0.2).sp,
                     )
                 }
                 Text(
                     text = "最新评分",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 11.sp,
+                    fontSize = 10.sp,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
+                    letterSpacing = 0.3.sp,
                 )
             }
         }
@@ -483,20 +490,21 @@ private fun StatItem(
         }
         Text(
             text = value,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.ExtraBold,
-            fontSize = 24.sp,
+            fontSize = 19.sp,
             color = valueColor,
-            letterSpacing = (-0.5).sp,
+            letterSpacing = (-0.2).sp,
             textAlign = TextAlign.Center,
         )
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 11.sp,
+            fontSize = 10.sp,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center,
+            letterSpacing = 0.3.sp,
         )
     }
 }
@@ -507,7 +515,7 @@ private fun StatItem(
 
 private val goalDisplayMap = mapOf(
     "acne" to Triple("祛痘", Rose50, Rose400),
-    "pore" to Triple("收毛孔", Mint50, null), // null = use primary
+    "pore" to Triple("收毛孔", Primary50, null), // null = use primary
     "brighten" to Triple("提亮", Lavender50, Lavender400),
     "hydrate" to Triple("补水", Color(0xFFE8F4FD), Color(0xFF3B82F6)),
     "anti_aging" to Triple("抗老", Color(0xFFFCE7F3), Color(0xFFBE185D)),
@@ -536,31 +544,32 @@ private fun SkinGoalsSection(
                 text = "我的护肤目标",
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
+                fontSize = 17.sp,
+                letterSpacing = (-0.3).sp,
             )
             Text(
                 text = "编辑",
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 13.sp,
+                fontSize = 14.sp,
             )
         }
 
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(spacing.sm),
             verticalArrangement = Arrangement.spacedBy(spacing.sm),
-            modifier = Modifier.padding(top = spacing.sm),
+            modifier = Modifier.padding(top = spacing.listGap),
         ) {
             if (goals.isEmpty()) {
                 // Show default goals when none set
                 GoalPill("祛痘", Rose50, Rose400)
-                GoalPill("收毛孔", Mint50, primary)
+                GoalPill("收毛孔", Primary50, primary)
                 GoalPill("提亮", Lavender50, Lavender400)
             } else {
                 goals.forEach { goalId ->
                     val (label, bg, textColor) = goalDisplayMap[goalId]
-                        ?: Triple(goalId, Mint50, null)
+                        ?: Triple(goalId, Primary50, null)
                     GoalPill(label, bg, textColor ?: primary)
                 }
             }
@@ -568,13 +577,15 @@ private fun SkinGoalsSection(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(50))
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .padding(horizontal = 14.dp, vertical = 6.dp),
+                    .border(1.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.4f), RoundedCornerShape(50))
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
             ) {
                 Text(
                     text = "+ 添加",
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 13.sp,
                 )
             }
         }
@@ -592,14 +603,15 @@ private fun GoalPill(
             .shadow(1.dp, shape = RoundedCornerShape(50))
             .clip(RoundedCornerShape(50))
             .background(bgColor)
-            .padding(horizontal = 14.dp, vertical = 6.dp),
+            .padding(horizontal = 12.dp, vertical = 6.dp),
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.labelMedium,
+            style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.SemiBold,
             color = textColor,
             fontSize = 13.sp,
+            letterSpacing = 0.05.sp,
         )
     }
 }
@@ -618,14 +630,14 @@ private fun MenuSection(
 ) {
     val spacing = MaterialTheme.spacing
 
-    val menuPadding = PaddingValues(horizontal = spacing.md, vertical = 2.dp)
+    val menuPadding = PaddingValues(horizontal = spacing.md, vertical = spacing.xs)
 
     // Function group
     SectionCard(modifier = modifier, contentPadding = menuPadding) {
         MenuItem(
             title = "护肤品管理",
             subtitle = "管理你的护肤品清单",
-            leading = { EmojiMenuIcon("\uD83E\uDDF4", Apricot50) },
+            leading = { EmojiMenuIcon("\uD83E\uDDF4", Secondary50) },
             onClick = onProductManage,
         )
         HorizontalDivider(modifier = Modifier.padding(horizontal = spacing.md))
@@ -661,14 +673,16 @@ private fun MenuSection(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50))
-                        .background(Mint50)
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                        .background(Primary50)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
                 ) {
                     Text(
                         text = "已同步",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary,
-                        fontSize = 11.sp,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = 0.3.sp,
                     )
                 }
             },
@@ -741,34 +755,37 @@ private fun AppFooter(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = MaterialTheme.spacing.lg),
+            .padding(top = MaterialTheme.spacing.md, bottom = MaterialTheme.spacing.sm),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs),
     ) {
         // Logo mark
         Box(
             modifier = Modifier
-                .size(36.dp)
-                .clip(RoundedCornerShape(10.dp))
+                .size(28.dp)
+                .clip(RoundedCornerShape(8.dp))
                 .background(brush = MaterialTheme.gradients.primary),
             contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = "\uD83C\uDF3F",
-                fontSize = 18.sp,
+                fontSize = 14.sp,
             )
         }
         Text(
-            text = "SKINTRACK",
+            text = "SkinTrack",
             style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            letterSpacing = 0.5.sp,
+            fontSize = 12.sp,
+            letterSpacing = 0.2.sp,
         )
         Text(
-            text = "v1.0.0 (Build 42)",
+            text = "v1.0.0",
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+            fontSize = 10.sp,
+            letterSpacing = 0.3.sp,
         )
     }
 }

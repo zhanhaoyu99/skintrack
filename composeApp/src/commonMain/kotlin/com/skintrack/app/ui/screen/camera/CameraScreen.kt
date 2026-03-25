@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -67,12 +68,12 @@ import com.skintrack.app.ui.component.ScoreRing
 import com.skintrack.app.ui.component.showTyped
 import com.skintrack.app.ui.screen.paywall.PaywallScreen
 import com.skintrack.app.ui.screen.report.RecordDetailScreen
-import com.skintrack.app.ui.theme.Apricot100
-import com.skintrack.app.ui.theme.Apricot300
-import com.skintrack.app.ui.theme.Apricot50
+import com.skintrack.app.ui.theme.Secondary100
+import com.skintrack.app.ui.theme.Secondary300
+import com.skintrack.app.ui.theme.Secondary50
 import com.skintrack.app.ui.theme.Lavender300
 import com.skintrack.app.ui.theme.Lavender50
-import com.skintrack.app.ui.theme.Mint50
+import com.skintrack.app.ui.theme.Primary50
 import com.skintrack.app.ui.theme.Rose100
 import com.skintrack.app.ui.theme.Rose400
 import com.skintrack.app.ui.theme.Motion
@@ -145,11 +146,11 @@ private fun CameraContent(viewModel: CameraViewModel) {
 
                 FaceGuideOverlay()
 
-                // Capture button
+                // Capture button — mockup: cam-controls padding-bottom space-48
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(bottom = MaterialTheme.spacing.xxl),
+                        .padding(bottom = MaterialTheme.spacing.section),
                 ) {
                     CaptureButton(
                         onClick = viewModel::capture,
@@ -197,9 +198,10 @@ private fun CameraContent(viewModel: CameraViewModel) {
                         score = state.analysisResult.overallScore,
                         label = "综合评分",
                     )
+                    // result-title p → b3 (13sp) per mockup
                     Text(
                         text = state.analysisResult.summary,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(horizontal = spacing.md),
                     )
@@ -229,34 +231,34 @@ private fun CameraContent(viewModel: CameraViewModel) {
                             .shadow(
                                 elevation = 6.dp,
                                 shape = RoundedCornerShape(percent = 50),
-                                ambientColor = Apricot300.copy(alpha = 0.15f),
-                                spotColor = Apricot300.copy(alpha = 0.12f),
+                                ambientColor = Secondary300.copy(alpha = 0.15f),
+                                spotColor = Secondary300.copy(alpha = 0.12f),
                             )
                             .background(
                                 brush = Brush.linearGradient(
-                                    colors = listOf(Apricot50, Color(0xFFFFF8F0)),
+                                    colors = listOf(Secondary50, Color(0xFFFFF8F0)),
                                 ),
                                 shape = RoundedCornerShape(percent = 50),
                             )
-                            .padding(horizontal = spacing.lg, vertical = spacing.sm),
-                        horizontalArrangement = Arrangement.spacedBy(spacing.xs),
+                            .padding(horizontal = spacing.md, vertical = spacing.sm),
+                        horizontalArrangement = Arrangement.spacedBy(spacing.iconGap),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(text = "\uD83D\uDD25", style = MaterialTheme.typography.bodyMedium)
+                        Text(text = "\uD83D\uDD25", style = MaterialTheme.typography.bodySmall)
                         Text(
                             text = state.milestoneMessage,
-                            style = MaterialTheme.typography.titleSmall,
+                            style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.Bold,
-                            color = Apricot300,
+                            color = Secondary300,
                         )
                     }
                 }
-                // Dual action buttons
+                // Dual action buttons — mockup: gap space-12
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = spacing.md),
-                    horizontalArrangement = Arrangement.spacedBy(spacing.md),
+                        .padding(top = spacing.md, start = spacing.sm, end = spacing.sm),
+                    horizontalArrangement = Arrangement.spacedBy(spacing.listGap),
                 ) {
                     OutlinedButton(
                         onClick = viewModel::resetToPreview,
@@ -403,10 +405,10 @@ private fun PermissionRequestContent(onRequest: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        // Large pink camera icon circle
+        // Large pink camera icon circle — 80dp per mockup
         Box(
             modifier = Modifier
-                .size(130.dp)
+                .size(80.dp)
                 .clip(CircleShape)
                 .background(
                     brush = Brush.radialGradient(
@@ -417,14 +419,14 @@ private fun PermissionRequestContent(onRequest: () -> Unit) {
         ) {
             Text(
                 text = "\uD83D\uDCF7",
-                style = MaterialTheme.typography.displayMedium,
+                style = MaterialTheme.typography.headlineLarge,
             )
         }
 
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(spacing.lg))
 
         Text(
-            text = "来记录你的美丽吧",
+            text = "来拍张自拍吧",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.ExtraBold,
         )
@@ -432,31 +434,31 @@ private fun PermissionRequestContent(onRequest: () -> Unit) {
         Spacer(modifier = Modifier.height(spacing.sm))
 
         Text(
-            text = "使用相机记录你的肌肤变化，所有照片仅保存在你的设备上，安全又私密。",
+            text = "我们需要使用相机来拍摄你的皮肤照片，AI 会帮你分析肌肤状况",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
 
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(spacing.xl))
 
-        // Feature list with colored dots
+        // Feature list — mockup uses space-16 gap between items
         Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(spacing.md),
             modifier = Modifier.fillMaxWidth(),
         ) {
             FeatureBullet(
-                text = "AI 智能解读五大肌肤维度",
-                dotBg = Mint50,
+                text = "AI 智能分析五大肌肤维度",
+                dotBg = Primary50,
                 dotColor = MaterialTheme.colorScheme.primary,
             )
             FeatureBullet(
-                text = "追踪每天的肌肤变化趋势",
+                text = "追踪肌肤变化趋势",
                 dotBg = Lavender50,
                 dotColor = Lavender300,
             )
             FeatureBullet(
-                text = "照片仅存储在本地设备中",
+                text = "照片仅保存在本地，隐私安全",
                 dotBg = Rose50,
                 dotColor = Rose400,
             )
@@ -475,10 +477,10 @@ private fun PermissionRequestContent(onRequest: () -> Unit) {
             Text("允许使用相机")
         }
 
-        // "下次再说" text button
+        // "下次再说" text button — mockup: margin-bottom space-12
         TextButton(
             onClick = { navigator.pop() },
-            modifier = Modifier.padding(top = spacing.sm),
+            modifier = Modifier.padding(top = spacing.listGap),
         ) {
             Text(
                 text = "下次再说",
@@ -494,13 +496,15 @@ private fun FeatureBullet(
     dotBg: Color,
     dotColor: Color,
 ) {
+    val spacing = MaterialTheme.spacing
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(spacing.listGap),
     ) {
         Box(
             modifier = Modifier
-                .size(32.dp)
+                .padding(top = spacing.xxs)
+                .size(22.dp)
                 .clip(CircleShape)
                 .background(dotBg),
             contentAlignment = Alignment.Center,
@@ -509,13 +513,13 @@ private fun FeatureBullet(
                 Icons.Default.Check,
                 contentDescription = null,
                 tint = dotColor,
-                modifier = Modifier.size(15.dp),
+                modifier = Modifier.size(14.dp),
             )
         }
         Text(
             text = text,
             style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -672,7 +676,7 @@ private fun RecordLimitShowcase(
                 .height(MaterialTheme.dimens.buttonHeight)
                 .clip(buttonShape)
                 .background(
-                    brush = Brush.horizontalGradient(listOf(Apricot300, Apricot100)),
+                    brush = Brush.horizontalGradient(listOf(Secondary300, Secondary100)),
                     shape = buttonShape,
                 )
                 .clickable(onClick = onUpgrade),
@@ -705,29 +709,32 @@ private fun MiniMetricRow(result: com.skintrack.app.data.remote.SkinAnalysisResu
         Triple("泛红", result.rednessScore, skinMetric.redness),
         Triple("水润", 100 - result.blackheadDensity.coerceIn(0, 100), skinMetric.hydration),
     )
+    // Mockup: gap space-8, centered
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = spacing.md),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(spacing.sm, Alignment.CenterHorizontally),
     ) {
         metrics.forEach { (label, score, color) ->
+            // rm-item: 56dp wide, bg surface-secondary, radius-sm, padding 8/4
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(spacing.xs),
+                modifier = Modifier
+                    .width(56.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        shape = MaterialTheme.shapes.small,
+                    )
+                    .padding(horizontal = spacing.xs, vertical = spacing.sm),
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(8.dp)
-                        .clip(CircleShape)
-                        .background(color),
-                )
+                // rm-val: num-sm (14sp/700), colored per metric
                 Text(
                     text = "$score",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = color,
                 )
+                Spacer(modifier = Modifier.height(spacing.xxs))
+                // rm-lbl: 9px/600 — approximate with labelSmall
                 Text(
                     text = label,
                     style = MaterialTheme.typography.labelSmall,

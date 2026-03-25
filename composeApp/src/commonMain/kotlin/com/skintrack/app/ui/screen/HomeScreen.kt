@@ -243,7 +243,10 @@ class HomeScreen : Screen {
                     },
                 ) { tab ->
                     when (tab) {
-                        0 -> DashboardScreen()
+                        0 -> DashboardScreen(
+                            onSwitchToTimeline = { previousTab = selectedTab; selectedTab = 1 },
+                            onSwitchToProfile = { previousTab = selectedTab; selectedTab = 3 },
+                        )
                         1 -> TimelineScreen()
                         2 -> AttributionReportContent()
                         3 -> ProfileScreen()

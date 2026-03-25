@@ -42,11 +42,12 @@ import com.skintrack.app.ui.component.ScoreRing
 import com.skintrack.app.ui.component.SectionHeader
 import com.skintrack.app.ui.component.animateListItem
 import com.skintrack.app.ui.screen.attribution.AttributionReportScreen
+import com.skintrack.app.ui.screen.camera.CameraScreen
 import com.skintrack.app.ui.screen.report.RecordDetailScreen
 import com.skintrack.app.ui.screen.share.ShareCardScreen
 import com.skintrack.app.ui.theme.FullRoundedShape
 import com.skintrack.app.ui.theme.Lavender300
-import com.skintrack.app.ui.theme.Mint300
+import com.skintrack.app.ui.theme.Primary300
 import com.skintrack.app.ui.theme.Rose300
 import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.extendedColors
@@ -75,7 +76,7 @@ fun TimelineScreen(
         // Time filter chips
         LazyRow(
             contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.md),
-            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.iconGap),
         ) {
             items(TimelineFilter.entries) { filter ->
                 FilterChip(
@@ -92,6 +93,7 @@ fun TimelineScreen(
             }
             is TimelineUiState.Empty -> {
                 TimelineEmptyState(
+                    onStartCamera = { navigator.push(CameraScreen()) },
                     modifier = Modifier.fillMaxSize(),
                 )
             }
@@ -101,7 +103,7 @@ fun TimelineScreen(
                         horizontal = MaterialTheme.spacing.md,
                         vertical = MaterialTheme.spacing.sm,
                     ),
-                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
+                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.listGap),
                 ) {
                     // 1. Compare card (design: before trend chart)
                     if (state.compareData != null) {
@@ -143,17 +145,14 @@ fun TimelineScreen(
                         }
                     }
 
-                    // 4. "所有记录" section header
+                    // 4. "近期记录" section header
                     item(key = "records_header") {
-                        SectionHeader(
-                            title = "所有记录",
-                            trailing = {
-                                Text(
-                                    text = "${state.records.size} 条",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            },
+                        Text(
+                            text = "近期记录",
+                            fontSize = 12.sp,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            letterSpacing = 0.5.sp,
                         )
                     }
 
@@ -189,14 +188,13 @@ private fun TrendChartSection(
                 .fillMaxWidth()
                 .padding(MaterialTheme.spacing.md),
         ) {
-            SectionHeader(title = "趋势变化")
+            SectionHeader(title = "趋势分析")
 
             // Metric filter chips inside the trend card
             LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs),
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.iconGap),
                 modifier = Modifier.padding(
-                    top = MaterialTheme.spacing.sm,
-                    bottom = MaterialTheme.spacing.sm,
+                    bottom = MaterialTheme.spacing.listGap,
                 ),
             ) {
                 items(ChartMetric.entries) { metric ->
@@ -234,11 +232,11 @@ private fun TimelineRecordItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                .padding(horizontal = spacing.md, vertical = spacing.listGap),
+            horizontalArrangement = Arrangement.spacedBy(spacing.listGap),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // Thumbnail 56dp
+            // Thumbnail 56dp with radius-md (12dp)
             val imagePath = record.localImagePath
             if (imagePath != null) {
                 AsyncImage(
@@ -246,32 +244,32 @@ private fun TimelineRecordItem(
                     contentDescription = "皮肤照片",
                     modifier = Modifier
                         .size(56.dp)
-                        .clip(MaterialTheme.shapes.small),
+                        .clip(MaterialTheme.shapes.medium),
                     contentScale = ContentScale.Crop,
                 )
             } else {
                 Box(
                     modifier = Modifier
                         .size(56.dp)
-                        .clip(MaterialTheme.shapes.small)
+                        .clip(MaterialTheme.shapes.medium)
                         .background(MaterialTheme.colorScheme.surfaceVariant),
                 )
             }
 
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(spacing.xs),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 // Date + change badge
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(spacing.xs),
+                    horizontalArrangement = Arrangement.spacedBy(spacing.sm),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = formatShortDate(record.recordedAt),
                         fontSize = 14.sp,
                         fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                        letterSpacing = (-0.2).sp,
+                        letterSpacing = 0.05.sp,
                     )
                     if (scoreDiff != null) {
                         val functional = MaterialTheme.extendedColors.functional
@@ -297,27 +295,29 @@ private fun TimelineRecordItem(
                             fontSize = 10.sp,
                             fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
                             color = fgColor,
+                            letterSpacing = 0.3.sp,
                             modifier = Modifier
                                 .background(
                                     color = bgColor,
-                                    shape = androidx.compose.foundation.shape.RoundedCornerShape(4.dp),
+                                    shape = FullRoundedShape,
                                 )
                                 .padding(
-                                    horizontal = 6.dp,
-                                    vertical = 1.dp,
+                                    horizontal = 8.dp,
+                                    vertical = 2.dp,
                                 ),
                         )
                     }
                 }
 
-                // Summary text
+                // Summary text (b3: 13px/400/1.40/0.05px)
                 Text(
                     text = record.skinType.displayName,
                     fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-                    lineHeight = 17.sp,
+                    lineHeight = 18.sp,
+                    letterSpacing = 0.05.sp,
                 )
             }
 
@@ -352,6 +352,7 @@ private fun TimelineRecordItem(
 
 @Composable
 private fun TimelineEmptyState(
+    onStartCamera: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val spacing = MaterialTheme.spacing
@@ -364,7 +365,7 @@ private fun TimelineEmptyState(
                 .padding(start = 32.dp, top = 60.dp)
                 .size(8.dp)
                 .clip(androidx.compose.foundation.shape.CircleShape)
-                .background(Mint300.copy(alpha = 0.3f)),
+                .background(Primary300.copy(alpha = 0.3f)),
         )
         Box(
             modifier = Modifier
@@ -386,14 +387,14 @@ private fun TimelineEmptyState(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = spacing.xl, vertical = 40.dp),
+            .padding(horizontal = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        // Illustration circle with dashed border
+        // Illustration circle
         Box(
             modifier = Modifier
-                .size(160.dp)
+                .size(140.dp)
                 .clip(androidx.compose.foundation.shape.CircleShape)
                 .background(
                     brush = androidx.compose.ui.graphics.Brush.linearGradient(
@@ -415,69 +416,67 @@ private fun TimelineEmptyState(
             modifier = Modifier.size(spacing.lg),
         )
 
+        // h3: 19px/700
         Text(
-            text = "你的第一次记录将从这里开始",
-            fontSize = 20.sp,
+            text = "还没有记录哦",
+            fontSize = 19.sp,
             fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-            letterSpacing = (-0.3).sp,
+            letterSpacing = (-0.2).sp,
         )
 
         androidx.compose.foundation.layout.Spacer(
-            modifier = Modifier.size(spacing.sm),
+            modifier = Modifier.size(spacing.sm), // 8dp matches space-8
         )
 
         Text(
-            text = "拍下第一张素颜照，AI 帮你分析肌肤状态。\n坚持记录，你会看到皮肤一天天在变好~",
-            style = MaterialTheme.typography.bodyMedium,
+            text = "拍第一张自拍，开始追踪你的皮肤变化吧~",
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
             fontSize = 14.sp,
-            lineHeight = 21.sp,
+            lineHeight = 20.sp,
+            letterSpacing = 0.05.sp,
         )
 
         androidx.compose.foundation.layout.Spacer(
-            modifier = Modifier.size(28.dp),
+            modifier = Modifier.size(spacing.lg), // 24dp matches space-24
         )
 
         // Step guide
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(spacing.lg),
         ) {
             TimelineStepItem(
                 number = 1,
-                text = "自拍一张\n素颜照",
+                text = "拍照",
                 isPrimary = true,
-                modifier = Modifier.weight(1f),
             )
             TimelineStepItem(
                 number = 2,
-                text = "AI 自动\n分析评分",
+                text = "分析",
                 isPrimary = false,
-                modifier = Modifier.weight(1f),
             )
             TimelineStepItem(
                 number = 3,
-                text = "查看趋势\n变化",
+                text = "追踪",
                 isPrimary = false,
-                modifier = Modifier.weight(1f),
             )
         }
 
         androidx.compose.foundation.layout.Spacer(
-            modifier = Modifier.size(28.dp),
+            modifier = Modifier.size(spacing.xl), // 32dp matches space-32
         )
 
         // CTA Button
         androidx.compose.material3.Button(
-            onClick = { /* Navigate to camera handled by parent */ },
+            onClick = onStartCamera,
             modifier = Modifier.fillMaxWidth(),
             shape = FullRoundedShape,
         ) {
             Text(
-                text = "开始第一次记录",
-                style = MaterialTheme.typography.bodyLarge,
+                text = "开始拍照",
+                fontSize = 16.sp,
                 fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                letterSpacing = (-0.1).sp,
             )
         }
     }
@@ -494,33 +493,35 @@ private fun TimelineStepItem(
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.iconGap),
     ) {
         Box(
             modifier = Modifier
                 .size(32.dp)
                 .background(
-                    color = if (isPrimary) MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.outlineVariant,
+                    color = if (isPrimary) MaterialTheme.colorScheme.primaryContainer
+                    else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
                     shape = androidx.compose.foundation.shape.CircleShape,
                 ),
             contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = "$number",
-                fontSize = 14.sp,
-                color = if (isPrimary) MaterialTheme.colorScheme.onPrimary
+                fontSize = 12.sp,
+                color = if (isPrimary) MaterialTheme.colorScheme.primary
                 else MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                letterSpacing = 0.2.sp,
             )
         }
         Text(
             text = text,
-            fontSize = 12.sp,
+            fontSize = 10.sp,
             fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-            lineHeight = 16.sp,
-            color = MaterialTheme.colorScheme.onSurface,
+            lineHeight = 13.sp,
+            letterSpacing = 0.3.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }

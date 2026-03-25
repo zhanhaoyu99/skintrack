@@ -67,7 +67,7 @@ import com.skintrack.app.ui.component.SectionCard
 import com.skintrack.app.ui.component.animateCardEntrance
 import com.skintrack.app.ui.screen.auth.AuthScreen
 import com.skintrack.app.ui.screen.paywall.PaywallScreen
-import com.skintrack.app.ui.theme.Mint100
+import com.skintrack.app.ui.theme.Primary100
 import com.skintrack.app.ui.theme.Rose50
 import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.gradients
@@ -88,6 +88,7 @@ class SettingsScreen : Screen {
         val exportState by viewModel.exportState.collectAsState()
         val showDeleteDialog by viewModel.showDeleteDialog.collectAsState()
         val deleteState by viewModel.deleteState.collectAsState()
+        val showLogoutConfirm by viewModel.showLogoutConfirm.collectAsState()
         val snackbarMessage by viewModel.snackbarMessage.collectAsState()
         val loggedOut by viewModel.loggedOut.collectAsState()
 
@@ -151,6 +152,30 @@ class SettingsScreen : Screen {
             )
         }
 
+        // Logout confirmation dialog
+        if (showLogoutConfirm) {
+            AlertDialog(
+                onDismissRequest = { viewModel.dismissLogoutConfirm() },
+                title = { Text("退出登录") },
+                text = {
+                    Text(
+                        text = "确定要退出登录吗？",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.confirmLogout() }) {
+                        Text("退出", color = MaterialTheme.colorScheme.error)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { viewModel.dismissLogoutConfirm() }) {
+                        Text("取消")
+                    }
+                },
+            )
+        }
+
         // Delete account dialog
         if (showDeleteDialog) {
             DeleteAccountDialog(
@@ -176,7 +201,7 @@ class SettingsScreen : Screen {
             },
             snackbarHost = { SnackbarHost(snackbarHostState) },
         ) { padding ->
-            val menuPadding = PaddingValues(horizontal = MaterialTheme.spacing.md, vertical = 2.dp)
+            val menuPadding = PaddingValues(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.xs)
 
             Column(
                 modifier = Modifier
@@ -184,7 +209,7 @@ class SettingsScreen : Screen {
                     .padding(padding)
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = MaterialTheme.spacing.md),
-                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
             ) {
                 // ── Account section ──────────────────────────────────────
                 SettingsSectionTitle(
@@ -197,7 +222,7 @@ class SettingsScreen : Screen {
                     MenuItem(
                         title = "编辑资料",
                         subtitle = "头像、昵称、肤质",
-                        leading = { MenuIcon(Icons.Default.Person, Mint100, MaterialTheme.colorScheme.primary) },
+                        leading = { MenuIcon(Icons.Default.Person, Primary100, MaterialTheme.colorScheme.primary) },
                         onClick = { navigator.push(EditProfileScreen()) },
                     )
                     HorizontalDivider(
@@ -286,7 +311,7 @@ class SettingsScreen : Screen {
                     MenuItem(
                         title = "数据同步",
                         subtitle = "最后同步：今天 09:30",
-                        leading = { MenuIcon(Icons.Default.Refresh, Mint100, MaterialTheme.colorScheme.primary) },
+                        leading = { MenuIcon(Icons.Default.Refresh, Primary100, MaterialTheme.colorScheme.primary) },
                         onClick = { viewModel.manualSync() },
                         trailing = {
                             Row(
@@ -365,7 +390,7 @@ class SettingsScreen : Screen {
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
                 OutlinedButton(
-                    onClick = { viewModel.logout() },
+                    onClick = { viewModel.requestLogout() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(MaterialTheme.dimens.buttonHeight)
@@ -373,24 +398,14 @@ class SettingsScreen : Screen {
                     shape = RoundedCornerShape(50),
                     border = BorderStroke(
                         width = 1.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant,
+                        color = MaterialTheme.colorScheme.error,
                     ),
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = "\uD83D\uDEAA",
-                            fontSize = 16.sp,
-                        )
-                        Text(
-                            text = "退出登录",
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                    }
+                    Text(
+                        text = "退出登录",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.labelLarge,
+                    )
                 }
 
                 Box(
@@ -441,10 +456,10 @@ private fun SettingsSectionTitle(
         )
         Text(
             text = title,
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            letterSpacing = 0.3.sp,
+            letterSpacing = 0.5.sp,
         )
     }
 }
@@ -493,14 +508,13 @@ private fun SyncBadge() {
         modifier = Modifier
             .clip(RoundedCornerShape(50))
             .background(Color(0xFFECFDF5))
-            .padding(horizontal = 10.dp, vertical = 3.dp),
+            .padding(horizontal = MaterialTheme.spacing.sm, vertical = 2.dp),
     ) {
         Text(
             text = "已同步",
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.SemiBold,
             color = Color(0xFF059669),
-            fontSize = 12.sp,
         )
     }
 }

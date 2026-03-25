@@ -5,276 +5,159 @@
 <link rel="stylesheet" href="base.css">
 <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 <style>
-body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content: center; }
-.phone-frame { flex-shrink: 0; }
+body { display: flex; gap: var(--space-32); padding: var(--space-32); flex-wrap: wrap; justify-content: center; }
 
-/* Top app bar action text */
-.top-app-bar .action-text {
-  font-size: 16px; font-weight: 600; color: var(--primary);
-  padding: 0 12px; cursor: pointer;
+/* Avatar edit */
+.avatar-edit {
+  position: relative; width: 88px; height: 88px; margin: 0 auto var(--space-24);
 }
-
-/* ===== Edit Profile ===== */
-.avatar-section {
-  display: flex; flex-direction: column; align-items: center;
-  padding: 24px 0 28px; position: relative;
-}
-.avatar-wrap {
-  width: 80px; height: 80px; border-radius: 50%;
-  background: linear-gradient(135deg, #FDA4AF, #FB7185);
+.avatar-edit .av {
+  width: 88px; height: 88px; border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--rose-300), var(--rose-400));
   display: flex; align-items: center; justify-content: center;
-  font-size: 34px; font-weight: 800; color: white;
-  position: relative;
-  box-shadow: 0 4px 16px rgba(251,113,133,0.3);
+  font-size: var(--font-h1-size); font-weight: 700; color: var(--content-inverse);
+  box-shadow: var(--shadow-rose-sm);
 }
-.avatar-camera {
-  position: absolute; bottom: 0; right: -2px;
-  width: 28px; height: 28px; border-radius: 50%;
-  background: var(--primary); display: flex; align-items: center; justify-content: center;
-  border: 2.5px solid var(--surface);
-  box-shadow: 0 2px 8px rgba(45,159,127,0.3);
-}
-.avatar-camera svg { width: 14px; height: 14px; color: white; stroke-width: 2.5; }
-
-/* Form */
-.edit-form { padding: 0 20px; }
-
-/* Field (reuse auth pattern) */
-.field { width: 100%; margin-bottom: 14px; }
-.field label {
-  font-size: 13px; font-weight: 600; color: var(--on-surface-variant);
-  margin-bottom: 6px; display: block; letter-spacing: 0.1px;
-}
-.field-input { position: relative; }
-.field-input .prefix {
-  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-  color: var(--on-surface-variant); display: flex; align-items: center; pointer-events: none;
-}
-.field-input .prefix svg { width: 18px; height: 18px; stroke-width: 2; }
-.field-input .suffix {
-  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-  color: var(--on-surface-variant); background: none; border: none; padding: 4px;
-  cursor: pointer; display: flex;
-}
-.field-input .suffix svg { width: 18px; height: 18px; }
-.field-input input, .field-input select {
-  width: 100%; height: 50px; border: 1.5px solid var(--outline-variant); border-radius: var(--r-md);
-  padding: 0 44px 0 42px; font-size: 15px; font-family: var(--font); background: var(--surface-container);
-  color: var(--on-surface); outline: none; transition: all 0.2s;
-}
-.field-input input.no-prefix { padding-left: var(--md); }
-.field-input input:focus, .field-input select:focus {
-  border-color: var(--primary); background: var(--surface);
-  box-shadow: 0 0 0 3px rgba(45,159,127,0.1);
-}
-.field-input input::placeholder { color: #B0B8C1; font-size: 14px; }
-.field-input input.disabled {
-  opacity: 0.6; background: var(--surface-variant); cursor: not-allowed;
-}
-.field-input select {
-  appearance: none; -webkit-appearance: none;
-  padding: 0 44px 0 var(--md); cursor: pointer;
-}
-
-/* Chip row */
-.chip-row { display: flex; gap: 10px; }
-
-/* ===== Change Password ===== */
-.lock-illus {
-  width: 72px; height: 72px; border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, var(--mint-100), var(--mint-50));
+.avatar-edit .edit-badge {
+  position: absolute; bottom: 0; right: 0;
+  width: 28px; height: 28px; border-radius: var(--radius-full);
+  background: var(--interactive-primary); border: 2px solid var(--surface-primary);
   display: flex; align-items: center; justify-content: center;
-  margin: 20px auto 28px;
-  box-shadow: 0 8px 28px rgba(45,159,127,0.1);
 }
-.lock-illus svg { width: 34px; height: 34px; color: var(--primary); stroke-width: 1.5; }
+.avatar-edit .edit-badge svg { width: 14px; height: 14px; color: white; stroke-width: 2.5; }
 
-.pw-form { padding: 0 20px; }
-
-/* Strength bar */
-.strength-bar { display: flex; gap: 4px; margin-top: 6px; margin-bottom: 4px; }
-.strength-seg {
-  flex: 1; height: 4px; border-radius: 2px;
-  background: var(--outline-variant);
+/* Skin type selector */
+.st-selector { display: flex; flex-wrap: wrap; gap: var(--space-8); }
+.st-opt {
+  padding: var(--space-8) var(--space-16); border-radius: var(--radius-full);
+  border: 1.5px solid var(--border-default); font-size: var(--font-b3-size);
+  font-weight: 600; color: var(--content-secondary); cursor: pointer;
+  transition: all var(--duration-fast);
 }
-.strength-seg.filled { background: var(--primary); }
-.strength-text {
-  font-size: 12px; font-weight: 600; color: var(--primary);
-  margin-bottom: 14px;
+.st-opt.active {
+  border-color: var(--interactive-primary); background: var(--surface-brand-subtle);
+  color: var(--content-brand);
 }
 
-/* Requirements checklist */
-.req-list { padding: 0 0 20px; display: flex; flex-direction: column; gap: 8px; }
-.req-item {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 13px; font-weight: 500;
-}
-.req-item.met { color: var(--success); }
-.req-item.unmet { color: var(--on-surface-variant); }
-.req-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+/* Password strength */
+.pw-strength { display: flex; gap: var(--space-4); margin-top: var(--space-6); margin-bottom: var(--space-4); }
+.pw-bar { flex: 1; height: 3px; border-radius: var(--radius-full); background: var(--surface-tertiary); }
+.pw-bar.filled { background: var(--content-success); }
+.pw-bar.medium { background: var(--warning-400); }
+.pw-hint { font-size: var(--font-c2-size); color: var(--content-tertiary); margin-bottom: var(--space-12); }
 
-/* Note text */
-.note-text {
-  text-align: center; font-size: 13px; color: var(--on-surface-variant);
-  margin-top: 12px; font-weight: 500;
+/* Lock icon for password */
+.lock-icon {
+  width: 64px; height: 64px; border-radius: var(--radius-full);
+  background: var(--grad-primary); display: flex; align-items: center; justify-content: center;
+  margin: 0 auto var(--space-20); box-shadow: var(--shadow-brand-sm);
 }
+.lock-icon svg { width: var(--icon-size-lg); height: var(--icon-size-lg); color: white; }
 </style>
 </head>
 <body>
 
-<!-- ===== Screen 1: Edit Profile ===== -->
+<!-- ═══════ EDIT PROFILE ═══════ -->
+<div>
+<div class="phone-label">Edit Profile</div>
 <div class="phone-frame">
-  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="#111827" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="#111827" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#111827" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="#111827"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="#111827" opacity="0.4" stroke="none"/></svg></div></div>
+  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="currentColor" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="currentColor" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="currentColor" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="currentColor"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="currentColor" opacity="0.4" stroke="none"/></svg></div></div>
+
   <div class="top-app-bar">
-    <div class="nav-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
-    <div class="title">编辑资料</div>
-    <span class="action-text">保存</span>
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></div>
+    <span class="title">编辑资料</span>
+    <div class="action" style="font-size:var(--font-b2-size);font-weight:600;color:var(--content-brand);padding-right:var(--space-12)">保存</div>
   </div>
-  <div class="content-no-padding" style="overflow-y:auto">
+
+  <div class="content">
     <!-- Avatar -->
-    <div class="avatar-section">
-      <div class="avatar-wrap">
-        L
-        <div class="avatar-camera">
-          <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        </div>
+    <div class="avatar-edit">
+      <div class="av">L</div>
+      <div class="edit-badge"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+    </div>
+
+    <!-- Fields -->
+    <div class="text-field">
+      <label>昵称</label>
+      <input type="text" value="Lisa">
+    </div>
+
+    <div class="text-field">
+      <label>邮箱</label>
+      <input type="email" value="lisa@example.com" style="color:var(--content-tertiary)">
+      <div class="helper">邮箱注册后不可修改</div>
+    </div>
+
+    <div style="margin-bottom:var(--space-16)">
+      <label style="font-size:var(--font-b3-size);font-weight:600;color:var(--content-secondary);display:block;margin-bottom:var(--space-8)">肤质类型</label>
+      <div class="st-selector">
+        <span class="st-opt">油性</span>
+        <span class="st-opt">干性</span>
+        <span class="st-opt active">混合</span>
+        <span class="st-opt">敏感</span>
+        <span class="st-opt">中性</span>
       </div>
     </div>
 
-    <!-- Form -->
-    <div class="edit-form">
-      <!-- Nickname -->
-      <div class="field">
-        <label>昵称</label>
-        <div class="field-input">
-          <span class="prefix"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
-          <input type="text" value="Lisa">
-        </div>
+    <div style="margin-bottom:var(--space-16)">
+      <label style="font-size:var(--font-b3-size);font-weight:600;color:var(--content-secondary);display:block;margin-bottom:var(--space-8)">肌肤目标</label>
+      <div class="st-selector">
+        <span class="st-opt active" style="border-color:var(--rose-300);background:var(--rose-50);color:var(--rose-500)">祛痘</span>
+        <span class="st-opt active" style="border-color:var(--primary-300);background:var(--primary-50);color:var(--primary-500)">收毛孔</span>
+        <span class="st-opt active" style="border-color:var(--secondary-300);background:var(--secondary-50);color:var(--secondary-600)">提亮</span>
+        <span class="st-opt">抗老</span>
+        <span class="st-opt">补水</span>
+        <span class="st-opt">祛斑</span>
       </div>
+    </div>
 
-      <!-- Email (disabled) -->
-      <div class="field">
-        <label>邮箱</label>
-        <div class="field-input">
-          <span class="prefix"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
-          <input type="email" value="lisa@example.com" class="disabled" readonly>
-          <button class="suffix"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></button>
-        </div>
-      </div>
-
-      <!-- Gender chips -->
-      <div class="field">
-        <label>性别</label>
-        <div class="chip-row">
-          <span class="chip">男</span>
-          <span class="chip active">女</span>
-          <span class="chip">其他</span>
-        </div>
-      </div>
-
-      <!-- Birthday -->
-      <div class="field">
-        <label>生日</label>
-        <div class="field-input">
-          <span class="prefix"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
-          <input type="text" value="1996-08-15">
-        </div>
-      </div>
-
-      <!-- Skin type -->
-      <div class="field">
-        <label>肤质</label>
-        <div class="field-input">
-          <select>
-            <option selected>混合肌肤</option>
-          </select>
-          <button class="suffix"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
-        </div>
-      </div>
+    <div class="text-field">
+      <label>个性签名</label>
+      <input type="text" placeholder="一句话描述你的护肤态度">
     </div>
   </div>
 </div>
+</div>
 
-<!-- ===== Screen 2: Change Password ===== -->
+<!-- ═══════ CHANGE PASSWORD ═══════ -->
+<div>
+<div class="phone-label">Change Password</div>
 <div class="phone-frame">
-  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="#111827" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="#111827" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#111827" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="#111827"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="#111827" opacity="0.4" stroke="none"/></svg></div></div>
+  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="currentColor" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="currentColor" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="currentColor" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="currentColor"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="currentColor" opacity="0.4" stroke="none"/></svg></div></div>
+
   <div class="top-app-bar">
-    <div class="nav-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
-    <div class="title">修改密码</div>
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></div>
+    <span class="title">修改密码</span>
   </div>
-  <div class="content-no-padding" style="overflow-y:auto">
-    <!-- Lock illustration -->
-    <div class="lock-illus">
-      <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor" stroke="none"/><line x1="12" y1="17" x2="12" y2="19"/></svg>
+
+  <div class="content" style="padding-top:var(--space-24)">
+    <div class="lock-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1"/></svg></div>
+
+    <div class="text-field">
+      <label>当前密码</label>
+      <input type="password" placeholder="输入当前密码">
     </div>
 
-    <!-- Form -->
-    <div class="pw-form">
-      <!-- Current password -->
-      <div class="field">
-        <label>当前密码</label>
-        <div class="field-input">
-          <span class="prefix"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-          <input type="password" value="password123" class="no-prefix" style="padding-left:42px; -webkit-text-security:disc;">
-        </div>
-      </div>
-
-      <!-- New password -->
-      <div class="field">
-        <label>新密码</label>
-        <div class="field-input">
-          <span class="prefix"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-          <input type="password" placeholder="输入新密码" style="padding-left:42px;">
-          <button class="suffix"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-        </div>
-      </div>
-
-      <!-- Strength indicator -->
-      <div class="strength-bar">
-        <div class="strength-seg filled"></div>
-        <div class="strength-seg filled"></div>
-        <div class="strength-seg filled"></div>
-        <div class="strength-seg"></div>
-      </div>
-      <div class="strength-text">密码强度: 强</div>
-
-      <!-- Confirm new password -->
-      <div class="field">
-        <label>确认新密码</label>
-        <div class="field-input">
-          <span class="prefix"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-          <input type="password" placeholder="再次输入新密码" style="padding-left:42px;">
-          <button class="suffix"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-        </div>
-      </div>
-
-      <!-- Requirements checklist -->
-      <div class="req-list">
-        <div class="req-item met">
-          <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor"/></svg>
-          至少 8 个字符
-        </div>
-        <div class="req-item met">
-          <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor"/></svg>
-          包含大写字母
-        </div>
-        <div class="req-item met">
-          <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor"/></svg>
-          包含数字
-        </div>
-        <div class="req-item unmet">
-          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          包含特殊字符
-        </div>
-      </div>
-
-      <!-- Update button -->
-      <button class="btn btn-primary">更新密码</button>
-
-      <!-- Note -->
-      <p class="note-text">修改密码后需要重新登录</p>
+    <div class="text-field" style="margin-bottom:0">
+      <label>新密码</label>
+      <input type="password" placeholder="至少 6 位新密码">
     </div>
+    <div class="pw-strength">
+      <div class="pw-bar filled"></div>
+      <div class="pw-bar filled"></div>
+      <div class="pw-bar medium"></div>
+      <div class="pw-bar"></div>
+    </div>
+    <div class="pw-hint">密码强度：中等</div>
+
+    <div class="text-field">
+      <label>确认新密码</label>
+      <input type="password" placeholder="再次输入新密码">
+    </div>
+
+    <button class="btn btn-primary" style="margin-top:var(--space-8)">确认修改</button>
   </div>
+</div>
 </div>
 
 </body>

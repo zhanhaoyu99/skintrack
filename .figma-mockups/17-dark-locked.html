@@ -3,125 +3,164 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=390">
 <link rel="stylesheet" href="base.css">
-<link rel="stylesheet" href="dark.css">
 <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 <style>
-body { display: flex; gap: 32px; padding: 32px; flex-wrap: wrap; justify-content: center; background: #0A0B0C; }
-.phone-frame { flex-shrink: 0; }
-/* Dark Pro upgrade card */
-.pro-card { background: linear-gradient(135deg, rgba(62,48,32,0.8), rgba(46,36,24,0.9)); border: 1px solid rgba(255,215,0,0.12); border-radius: var(--r-xl); padding: 24px 20px; text-align: center; position: relative; overflow: hidden; }
-.pro-card::before { content: ''; position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; border-radius: 50%; background: rgba(255,215,0,0.06); }
-.pro-card .crown { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(145deg, #FFD700, #FFA500); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; box-shadow: 0 0 30px rgba(255,215,0,0.25), 0 4px 14px rgba(255,170,0,0.3); }
-.pro-card .crown svg { width: 26px; height: 26px; color: white; stroke-width: 1.8; }
-.pro-card h3 { font-size: 18px; font-weight: 800; color: var(--on-surface); margin-bottom: 6px; }
-.pro-card p { font-size: 13px; color: var(--on-surface-variant); line-height: 1.5; margin-bottom: 16px; }
-.feat-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 18px; }
-.feat-pill { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: var(--r-full); background: var(--surface-variant); font-size: 12px; font-weight: 600; color: var(--on-surface); border: 0.5px solid rgba(255,255,255,0.06); }
-.feat-pill svg { width: 14px; height: 14px; }
-.pro-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; border-radius: var(--r-full); background: linear-gradient(135deg, #F59E0B, #D97706); color: white; font-size: 15px; font-weight: 700; border: none; box-shadow: 0 0 20px rgba(245,158,11,0.2), 0 4px 16px rgba(217,119,6,0.35); font-family: var(--font); }
-.pro-btn svg { width: 18px; height: 18px; fill: white; stroke: none; }
-.pro-trial { font-size: 12px; color: var(--on-surface-variant); margin-top: 10px; font-weight: 600; }
-/* Dark blur */
-.blur-wrap { position: relative; }
-.blur-content { filter: blur(8px); opacity: 0.3; pointer-events: none; }
-.blur-badge { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); background: var(--surface); padding: 10px 22px; border-radius: var(--r-full); box-shadow: 0 4px 16px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--on-surface); z-index: 5; border: 0.5px solid rgba(255,255,255,0.06); }
-.blur-badge svg { width: 16px; height: 16px; color: var(--warning); }
-/* Detail reuse */
-.dp { height: 240px; background: linear-gradient(170deg, #D4B8A8 0%, #C8A898 30%, #B8A088 60%, #A89480 100%); position: relative; overflow: hidden; }
-.dp .tb { position: absolute; top: 54px; left: 0; right: 0; display: flex; justify-content: space-between; padding: 0 12px; }
-.dp .tb .b { width: 42px; height: 42px; border-radius: 50%; background: rgba(0,0,0,0.25); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; }
-.dp .tb .b svg { width: 22px; height: 22px; color: white; }
-.so { display: flex; align-items: center; gap: 18px; padding: 18px 20px; margin: -36px 16px 14px; background: var(--surface); border-radius: var(--r-xl); box-shadow: 0 4px 16px rgba(0,0,0,0.3); position: relative; z-index: 5; border: 0.5px solid rgba(255,255,255,0.04); }
-.so .rg { width: 74px; height: 74px; position: relative; flex-shrink: 0; }
-.so .rg svg { transform: rotate(-90deg); width: 100%; height: 100%; }
-.so .rg .v { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 24px; font-weight: 800; color: var(--on-surface); }
-.so .inf h3 { font-size: 19px; font-weight: 800; color: var(--on-surface); }
-.so .inf p { font-size: 13px; color: var(--on-surface-variant); margin-top: 2px; }
-/* Usage meter */
-.meter { margin: 0 0 16px; }
-.meter-bar { display: flex; align-items: center; gap: 12px; }
-.meter-track { flex: 1; height: 10px; background: var(--surface-variant); border-radius: var(--r-full); overflow: hidden; }
-.meter-fill { height: 100%; border-radius: var(--r-full); background: linear-gradient(90deg, var(--error), #F87171); }
-.meter-label { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; }
-.meter-label .used { font-weight: 700; color: var(--error); }
-.meter-label .total { color: var(--on-surface-variant); }
+body { display: flex; gap: var(--space-32); padding: var(--space-32); flex-wrap: wrap; justify-content: center; background: #1A1F1C; }
+
+.pro-card { margin: var(--space-12) var(--space-16); padding: var(--space-20); background: linear-gradient(135deg, rgba(244,162,97,0.08), rgba(255,215,0,0.06)); border-radius: var(--radius-lg); border: var(--card-border-width) solid rgba(244,162,97,0.1); text-align: center; }
+.crown { width: 56px; height: 56px; border-radius: var(--radius-full); background: var(--gold-gradient); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-12); box-shadow: var(--shadow-gold-sm); }
+.crown svg { width: 26px; height: 26px; fill: white; stroke: none; }
+.feat-tags { display: flex; gap: var(--space-6); justify-content: center; flex-wrap: wrap; margin-bottom: var(--space-16); }
+.feat-tag { padding: var(--space-4) var(--space-10); border-radius: var(--radius-full); background: rgba(244,162,97,0.08); font-size: var(--font-c2-size); font-weight: 600; color: var(--secondary-400); }
+.btn-upgrade { height: var(--button-height-sm); border-radius: var(--radius-full); border: none; font-size: var(--font-btn-sm-size); font-weight: var(--font-btn-sm-weight); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; padding: 0 var(--space-24); font-family: var(--font-family); background: var(--gold-gradient); color: var(--gold-text); box-shadow: var(--shadow-gold-sm); gap: var(--space-6); }
+.trial-pill { display: inline-flex; align-items: center; gap: var(--space-4); padding: var(--space-2) var(--space-10); border-radius: var(--radius-full); background: var(--surface-success); color: var(--content-success); font-size: var(--font-c2-size); font-weight: 600; margin-top: var(--space-10); }
+
+.blur-wrap { position: relative; margin: 0 var(--space-16) var(--space-12); overflow: hidden; border-radius: var(--radius-lg); }
+.blur-c { filter: blur(6px); opacity: 0.4; pointer-events: none; }
+.blur-pill { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); padding: var(--space-6) var(--space-16); border-radius: var(--radius-full); background: var(--surface-secondary); box-shadow: var(--shadow-md); font-size: var(--font-c1-size); font-weight: 700; color: var(--content-secondary); display: flex; align-items: center; gap: var(--space-6); z-index: 5; }
+.blur-pill svg { width: 14px; height: 14px; }
+
+.dp-sm { height: 240px; position: relative; overflow: hidden; flex-shrink: 0; background: linear-gradient(180deg, #5A4A40, #403530, #3A2E28); }
+.dp-sm .face { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.dp-sm .face svg { width: 150px; height: 190px; opacity: 0.05; }
+.dp-sm .bar { position: absolute; top: var(--status-bar-height); left: 0; right: 0; padding: 0 var(--space-8); display: flex; align-items: center; }
+.dp-sm .bar .btn-icon { width: 40px; height: 40px; border-radius: var(--radius-full); background: rgba(0,0,0,0.3); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; }
+.dp-sm .bar .btn-icon svg { width: var(--icon-size-sm); height: var(--icon-size-sm); color: white; }
+.dp-sm .free-label { position: absolute; top: calc(var(--status-bar-height) + 8px); right: var(--space-12); padding: var(--space-2) var(--space-10); border-radius: var(--radius-full); background: rgba(255,255,255,0.15); backdrop-filter: blur(8px); font-size: var(--font-c2-size); font-weight: 600; color: rgba(255,255,255,0.75); }
+
+.so-mini { margin: -32px var(--space-16) var(--space-12); padding: var(--space-16); background: var(--surface-secondary); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: var(--card-border-width) solid var(--border-subtle); display: flex; align-items: center; gap: var(--space-12); position: relative; z-index: 5; }
+.so-mini .ring { width: 56px; height: 56px; position: relative; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.so-mini .ring .val { position: absolute; font-size: var(--font-num-md-size); font-weight: var(--font-num-md-weight); color: var(--content-brand); }
+
+.basic-scores { display: flex; gap: var(--space-6); margin: 0 var(--space-16) 0; }
+.bs-item { flex: 1; text-align: center; padding: var(--space-8) var(--space-4); background: var(--surface-secondary); border-radius: var(--radius-sm); border: var(--card-border-width) solid var(--border-subtle); }
+.bs-item .bs-val { font-size: var(--font-h4-size); font-weight: 800; }
+.bs-item .bs-lbl { font-size: 9px; color: var(--content-tertiary); font-weight: 600; margin-top: var(--space-2); }
 </style>
 </head>
 <body>
 
-<!-- Dark Record Detail Locked -->
-<div class="phone-frame dark">
-  <div class="status-bar light" style="position:absolute;z-index:20;width:100%"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="white" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="white" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="white" stroke-width="1" fill="none" opacity="0.5"/><rect x="2" y="2" width="18" height="9" rx="2" fill="white"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="white" opacity="0.5" stroke="none"/></svg></div></div>
-  <div class="content-no-padding" style="height:100%;overflow-y:auto">
-    <div class="dp"><div class="tb"><div class="b"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7" stroke="white"/></svg></div><div class="b"><svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13" stroke="white"/></svg></div></div></div>
-    <div class="so">
-      <div class="rg"><svg viewBox="0 0 74 74"><circle cx="37" cy="37" r="31" fill="none" stroke="var(--outline-variant)" stroke-width="5"/><circle cx="37" cy="37" r="31" fill="none" stroke="var(--primary)" stroke-width="5" stroke-linecap="round" stroke-dasharray="160" stroke-dashoffset="28"/></svg><div class="v">82</div></div>
-      <div class="inf"><h3>皮肤状态不错哦</h3><p>2026年3月14日</p></div>
+<!-- ═══════ DARK: LOCKED — Record Detail ═══════ -->
+<div>
+<div class="phone-label" style="color:var(--neutral-400)">Dark — Locked Record</div>
+<div class="phone-frame" data-theme="dark" style="flex-direction:column">
+  <div class="dp-sm">
+    <div class="status-bar light" style="position:absolute;top:0;left:0;right:0;z-index:10"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="white" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="white" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="white" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="white"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="white" opacity="0.4" stroke="none"/></svg></div></div>
+    <div class="bar"><div class="btn-icon"><svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></div></div>
+    <div class="free-label">免费版</div>
+    <div class="face"><svg viewBox="0 0 100 130" fill="none" stroke="white" stroke-width="0.8"><ellipse cx="50" cy="60" rx="35" ry="45"/></svg></div>
+  </div>
+  <div class="content-no-padding" style="flex:1;overflow-y:auto">
+    <div class="so-mini">
+      <div class="ring"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="22" fill="none" stroke="var(--surface-tertiary)" stroke-width="4"/><circle cx="28" cy="28" r="22" fill="none" stroke="var(--primary-400)" stroke-width="4" stroke-linecap="round" stroke-dasharray="138" stroke-dashoffset="25" transform="rotate(-90 28 28)"/></svg><span class="val">82</span></div>
+      <div><div style="font-size:var(--font-h4-size);font-weight:700;color:var(--content-primary)">皮肤状态不错哦</div><div style="font-size:var(--font-b3-size);color:var(--content-secondary);margin-top:var(--space-2)">2026.03.14</div></div>
     </div>
-    <!-- Basic scores -->
-    <div style="background:var(--surface-variant);border-radius:var(--r-lg);padding:16px;margin:0 16px 14px;border:0.5px solid rgba(255,255,255,0.04)">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-size:17px;font-weight:700;color:var(--on-surface)">基础评分</div><div style="padding:3px 10px;border-radius:var(--r-full);background:var(--outline-variant);font-size:11px;font-weight:700;color:var(--on-surface-variant)">免费版</div></div>
-      <div style="display:flex;justify-content:space-around;text-align:center;padding:8px 0">
-        <div><div style="font-size:18px;font-weight:800;color:var(--acne)">85</div><div style="font-size:10px;color:var(--on-surface-variant);font-weight:600;margin-top:2px">痘痘</div></div>
-        <div><div style="font-size:18px;font-weight:800;color:var(--pore)">78</div><div style="font-size:10px;color:var(--on-surface-variant);font-weight:600;margin-top:2px">毛孔</div></div>
-        <div><div style="font-size:18px;font-weight:800;color:var(--evenness)">82</div><div style="font-size:10px;color:var(--on-surface-variant);font-weight:600;margin-top:2px">均匀</div></div>
-        <div><div style="font-size:18px;font-weight:800;color:var(--redness)">75</div><div style="font-size:10px;color:var(--on-surface-variant);font-weight:600;margin-top:2px">泛红</div></div>
-        <div><div style="font-size:18px;font-weight:800;color:var(--hydration)">80</div><div style="font-size:10px;color:var(--on-surface-variant);font-weight:600;margin-top:2px">水润</div></div>
-      </div>
+    <div class="basic-scores">
+      <div class="bs-item"><div class="bs-val" style="color:var(--metric-acne)">85</div><div class="bs-lbl">痘痘</div></div>
+      <div class="bs-item"><div class="bs-val" style="color:var(--metric-pore)">78</div><div class="bs-lbl">毛孔</div></div>
+      <div class="bs-item"><div class="bs-val" style="color:var(--metric-evenness)">82</div><div class="bs-lbl">均匀</div></div>
+      <div class="bs-item"><div class="bs-val" style="color:var(--metric-redness)">75</div><div class="bs-lbl">泛红</div></div>
+      <div class="bs-item"><div class="bs-val" style="color:var(--metric-hydration)">80</div><div class="bs-lbl">水润</div></div>
     </div>
-    <!-- Dark Pro card -->
-    <div style="margin:0 16px 14px">
-      <div class="pro-card">
-        <div class="crown"><svg viewBox="0 0 26 26"><path d="M3 18l4-10 4 6 2-10 2 10 4-6 4 10z" fill="none" stroke="white" stroke-width="1.8" stroke-linejoin="round"/><rect x="3" y="18" width="20" height="3" rx="1" fill="none" stroke="white" stroke-width="1.8"/></svg></div>
-        <h3>解锁完整肌肤分析</h3>
-        <p>AI 深度解读 · 多维雷达图 · 专属护肤建议</p>
-        <div class="feat-pills">
-          <div class="feat-pill"><svg viewBox="0 0 14 14" style="color:var(--primary)"><circle cx="7" cy="7" r="6"/><path d="M5 7.5l1.5 1.5L9 6"/></svg>AI 分析</div>
-          <div class="feat-pill"><svg viewBox="0 0 14 14" style="color:#A78BFA"><path d="M7 1v12M1 7h12"/><circle cx="7" cy="7" r="5" opacity="0.3"/></svg>雷达图</div>
-          <div class="feat-pill"><svg viewBox="0 0 14 14" style="color:var(--info)"><path d="M7 1v3M7 10v3M1 7h3M10 7h3"/><circle cx="7" cy="7" r="2.5"/></svg>建议</div>
-        </div>
-        <button class="pro-btn"><svg viewBox="0 0 18 18"><path d="M9 1l2.3 4.7L16 6.5l-3.8 3.7.9 5.2L9 12.8 4.9 15.4l.9-5.2L2 6.5l4.7-.8z"/></svg>升级 Pro</button>
-        <div class="pro-trial">新用户享 14 天免费试用</div>
-      </div>
+    <div class="pro-card">
+      <div class="crown"><svg viewBox="0 0 24 24"><path d="M2 6l4 8 6-6 6 6 4-8v12H2V6z"/></svg></div>
+      <div style="font-size:var(--font-h4-size);font-weight:700;color:var(--content-primary);margin-bottom:var(--space-4)">解锁深度分析</div>
+      <div style="font-size:var(--font-b3-size);color:var(--content-secondary);margin-bottom:var(--space-12)">升级 Pro 查看雷达图、AI 洞察</div>
+      <div class="feat-tags"><span class="feat-tag">雷达图</span><span class="feat-tag">AI 分析</span><span class="feat-tag">建议</span></div>
+      <button class="btn-upgrade">&#9733; 升级 Pro</button>
+      <div class="trial-pill"><svg viewBox="0 0 10 10" width="8" height="8" fill="none" stroke="var(--content-success)" stroke-width="1.5"><circle cx="5" cy="5" r="3.5"/></svg> 14天免费试用</div>
     </div>
-    <!-- Dark blurred radar -->
-    <div class="blur-wrap" style="margin:0 16px 16px">
-      <div class="blur-content" style="background:var(--surface-variant);border-radius:var(--r-lg);padding:20px">
-        <div style="width:150px;height:150px;margin:0 auto"><svg viewBox="0 0 150 150"><polygon points="75,12 130,35 130,85 75,108 20,85 20,35" fill="none" stroke="var(--outline-variant)" stroke-width="0.5"/><polygon points="75,30 115,45 112,78 75,92 38,78 35,45" fill="var(--primary)" fill-opacity="0.1" stroke="var(--primary)" stroke-width="1.5"/></svg></div>
+    <div class="blur-wrap">
+      <div class="blur-c" style="padding:var(--space-16);background:var(--surface-secondary);border-radius:var(--radius-lg)">
+        <svg width="190" height="130" viewBox="0 0 190 130"><polygon points="95,10 155,35 155,95 95,120 35,95 35,35" fill="var(--primary-400)" fill-opacity="0.06" stroke="var(--primary-400)" stroke-width="1" stroke-opacity="0.3"/></svg>
       </div>
-      <div class="blur-badge"><svg viewBox="0 0 16 16"><rect x="3" y="8" width="10" height="7" rx="1.5" fill="var(--warning)"/><path d="M5 8V5.5a3 3 0 0 1 6 0V8" stroke="var(--warning)" stroke-width="1.5" fill="none"/></svg>Pro 专享功能</div>
+      <div class="blur-pill"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Pro 专属</div>
     </div>
   </div>
 </div>
+</div>
 
-<!-- Dark Camera Locked -->
-<div class="phone-frame dark">
-  <div class="status-bar"><span class="time" style="color:var(--on-surface)">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="#E4E3E8" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="#E4E3E8" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#E4E3E8" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="#E4E3E8"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="#E4E3E8" opacity="0.4" stroke="none"/></svg></div></div>
-  <div class="top-app-bar"><div class="nav-icon"><svg viewBox="0 0 24 24" width="24" height="24" style="color:var(--on-surface)"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div><div class="title" style="color:var(--on-surface)">拍照记录</div></div>
-  <div style="flex:1;display:flex;flex-direction:column;padding:16px">
-    <div class="meter">
-      <div class="meter-bar">
-        <svg viewBox="0 0 24 24" width="22" height="22" style="color:var(--error);flex-shrink:0"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/><line x1="4" y1="4" x2="20" y2="20" stroke-width="2.5"/></svg>
-        <div class="meter-track"><div class="meter-fill" style="width:100%"></div></div>
-      </div>
-      <div class="meter-label"><span class="used">已使用 3 次</span><span class="total">免费版上限 3 次</span></div>
+<!-- ═══════ DARK: LOCKED — Record Limit ═══════ -->
+<div>
+<div class="phone-label" style="color:var(--neutral-400)">Dark — Locked Limit</div>
+<div class="phone-frame" data-theme="dark">
+  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="currentColor" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="currentColor" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="currentColor" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="currentColor"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="currentColor" opacity="0.4" stroke="none"/></svg></div></div>
+  <div class="top-app-bar"><div class="nav-icon"><svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></div><span class="title">你的蜕变之旅</span></div>
+  <div class="content">
+    <div style="text-align:center;font-size:var(--font-b2-size);color:var(--content-secondary);margin-bottom:var(--space-16)">已完成 3 次记录~</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:var(--space-12);padding:var(--space-16);background:var(--surface-success);border-radius:var(--radius-lg);margin-bottom:var(--space-16)">
+      <div style="font-size:var(--font-num-xl-size);font-weight:var(--font-num-xl-weight);color:var(--content-success)">+10</div>
+      <div style="font-size:var(--font-b2-size);color:var(--content-success)">皮肤在变好</div>
     </div>
-    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 20px">
-      <div style="width:130px;height:130px;border-radius:50%;background:var(--surface-variant);display:flex;align-items:center;justify-content:center;margin-bottom:24px;position:relative">
-        <svg viewBox="0 0 56 56" width="64" height="64" style="color:var(--on-surface-variant);stroke-width:1.2;opacity:0.4"><path d="M50 44a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4V20a4 4 0 0 1 4-4h8l4-6h12l4 6h8a4 4 0 0 1 4 4z"/><circle cx="28" cy="30" r="10"/></svg>
-        <div style="position:absolute;width:100%;height:2px;background:var(--error);transform:rotate(-45deg);opacity:0.5"></div>
+    <div style="padding:var(--space-16);border:2px dashed var(--border-default);border-radius:var(--radius-lg);text-align:center;margin-bottom:var(--space-16)">
+      <div style="width:48px;height:48px;border-radius:var(--radius-full);background:var(--surface-tertiary);display:flex;align-items:center;justify-content:center;margin:0 auto var(--space-8);font-size:var(--font-h2-size);font-weight:800;color:var(--content-disabled)">?</div>
+      <div style="font-size:var(--font-h4-size);font-weight:700;color:var(--content-primary);margin-bottom:var(--space-4)">第 4 次记录？</div>
+      <div style="font-size:var(--font-b3-size);color:var(--content-secondary)">升级 Pro 解锁无限记录</div>
+    </div>
+    <button class="btn btn-primary" style="margin-bottom:var(--space-8)">升级 Pro 解锁</button>
+    <div class="trial-pill" style="margin:0 auto;display:flex"><svg viewBox="0 0 10 10" width="8" height="8" fill="none" stroke="var(--content-success)" stroke-width="1.5"><circle cx="5" cy="5" r="3.5"/></svg> 14天免费试用</div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════ DARK: LOCKED — Attribution ═══════ -->
+<div>
+<div class="phone-label" style="color:var(--neutral-400)">Dark — Locked Attribution</div>
+<div class="phone-frame" data-theme="dark">
+  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="currentColor" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="currentColor" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="currentColor" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="currentColor"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="currentColor" opacity="0.4" stroke="none"/></svg></div></div>
+  <div class="top-app-bar"><div class="nav-icon"><svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></div><span class="title">归因分析报告</span></div>
+  <div class="content">
+    <div style="display:flex;gap:var(--space-8);margin-bottom:var(--space-12)">
+      <div style="flex:1;padding:var(--space-12);border-radius:var(--radius-md);background:var(--surface-success);text-align:center"><div style="font-size:var(--font-num-md-size);font-weight:700;color:var(--content-success)">+12</div><div style="font-size:var(--font-c2-size);color:var(--content-tertiary);margin-top:var(--space-4)">分数</div></div>
+      <div style="flex:1;padding:var(--space-12);border-radius:var(--radius-md);background:var(--surface-lavender);text-align:center"><div style="font-size:var(--font-num-md-size);font-weight:700">6</div><div style="font-size:var(--font-c2-size);color:var(--content-tertiary);margin-top:var(--space-4)">产品</div></div>
+      <div style="flex:1;padding:var(--space-12);border-radius:var(--radius-md);background:var(--surface-brand-subtle);text-align:center"><div style="font-size:var(--font-num-md-size);font-weight:700">30</div><div style="font-size:var(--font-c2-size);color:var(--content-tertiary);margin-top:var(--space-4)">天数</div></div>
+    </div>
+    <div class="pro-card" style="margin:0 0 var(--space-12)">
+      <div class="crown"><svg viewBox="0 0 24 24"><path d="M2 6l4 8 6-6 6 6 4-8v12H2V6z"/></svg></div>
+      <div style="font-size:var(--font-h4-size);font-weight:700;color:var(--content-primary);margin-bottom:var(--space-4)">解锁 AI 归因洞察</div>
+      <div style="font-size:var(--font-b3-size);color:var(--content-secondary);margin-bottom:var(--space-12)">了解哪个产品最有效</div>
+      <div class="feat-tags"><span class="feat-tag">AI 洞察</span><span class="feat-tag">排名</span><span class="feat-tag">建议</span></div>
+      <button class="btn-upgrade">&#9733; 升级 Pro</button>
+      <div class="trial-pill"><svg viewBox="0 0 10 10" width="8" height="8" fill="none" stroke="var(--content-success)" stroke-width="1.5"><circle cx="5" cy="5" r="3.5"/></svg> 14天免费</div>
+    </div>
+    <div class="blur-wrap">
+      <div class="blur-c" style="padding:var(--space-16);background:var(--surface-secondary);border-radius:var(--radius-lg)">
+        <div style="display:flex;align-items:center;gap:var(--space-12);padding:var(--space-10) 0"><div style="width:28px;height:28px;border-radius:var(--radius-full);background:rgba(232,146,91,0.1)"></div><div style="flex:1;height:14px;background:var(--surface-tertiary);border-radius:var(--radius-xs)"></div></div>
+        <div style="display:flex;align-items:center;gap:var(--space-12);padding:var(--space-10) 0;border-top:var(--card-border-width) solid var(--border-subtle)"><div style="width:28px;height:28px;border-radius:var(--radius-full);background:rgba(155,138,219,0.1)"></div><div style="flex:1;height:14px;background:var(--surface-tertiary);border-radius:var(--radius-xs)"></div></div>
       </div>
-      <h3 style="font-size:20px;font-weight:800;color:var(--on-surface);margin-bottom:8px">免费次数已用完</h3>
-      <p style="font-size:14px;color:var(--on-surface-variant);line-height:1.6;margin-bottom:8px">免费版最多记录 3 次肌肤状态</p>
-      <div style="background:var(--surface-variant);border-radius:var(--r-lg);padding:16px;width:100%;margin:16px 0 24px;text-align:left;border:0.5px solid rgba(255,255,255,0.04)">
-        <div style="font-size:14px;font-weight:700;color:var(--on-surface);margin-bottom:10px">升级 Pro 享受</div>
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><svg viewBox="0 0 16 16" width="16" height="16" style="color:var(--primary);flex-shrink:0"><path d="M3.5 8l3 3L12.5 5"/></svg><span style="font-size:13px;color:var(--on-surface)">无限拍照记录</span></div>
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><svg viewBox="0 0 16 16" width="16" height="16" style="color:var(--primary);flex-shrink:0"><path d="M3.5 8l3 3L12.5 5"/></svg><span style="font-size:13px;color:var(--on-surface)">AI 详细分析报告</span></div>
-        <div style="display:flex;align-items:center;gap:10px"><svg viewBox="0 0 16 16" width="16" height="16" style="color:var(--primary);flex-shrink:0"><path d="M3.5 8l3 3L12.5 5"/></svg><span style="font-size:13px;color:var(--on-surface)">产品归因分析</span></div>
-      </div>
-      <button class="pro-btn" style="font-size:16px;padding:14px 36px"><svg viewBox="0 0 18 18"><path d="M9 1l2.3 4.7L16 6.5l-3.8 3.7.9 5.2L9 12.8 4.9 15.4l.9-5.2L2 6.5l4.7-.8z"/></svg>升级 Pro · 14天免费</button>
+      <div class="blur-pill"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Pro 专属</div>
     </div>
   </div>
 </div>
+</div>
 
-</body></html>
+<!-- ═══════ DARK: LOCKED — Share ═══════ -->
+<div>
+<div class="phone-label" style="color:var(--neutral-400)">Dark — Locked Share</div>
+<div class="phone-frame" data-theme="dark">
+  <div class="status-bar"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="currentColor" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="currentColor" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="currentColor" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="currentColor"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="currentColor" opacity="0.4" stroke="none"/></svg></div></div>
+  <div class="top-app-bar"><div class="nav-icon"><svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></div><span class="title">分享对比卡片</span></div>
+  <div class="content" style="display:flex;flex-direction:column;align-items:center">
+    <div class="blur-wrap" style="margin:0 0 var(--space-16);width:260px">
+      <div class="blur-c" style="border-radius:var(--radius-xl);overflow:hidden">
+        <div style="height:36px;background:var(--grad-hero)"></div>
+        <div style="display:flex;height:120px"><div style="flex:1;background:var(--grad-skin)"></div><div style="flex:1;background:linear-gradient(135deg,#5A4A40,#4A3C34)"></div></div>
+        <div style="padding:var(--space-12);text-align:center;background:white"><div style="font-size:28px;font-weight:800;color:#059669">+10</div></div>
+        <div style="height:28px;background:#F8FAF9"></div>
+      </div>
+      <div class="blur-pill"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Pro 专属</div>
+    </div>
+    <div class="pro-card" style="margin:0;width:100%">
+      <div class="crown"><svg viewBox="0 0 24 24"><path d="M2 6l4 8 6-6 6 6 4-8v12H2V6z"/></svg></div>
+      <div style="font-size:var(--font-h4-size);font-weight:700;color:var(--content-primary);margin-bottom:var(--space-4)">解锁精美分享卡</div>
+      <div style="font-size:var(--font-b3-size);color:var(--content-secondary);margin-bottom:var(--space-12)">分享你的蜕变故事</div>
+      <div class="feat-tags"><span class="feat-tag">多模板</span><span class="feat-tag">分享</span><span class="feat-tag">保存</span></div>
+      <button class="btn-upgrade">&#9733; 升级 Pro</button>
+      <div class="trial-pill"><svg viewBox="0 0 10 10" width="8" height="8" fill="none" stroke="var(--content-success)" stroke-width="1.5"><circle cx="5" cy="5" r="3.5"/></svg> 14天免费</div>
+    </div>
+  </div>
+</div>
+</div>
+
+</body>
+</html>

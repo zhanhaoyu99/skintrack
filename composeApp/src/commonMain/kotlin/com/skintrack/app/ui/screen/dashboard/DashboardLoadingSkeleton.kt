@@ -35,7 +35,7 @@ fun DashboardLoadingSkeleton(modifier: Modifier = Modifier) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = spacing.md),
-        verticalArrangement = Arrangement.spacedBy(spacing.md),
+        verticalArrangement = Arrangement.spacedBy(spacing.listGap),
     ) {
         // Header skeleton
         item(key = "header") {
@@ -62,6 +62,11 @@ fun DashboardLoadingSkeleton(modifier: Modifier = Modifier) {
             QuickActionsSkeleton()
         }
 
+        // Checkin card skeleton
+        item(key = "checkin") {
+            CheckinSkeleton()
+        }
+
         // Trend chart skeleton
         item(key = "trend") {
             TrendChartSkeleton()
@@ -76,15 +81,20 @@ private fun HeaderSkeleton() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = spacing.md + spacing.xs, vertical = spacing.md),
+            .padding(
+                start = spacing.cardInner,
+                end = spacing.cardInner,
+                top = spacing.xs,
+                bottom = spacing.md,
+            ),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            SkeletonBox(width = 60.dp, height = 14.dp)
-            SkeletonBox(width = 80.dp, height = 24.dp)
+            SkeletonBox(width = 80.dp, height = 14.dp)
+            SkeletonBox(width = 60.dp, height = 24.dp)
         }
 
         Row(
@@ -151,17 +161,13 @@ private fun MetricsSkeleton() {
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         repeat(5) {
-            SkeletonCard(
-                modifier = Modifier.weight(1f),
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    SkeletonBox(width = 24.dp, height = 18.dp)
-                    SkeletonBox(width = 28.dp, height = 10.dp)
-                }
-            }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(68.dp)
+                    .clip(MaterialTheme.shapes.medium)
+                    .shimmer(),
+            )
         }
     }
 }
@@ -170,31 +176,14 @@ private fun MetricsSkeleton() {
 private fun ReminderSkeleton() {
     val spacing = MaterialTheme.spacing
 
-    SkeletonCard(
-        modifier = Modifier.padding(horizontal = spacing.md),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(spacing.md),
-        ) {
-            SkeletonBox(
-                width = 44.dp,
-                height = 44.dp,
-                modifier = Modifier.clip(RoundedCornerShape(13.dp)),
-            )
-
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                SkeletonBox(width = 120.dp, height = 14.dp)
-                SkeletonBox(width = 160.dp, height = 12.dp)
-            }
-
-            SkeletonPill(width = 64.dp, height = 32.dp)
-        }
-    }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = spacing.md)
+            .height(60.dp)
+            .clip(MaterialTheme.shapes.large)
+            .shimmer(),
+    )
 }
 
 @Composable
@@ -213,27 +202,36 @@ private fun QuickActionsSkeleton() {
                 horizontalArrangement = Arrangement.spacedBy(spacing.sm),
             ) {
                 repeat(2) {
-                    SkeletonCard(
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(spacing.sm),
-                        ) {
-                            SkeletonBox(
-                                width = 40.dp,
-                                height = 40.dp,
-                                modifier = Modifier.clip(RoundedCornerShape(12.dp)),
-                            )
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(56.dp)
+                            .clip(MaterialTheme.shapes.large)
+                            .shimmer(),
+                    )
+                }
+            }
+        }
+    }
+}
 
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(spacing.xs),
-                            ) {
-                                SkeletonBox(width = 56.dp, height = 14.dp)
-                                SkeletonBox(width = 40.dp, height = 10.dp)
-                            }
-                        }
-                    }
+@Composable
+private fun CheckinSkeleton() {
+    val spacing = MaterialTheme.spacing
+
+    SkeletonCard(
+        modifier = Modifier.padding(horizontal = spacing.md),
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(spacing.listGap),
+        ) {
+            SkeletonBox(width = 100.dp, height = 16.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                repeat(7) {
+                    SkeletonCircle(size = 34.dp)
                 }
             }
         }
@@ -248,7 +246,7 @@ private fun TrendChartSkeleton() {
         modifier = Modifier.padding(horizontal = spacing.md),
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(spacing.sm),
+            verticalArrangement = Arrangement.spacedBy(spacing.listGap),
         ) {
             // Header row
             Row(
@@ -256,25 +254,16 @@ private fun TrendChartSkeleton() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                SkeletonBox(width = 72.dp, height = 16.dp)
+                SkeletonBox(width = 80.dp, height = 16.dp)
                 SkeletonBox(width = 48.dp, height = 14.dp)
-            }
-
-            // Filter chips
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                repeat(3) {
-                    SkeletonPill(width = 44.dp, height = 24.dp)
-                }
             }
 
             // Chart area
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(80.dp)
-                    .clip(RoundedCornerShape(spacing.xs))
+                    .height(100.dp)
+                    .clip(RoundedCornerShape(spacing.sm))
                     .shimmer(),
             )
         }

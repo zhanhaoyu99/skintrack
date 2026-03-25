@@ -111,7 +111,7 @@ data class RecordDetailScreen(val recordId: String) : Screen {
 }
 
 private val PhotoPreviewHeight = 280.dp
-private val FloatingCardOverlap = 36.dp
+private val FloatingCardOverlap = 40.dp
 
 private val SkinToneGradient = Brush.linearGradient(
     colors = listOf(
@@ -161,7 +161,10 @@ private fun DetailContent(
             item(key = "radar_chart") {
                 RadarChartCard(
                     record,
-                    modifier = Modifier.padding(horizontal = spacing.md),
+                    modifier = Modifier.padding(
+                        horizontal = spacing.md,
+                        vertical = spacing.iconGap,
+                    ),
                 )
             }
 
@@ -172,7 +175,7 @@ private fun DetailContent(
                     metricDiffs = state.metricDiffs,
                     modifier = Modifier.padding(
                         horizontal = spacing.md,
-                        vertical = spacing.sm,
+                        vertical = spacing.iconGap,
                     ),
                 )
             }
@@ -184,7 +187,10 @@ private fun DetailContent(
                         AiSummaryCard(
                             state.summary,
                             state.recommendations,
-                            modifier = Modifier.padding(horizontal = spacing.md),
+                            modifier = Modifier.padding(
+                                horizontal = spacing.md,
+                                vertical = spacing.iconGap,
+                            ),
                         )
                     }
                 }
@@ -194,7 +200,10 @@ private fun DetailContent(
                     LockedFeatureCard(
                         message = FeatureGate.DETAILED_AI_REPORT.lockedMessage,
                         onUpgrade = { navigator.push(PaywallScreen()) },
-                        modifier = Modifier.padding(horizontal = spacing.md),
+                        modifier = Modifier.padding(
+                            horizontal = spacing.md,
+                            vertical = spacing.iconGap,
+                        ),
                         title = "解锁完整分析报告",
                         subtitle = "AI 智能分析 · 多维雷达图 · 个性化建议",
                     )
@@ -207,7 +216,7 @@ private fun DetailContent(
                     state.usedProducts,
                     modifier = Modifier.padding(
                         horizontal = spacing.md,
-                        vertical = spacing.sm,
+                        vertical = spacing.iconGap,
                     ),
                 )
             }
@@ -219,7 +228,8 @@ private fun DetailContent(
                     modifier = Modifier.padding(
                         start = spacing.md,
                         end = spacing.md,
-                        bottom = spacing.lg,
+                        top = spacing.iconGap,
+                        bottom = spacing.xl,
                     ),
                 )
             }
@@ -260,18 +270,19 @@ private fun PhotoHeaderSection(
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(bottom = spacing.md)
+                        .padding(bottom = spacing.listGap)
                         .background(
                             color = Color.Black.copy(alpha = 0.35f),
                             shape = FullRoundedShape,
                         )
-                        .padding(horizontal = 18.dp, vertical = 7.dp),
+                        .padding(horizontal = spacing.listGap, vertical = spacing.xs),
                 ) {
                     Text(
                         text = "${record.overallScore}分 · ${getScoreLabel(record.overallScore)}",
-                        fontSize = 14.sp,
-                        color = Color.White,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.2.sp,
+                        color = Color.White,
                     )
                 }
             }
@@ -288,7 +299,7 @@ private fun PhotoHeaderSection(
                 IconButton(onClick = onBack) {
                     Box(
                         modifier = Modifier
-                            .size(42.dp)
+                            .size(40.dp)
                             .background(
                                 color = Color.Black.copy(alpha = 0.2f),
                                 shape = CircleShape,
@@ -306,7 +317,7 @@ private fun PhotoHeaderSection(
                 IconButton(onClick = onShare) {
                     Box(
                         modifier = Modifier
-                            .size(42.dp)
+                            .size(40.dp)
                             .background(
                                 color = Color.Black.copy(alpha = 0.2f),
                                 shape = CircleShape,
@@ -347,7 +358,7 @@ private fun FloatingScoreCard(
 
     Card(
         modifier = modifier,
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = MaterialTheme.shapes.large,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
@@ -356,8 +367,8 @@ private fun FloatingScoreCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 18.dp),
-            horizontalArrangement = Arrangement.spacedBy(18.dp),
+                .padding(spacing.cardInner),
+            horizontalArrangement = Arrangement.spacedBy(spacing.md),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (record.overallScore != null) {
@@ -372,19 +383,21 @@ private fun FloatingScoreCard(
                     Text(
                         text = getScoreMessage(record.overallScore),
                         fontSize = 19.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        letterSpacing = (-0.3).sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = (-0.2).sp,
                     )
                     if (percentile != null) {
                         Text(
                             text = "整体评分超过 ${percentile}% 的用户",
                             fontSize = 13.sp,
+                            letterSpacing = 0.05.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     } else {
                         Text(
                             text = formatRecordDate(record.recordedAt),
                             fontSize = 13.sp,
+                            letterSpacing = 0.05.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
@@ -397,15 +410,16 @@ private fun FloatingScoreCard(
                         }
                         Text(
                             text = text,
-                            style = MaterialTheme.typography.labelMedium,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            letterSpacing = 0.2.sp,
                             color = color,
-                            fontWeight = FontWeight.Bold,
                             modifier = Modifier
                                 .background(
                                     color = color.copy(alpha = 0.1f),
                                     shape = FullRoundedShape,
                                 )
-                                .padding(horizontal = spacing.sm, vertical = spacing.xs),
+                                .padding(horizontal = spacing.compact, vertical = spacing.xxs),
                         )
                     }
                 }
@@ -551,24 +565,25 @@ private fun MetricBarRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+            .padding(vertical = spacing.compact),
+        horizontalArrangement = Arrangement.spacedBy(spacing.compact),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // Label (52dp width, 13sp per design)
+        // Label (36dp width, b3: 13sp/600)
         Text(
             text = label,
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
+            letterSpacing = 0.05.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.width(52.dp),
+            modifier = Modifier.width(36.dp),
         )
 
-        // Gradient bar (7dp height per design) with micro glow shadow
+        // Gradient bar (8dp height per design) with micro glow shadow
         Box(
             modifier = Modifier
                 .weight(1f)
-                .height(7.dp)
+                .height(8.dp)
                 .shadow(elevation = 1.dp, shape = FullRoundedShape)
                 .clip(FullRoundedShape)
                 .background(MaterialTheme.colorScheme.surfaceVariant),
@@ -576,7 +591,7 @@ private fun MetricBarRow(
             Box(
                 modifier = Modifier
                     .fillMaxWidth(fraction)
-                    .height(7.dp)
+                    .height(8.dp)
                     .clip(FullRoundedShape)
                     .background(
                         brush = Brush.horizontalGradient(
@@ -586,14 +601,16 @@ private fun MetricBarRow(
             )
         }
 
-        // Score value (15sp/800 per design)
+        // Score value (num-sm: 14sp/700)
         Text(
             text = "$score",
-            fontSize = 15.sp,
-            fontWeight = FontWeight.ExtraBold,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.width(28.dp),
+            textAlign = androidx.compose.ui.text.style.TextAlign.End,
         )
 
-        // Change value (36dp width per design)
+        // Change value (c1: 12sp/600, 36dp width)
         if (change != null) {
             val functional = MaterialTheme.extendedColors.functional
             val changeColor = when {
@@ -603,8 +620,9 @@ private fun MetricBarRow(
             }
             Text(
                 text = if (change >= 0) "+$change" else "$change",
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 0.2.sp,
                 color = changeColor,
                 modifier = Modifier.width(36.dp),
                 textAlign = androidx.compose.ui.text.style.TextAlign.End,
@@ -664,7 +682,7 @@ private fun AiSummaryCard(
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = MaterialTheme.shapes.large,
     ) {
         Column(
             modifier = Modifier
@@ -683,34 +701,37 @@ private fun AiSummaryCard(
                     )
                 }
                 .padding(spacing.md),
-            verticalArrangement = Arrangement.spacedBy(spacing.sm),
+            verticalArrangement = Arrangement.spacedBy(spacing.listGap),
         ) {
             SectionHeader("AI 分析")
 
-            // "AI 智能生成" pill badge
+            // "AI 智能生成" pill badge (c2: 10sp/600)
             Text(
                 text = "AI 智能生成",
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 0.3.sp,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier
                     .background(
                         color = MaterialTheme.colorScheme.primaryContainer,
                         shape = FullRoundedShape,
                     )
-                    .padding(horizontal = spacing.sm, vertical = spacing.xs),
+                    .padding(horizontal = spacing.compact, vertical = spacing.xxs),
             )
 
             if (summary != null) {
+                // b2: 14sp/400/0.05, line-height 1.6 = ~22.4sp
                 Text(
                     text = summary,
-                    style = MaterialTheme.typography.bodyMedium,
-                    lineHeight = 24.sp,
+                    fontSize = 14.sp,
+                    letterSpacing = 0.05.sp,
+                    lineHeight = 22.sp,
                 )
             }
 
             if (recommendations.isNotEmpty()) {
-                // Highlight box (10px 12px padding per design)
+                // Highlight box (10px 12px padding, radius-sm)
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -718,13 +739,16 @@ private fun AiSummaryCard(
                             brush = aiHighlightGradient,
                             shape = MaterialTheme.shapes.small,
                         )
-                        .padding(horizontal = 12.dp, vertical = 10.dp),
+                        .padding(horizontal = spacing.listGap, vertical = spacing.compact),
                     verticalArrangement = Arrangement.spacedBy(spacing.xs),
                 ) {
                     recommendations.forEach { rec ->
+                        // b3: 13sp/400/0.05
                         Text(
                             text = rec,
-                            style = MaterialTheme.typography.bodySmall,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium,
+                            letterSpacing = 0.05.sp,
                             lineHeight = 20.sp,
                         )
                     }
@@ -768,16 +792,18 @@ private fun DailyProductsCard(
                 verticalArrangement = Arrangement.spacedBy(spacing.sm),
             ) {
                 products.forEach { product ->
+                    // c1: 12sp/500/0.2
                     Text(
                         text = product.name,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        letterSpacing = 0.2.sp,
                         modifier = Modifier
                             .background(
                                 color = MaterialTheme.colorScheme.surfaceVariant,
                                 shape = FullRoundedShape,
                             )
-                            .padding(horizontal = 14.dp, vertical = 7.dp),
+                            .padding(horizontal = spacing.listGap, vertical = spacing.iconGap),
                     )
                 }
             }

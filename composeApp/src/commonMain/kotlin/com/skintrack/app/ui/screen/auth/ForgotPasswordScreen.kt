@@ -23,12 +23,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -66,8 +66,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.skintrack.app.ui.component.animateListItem
-import com.skintrack.app.ui.theme.Mint50
-import com.skintrack.app.ui.theme.Mint100
+import com.skintrack.app.ui.theme.Primary50
+import com.skintrack.app.ui.theme.Primary100
 import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.gradients
 import com.skintrack.app.ui.theme.spacing
@@ -85,7 +85,7 @@ class ForgotPasswordScreen : Screen {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("忘记密码") },
+                    title = { Text("找回密码") },
                     navigationIcon = {
                         IconButton(onClick = { navigator.pop() }) {
                             Icon(
@@ -167,26 +167,17 @@ private fun EmailStep(
         // Lock icon with gradient background
         Box(
             modifier = Modifier
-                .padding(vertical = MaterialTheme.spacing.md)
+                .padding(top = MaterialTheme.spacing.lg)  // space-32 top padding in mockup
                 .size(88.dp)
-                .drawBehind {
-                    drawCircle(
-                        brush = Brush.radialGradient(
-                            colors = listOf(Mint100, Mint50),
-                            center = center.copy(
-                                x = center.x * 0.7f,
-                                y = center.y * 0.7f,
-                            ),
-                        ),
-                    )
-                }
+                .clip(CircleShape)  // radius-full
+                .background(brush = MaterialTheme.gradients.primary)  // grad-primary
                 .animateListItem(0),
             contentAlignment = Alignment.Center,
         ) {
             Icon(
                 imageVector = Icons.Default.Lock,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = Color.White,
                 modifier = Modifier.size(40.dp),
             )
         }
@@ -194,42 +185,42 @@ private fun EmailStep(
         // Title
         Text(
             text = "重置密码",
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.headlineSmall.copy(
+                fontWeight = FontWeight.ExtraBold,  // 800 per mockup
+            ),
             modifier = Modifier.animateListItem(1),
         )
 
         // Description
         Text(
-            text = "输入你注册时使用的邮箱地址，\n我们将发送一封包含验证码的邮件给你。",
-            style = MaterialTheme.typography.bodyMedium,
+            text = "输入你注册时使用的邮箱，我们会发送重置链接",
+            style = MaterialTheme.typography.bodyMedium,  // b2
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
-            lineHeight = 22.sp,
             modifier = Modifier.animateListItem(2),
         )
 
-        // Info hint box
-        Row(
+        // Info hint box with left border accent
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(MaterialTheme.shapes.medium)
-                .background(Mint50)
-                .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.sm)
+                .clip(MaterialTheme.shapes.medium)  // radius-md = 12dp
+                .background(Primary50)  // surface-brand-subtle
+                .drawBehind {
+                    // Left border accent (3px)
+                    drawRect(
+                        color = Color(0xFF2A9D7C),  // interactive-primary
+                        size = size.copy(width = 3.dp.toPx()),
+                    )
+                }
+                .padding(MaterialTheme.spacing.listGap)  // 12dp
                 .animateListItem(3),
-            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
         ) {
-            Icon(
-                imageVector = Icons.Default.Info,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(18.dp),
-            )
             Text(
-                text = "验证码将在10分钟内有效，请及时查收邮件（包括垃圾邮件文件夹）。",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                lineHeight = 18.sp,
+                text = "重置链接将在 24 小时内有效，请及时查收邮件并完成密码修改",
+                style = MaterialTheme.typography.bodySmall,  // b3 = 13sp
+                color = MaterialTheme.colorScheme.primary,  // content-brand
+                lineHeight = 19.5.sp,  // 13 * 1.5
             )
         }
 
@@ -237,8 +228,8 @@ private fun EmailStep(
         OutlinedTextField(
             value = email,
             onValueChange = onEmailChange,
-            label = { Text("注册邮箱") },
-            placeholder = { Text("请输入注册邮箱地址") },
+            label = { Text("邮箱") },
+            placeholder = { Text("你的邮箱地址") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
@@ -258,7 +249,7 @@ private fun EmailStep(
         ErrorMessage(error)
 
         SubmitButton(
-            text = "发送验证码",
+            text = "发送重置链接",
             isLoading = isLoading,
             isEnabled = isValid && !isLoading,
             onClick = {
@@ -271,11 +262,9 @@ private fun EmailStep(
         // Back to login link
         Text(
             text = "返回登录",
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.labelLarge,  // btn token
+            color = MaterialTheme.colorScheme.onSurfaceVariant,  // content-tertiary
             modifier = Modifier
-                .padding(top = MaterialTheme.spacing.sm)
                 .clickable { onBackToLogin() }
                 .animateListItem(6),
         )
@@ -398,7 +387,7 @@ private fun SuccessStep(
                 .clip(CircleShape)
                 .background(
                     brush = Brush.radialGradient(
-                        colors = listOf(Mint100, Mint50),
+                        colors = listOf(Primary100, Primary50),
                     ),
                 )
                 .animateListItem(0),
@@ -464,7 +453,7 @@ private fun SubmitButton(
         modifier = modifier
             .fillMaxWidth()
             .height(MaterialTheme.dimens.buttonHeight)
-            .clip(MaterialTheme.shapes.large)
+            .clip(RoundedCornerShape(50))  // radius-full (pill)
             .background(
                 brush = MaterialTheme.gradients.primary,
                 alpha = if (isEnabled) 1f else 0.38f,

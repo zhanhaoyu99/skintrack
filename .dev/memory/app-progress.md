@@ -1,13 +1,13 @@
-<!-- Last updated: 2026-03-18 -->
+<!-- Last updated: 2026-03-22 -->
 # SkinTrack 开发进度
 
 ## 当前状态（新session必读5行）
 - **阶段**: M3 测试上线 95% 进行中
-- **当前里程碑**: M3 视觉还原审查完成（全12页面对比HTML设计稿）
-- **当前工作**: 全页面UI审查完成 — Dashboard(MiniMetricCard彩色边线同步快照), Attribution(stat间距10dp+AI lineHeight24sp), Paywall(plan间距12dp), Auth(trust badges emoji同步), Profile(StatsCard渐变线+Avatar halo同步快照), Settings(padding16dp+section缩进+SyncBadge颜色+trailing箭头), LockedFeatureCard(title+subtitle双行时隐藏message), Share(标题+水印文案+footer padding+QR尺寸+新建ShareSnapshotTest)
+- **当前里程碑**: 设计系统 v5→v6 全量升级 + 全16页面视觉还原
+- **当前工作**: 功能审查+修复完成 — Dashboard(Tab导航接线+头像点击→Profile), Timeline(空态CTA→Camera导航修复), Attribution(排名副标题brand替代category), Settings(退出登录确认弹窗+AI通知持久化+DB v9), Auth+EditProfile(昵称20字符上限校验+计数器)
 - **阻塞问题**: 部署服务器到国内云（需要云服务器），真实支付/FCM为V2范围
 - **下一步**: 部署到国内云 → 服务端联调 → 内测20-30人 → Bug修复 → 发布
-- **产品文档**: `.dev/product/README.md`（索引）— 含全部 16 页设计规格
+- **产品文档**: `.dev/product/README.md`（索引）— 全部 18 份文档已重写同步最新设计稿（2026-03-22）
 
 ## 技术栈
 - **客户端**: Compose Multiplatform (KMP) — composeApp(commonMain/androidMain/iosMain)

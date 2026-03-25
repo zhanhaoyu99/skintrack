@@ -61,9 +61,9 @@ import com.skintrack.app.ui.component.SectionCard
 import com.skintrack.app.ui.component.SectionHeader
 import com.skintrack.app.ui.component.animateListItem
 import com.skintrack.app.ui.screen.paywall.PaywallScreen
-import com.skintrack.app.ui.theme.Apricot300
+import com.skintrack.app.ui.theme.Secondary300
 import com.skintrack.app.ui.theme.Lavender300
-import com.skintrack.app.ui.theme.Mint50
+import com.skintrack.app.ui.theme.Primary50
 import com.skintrack.app.ui.theme.extendedColors
 import com.skintrack.app.ui.theme.spacing
 import org.koin.compose.viewmodel.koinViewModel
@@ -253,98 +253,75 @@ private fun ScoreCompareRow(state: AttributionUiState.Content) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = spacing.lg, end = spacing.lg, top = spacing.sm, bottom = 20.dp),
+            .background(
+                brush = Brush.linearGradient(
+                    listOf(Color(0xFFFFF8F2), Color(0xFFFFF5ED)),
+                ),
+                shape = RoundedCornerShape(16.dp),
+            )
+            .border(
+                width = 0.5.dp,
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                shape = RoundedCornerShape(16.dp),
+            )
+            .padding(horizontal = spacing.md, vertical = spacing.cardInner),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // Before circle
+        // Before score
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Box(
-                modifier = Modifier
-                    .size(64.dp)
-                    .border(
-                        width = 2.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant,
-                        shape = CircleShape,
-                    )
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        shape = CircleShape,
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = "${state.firstScore}",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            Text(
+                text = "${state.firstScore}",
+                fontSize = 38.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                letterSpacing = (-1).sp,
+            )
             Text(
                 text = "${state.analysisDays}天前",
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.SemiBold,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.W500,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 6.dp),
+                letterSpacing = 0.2.sp,
+                modifier = Modifier.padding(top = spacing.xxs),
             )
         }
 
-        // Arrow + delta in the middle
-        Column(
-            modifier = Modifier.padding(horizontal = spacing.md),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+        // Arrow in the middle (32dp circle)
+        Box(
+            modifier = Modifier
+                .padding(horizontal = spacing.md)
+                .size(32.dp)
+                .background(
+                    color = functional.success.copy(alpha = 0.1f),
+                    shape = CircleShape,
+                ),
+            contentAlignment = Alignment.Center,
         ) {
-            // Arrow using unicode
             Text(
                 text = "\u2192",
-                style = MaterialTheme.typography.titleLarge,
-                color = deltaColor,
-            )
-            Text(
-                text = "${deltaPrefix}${delta}",
                 fontSize = 18.sp,
-                fontWeight = FontWeight.ExtraBold,
+                fontWeight = FontWeight.Bold,
                 color = deltaColor,
-                letterSpacing = (-0.5).sp,
             )
         }
 
-        // After circle
+        // After score
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Box(
-                modifier = Modifier
-                    .size(64.dp)
-                    .shadow(
-                        elevation = 4.dp,
-                        shape = CircleShape,
-                        ambientColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
-                        spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
-                    )
-                    .border(
-                        width = 2.5.dp,
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = CircleShape,
-                    )
-                    .background(
-                        color = Mint50,
-                        shape = CircleShape,
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = "${state.lastScore}",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
             Text(
-                text = "今天",
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
+                text = "${state.lastScore}",
+                fontSize = 38.sp,
+                fontWeight = FontWeight.ExtraBold,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(top = 6.dp),
+                letterSpacing = (-1).sp,
+            )
+            Text(
+                text = "现在",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.W500,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                letterSpacing = 0.2.sp,
+                modifier = Modifier.padding(top = spacing.xxs),
             )
         }
     }
@@ -431,7 +408,7 @@ private fun OverviewCard(state: AttributionUiState.Content) {
         // 3 stat sub-cards in a Row (matching design: green gradient, mint gradient, purple gradient)
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(spacing.sm),
         ) {
             val deltaPrefix = if (state.trendDelta >= 0) "+" else ""
             StatSubCard(
@@ -447,7 +424,7 @@ private fun OverviewCard(state: AttributionUiState.Content) {
                 label = "使用产品",
                 value = "${state.productsUsed}",
                 backgroundBrush = Brush.linearGradient(
-                    listOf(Mint50, Color(0xFFD1F0E4)),
+                    listOf(Primary50, Color(0xFFD1F0E4)),
                 ),
                 valueColor = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.weight(1f),
@@ -480,21 +457,23 @@ private fun StatSubCard(
                 brush = backgroundBrush,
                 shape = MaterialTheme.shapes.medium,
             )
-            .padding(horizontal = spacing.sm, vertical = 14.dp),
+            .padding(spacing.listGap),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(spacing.xs),
     ) {
         Text(
             text = value,
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.ExtraBold,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold,
             color = valueColor,
+            letterSpacing = (-0.2).sp,
         )
         Text(
             text = label,
-            style = MaterialTheme.typography.labelSmall,
+            fontSize = 10.sp,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+            letterSpacing = 0.3.sp,
         )
     }
 }
@@ -526,7 +505,7 @@ private fun AiInsightCard(insight: String) {
         listOf(
             MaterialTheme.colorScheme.primary,
             Lavender300,
-            Apricot300,
+            Secondary300,
         ),
     )
 
@@ -557,7 +536,7 @@ private fun AiInsightCard(insight: String) {
             .padding(spacing.md),
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(spacing.sm),
+            verticalArrangement = Arrangement.spacedBy(spacing.listGap),
         ) {
             // "AI 洞察" pill badge
             Text(
@@ -668,14 +647,14 @@ private fun ProductAttributionItem(
                         Modifier
                     },
                 )
-                .padding(horizontal = spacing.md, vertical = 14.dp),
-            horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+                .padding(horizontal = spacing.md, vertical = spacing.listGap),
+            horizontalArrangement = Arrangement.spacedBy(spacing.listGap),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // Rank badge circle (30dp per design)
+            // Rank badge circle (28dp per design)
             Box(
                 modifier = Modifier
-                    .size(30.dp)
+                    .size(28.dp)
                     .background(
                         brush = badgeBackground,
                         shape = CircleShape,
@@ -690,13 +669,13 @@ private fun ProductAttributionItem(
                 )
             }
 
-            // Product category icon (40dp square with rounded corners)
+            // Product category icon (36dp square with rounded corners)
             Box(
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(36.dp)
                     .background(
                         brush = iconBg,
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(8.dp),
                     ),
                 contentAlignment = Alignment.Center,
             ) {
@@ -710,33 +689,39 @@ private fun ProductAttributionItem(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = attribution.product.name,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = (-0.1).sp,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = 0.05.sp,
                 )
                 Text(
-                    text = "${attribution.product.category.displayName} \u00B7 使用 ${attribution.daysUsed} 天",
-                    style = MaterialTheme.typography.bodySmall,
+                    text = "${attribution.product.brand ?: attribution.product.category.displayName} \u00B7 使用 ${attribution.daysUsed} 天",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.W500,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    letterSpacing = 0.2.sp,
                 )
             }
 
-            Column(horizontalAlignment = Alignment.End) {
-                val prefix = if (attribution.impact >= 0) "+" else ""
-                Text(
-                    text = "${prefix}${formatImpact(attribution.impact)}",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = impactColor,
-                    letterSpacing = (-0.3).sp,
-                )
-                Text(
-                    text = "影响分",
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+            // Impact score pill
+            val prefix = if (attribution.impact >= 0) "+" else ""
+            val impactBg = if (attribution.impact >= 0) {
+                functional.success.copy(alpha = 0.1f)
+            } else {
+                functional.error.copy(alpha = 0.1f)
             }
+            Text(
+                text = "${prefix}${formatImpact(attribution.impact)}",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.W700,
+                color = impactColor,
+                letterSpacing = 0.2.sp,
+                modifier = Modifier
+                    .background(
+                        color = impactBg,
+                        shape = RoundedCornerShape(percent = 50),
+                    )
+                    .padding(horizontal = spacing.compact, vertical = spacing.xs),
+            )
         }
     }
 }
@@ -774,8 +759,8 @@ private fun SuggestionItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = spacing.sm),
-        horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+            .padding(vertical = spacing.compact),
+        horizontalArrangement = Arrangement.spacedBy(spacing.listGap),
         verticalAlignment = Alignment.Top,
     ) {
         // Colored circle icon (32dp per design)

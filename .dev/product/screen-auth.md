@@ -1,138 +1,409 @@
-# 认证页 AuthScreen
+# 认证页 Auth — 邮箱登录/注册 + 忘记密码
 
-> 设计稿: `.figma-mockups/02-auth.html` (2 屏: 登录 + 注册)
+> 设计稿: `.figma-mockups/02-auth.html` (3 屏: Login / Register / Forgot Password)
+> 暗色稿: `.figma-mockups/15-dark-screens.html`
 
-## 页面结构
+## 页面入口
 
-### 公共顶部
-```
-┌─────────────────────────┐
-│    [品牌 Logo 圆角图标]    │ ← 72dp 圆角方形 (22dp radius)，hero 渐变背景，白色叶子 SVG
-│       SkinTrack          │ ← 30sp Bold (letter-spacing -0.8)
-│  AI 驱动的肌肤管理助手     │ ← 14sp onSurfaceVariant
-│                         │
-│  [登录] [注册]            │ ← Segmented Control 切换
-└─────────────────────────┘
-```
-- **Logo 光晕**: 外圈 6dp 半透明 primary 渐变光晕 + shadow `0 8px 28px rgba(45,159,127,0.3)`
-- **装饰背景**: 3 个渐变圆形 blob (mint/apricot/lavender)，absolute 定位，柔和氛围
-```
+- Onboarding 最后一步 → Auth（默认 Login tab）
+- 任何需要登录的深链接 → Auth
+- Settings 退出登录 → Auth
+- Auth Login → Forgot Password（点击"忘记密码？"）
 
-### 登录态 (Login)
+## 页面状态
 
-```
-┌─────────────────────────┐
-│  邮箱                    │ ← 标签
-│  [user@example.com    ]  │ ← TextField
-│  密码                    │
-│  [password123     👁]   │ ← TextField + 密码可见切换
-│            忘记密码？     │ ← 右对齐链接 → ForgotPasswordScreen
-│                         │
-│  [    登 录    ]         │ ← 全宽 primary 按钮
-│                         │
-│         或               │ ← 分割线
-│  [Apple]  [WeChat]       │ ← 2 个社交登录按钮（矩形描边+文字）
-│                         │
-│ 🔒隐私安全  👥10万+用户  ⭐4.8分好评 │ ← 信任标记
-└─────────────────────────┘
-```
+| 状态 | 说明 |
+|------|------|
+| Login tab | 默认态，显示邮箱+密码表单 |
+| Register tab | 切到注册，显示昵称+邮箱+密码+确认密码 |
+| Forgot Password | 独立页面，TopAppBar 返回 Login |
+| Loading | 点击提交按钮后，按钮显示 loading spinner，禁用所有输入 |
+| Error | 字段级校验错误（红色边框+错误提示文字） |
+| FP Success | 忘记密码发送成功，替换表单为成功提示 |
 
-### 注册态 (Register)
+---
+
+## 布局结构
+
+### Login / Register（共享外壳）
 
 ```
-┌─────────────────────────┐
-│  昵称                    │
-│  [请输入昵称            ]  │
-│  邮箱                    │
-│  [请输入邮箱地址        ]  │
-│  密码                    │
-│  [请输入密码（至少6位）👁]  │ ← 密码强度提示
-│  确认密码                 │
-│  [再次输入密码          ]  │
-│                         │
-│  [   创建账号   ]        │ ← 全宽 primary 按钮
-│                         │
-│  注册即表示同意 服务条款 和 隐私政策 │ ← 底部法律链接
-│                         │
-│  🔒数据加密  ✅随时注销   │ ← 注册态信任标记（与登录态不同）
-└─────────────────────────┘
+Column(fillMaxSize, padding = horizontal spacing.lg(16dp))
+├── Spacer(topPadding = spacing.lg) // 16dp
+│
+├── AuthLogo                           // 居中
+│   Box(72x72dp, RoundedCorner 22dp)
+│     background: gradients.hero
+│     shadow: shadow-brand-md
+│     content: 白色 SVG 图标 36x36dp (strokeWidth 1.8)
+│
+├── Spacer(spacing.md)                 // 12dp — logo 到品牌名
+│
+├── Text("SkinTrack")                  // 居中
+│   h1(30sp), weight 800, contentPrimary
+│   letterSpacing = -0.8sp
+│
+├── Spacer(spacing.xs)                 // 4dp — 品牌名到标语
+│
+├── Text(tagline)                      // 居中
+│   b2(14sp), contentSecondary
+│   Login: "记录你的美，追踪你的变"
+│   Register: "创建账号，开始你的护肤旅程"
+│
+├── Spacer(spacing.xxl)                // 24dp — 标语到分段控件
+│
+├── SegmentedControl                   // 全宽
+│   Row(padding = spacing.xs(4dp))
+│     background: surfaceTertiary
+│     borderRadius: shapes.medium(12dp)
+│     tabs: ["登录", "注册"]
+│     Tab(flex=1):
+│       padding: vertical 10dp
+│       font: b2(14sp), weight 600
+│       borderRadius: shapes.small(8dp)
+│       active: surfacePrimary bg, contentPrimary color, shadow-xs
+│       inactive: transparent bg, contentSecondary color
+│     transition: Motion.SHORT(150ms), easing-standard
+│
+├── Spacer(spacing.xxl)                // 24dp — 分段控件到表单
+│
+├── <Login 或 Register 表单区域>        // 见下方
+│
+├── <Login 专属区域: 社交登录+信任标记>   // 见下方
+│   或
+│   <Register 专属区域: 信任标记+法律声明>
+│
+└── Spacer(weight 1f, min = spacing.lg)  // 底部弹性空间
 ```
 
-## 输入框通用样式
-- **高度**: 50dp
-- **边框**: 1.5px outlineVariant, md 圆角
-- **背景**: surfaceContainer (默认) → surface (聚焦)
-- **聚焦态**: primary 边框 + `0 0 0 3px rgba(45,159,127,0.1)` 光晕
-- **Prefix 图标**: 18dp, onSurfaceVariant, 左侧 14dp padding
-- **Suffix 图标** (密码可见): 18dp, onSurfaceVariant, 右侧 12dp padding
-- **Placeholder**: 14sp, `#B0B8C1`
-- **字段间距**: 14dp (marginBottom)
-
-## 字段规格
-
-| 字段 | 类型 | 校验 | 错误提示 |
-|------|------|------|---------|
-| 昵称 | 文本 | 非空 | "请输入昵称" |
-| 邮箱 | Email | 格式校验 | "邮箱格式不正确" |
-| 密码 | 密码 | ≥6 位 | "密码至少 6 位" |
-| 确认密码 | 密码 | 与密码一致 | "两次密码不一致" |
-
-## 社交登录（仅登录态显示）
-- **V1**: 仅展示 UI 占位，点击弹出 "即将上线" Toast
-- **V2 计划**: 接入微信登录 + Apple 登录
-- **按钮样式**: 矩形, 50dp 高, flex 等宽, 1.5px outlineVariant 描边, md 圆角, surface 背景
-- **按钮内容**: 左侧 20dp 品牌 SVG 图标 + 右侧品牌文字 (14sp Bold)
-- **排列**: 水平排列, 12dp 间距
-- **按钮列表**: Apple (黑色图标) + WeChat (#07C160 绿色图标)
-- **分隔线**: "或" 文字 (13sp, onSurfaceVariant) + 两侧 0.5px 水平线 (outlineVariant), 上下 20dp margin
-
-## 忘记密码 (ForgotPasswordScreen)
-
-> 设计稿: `02-auth.html` 第 3 屏
+### Login 表单区域
 
 ```
-┌─────────────────────────┐
-│ ← 忘记密码               │ ← TopAppBar
-├─────────────────────────┤
-│                         │
-│     [🔒 锁图标]          │ ← 88dp 圆形, mint 径向渐变背景, 锁 SVG (40dp)
-│                         │
-│      重置密码             │ ← 24sp Bold, 居中
-│  输入你注册时使用的邮箱地址│ ← 14sp onSurfaceVariant, 居中
-│  我们将发送一封包含密码    │
-│  重置链接的邮件给你。      │
-│                         │
-│  注册邮箱                 │ ← 标签 (13sp Bold)
-│  [📧 请输入注册邮箱地址 ]  │ ← TextField (50dp, md 圆角, prefix icon)
-│                         │
-│  ⓘ 重置链接将在24小时内有效│ ← 信息提示框 (mint-50 背景, md 圆角)
-│    请及时查收邮件（包括    │
-│    垃圾邮件文件夹）。      │
-│                         │
-│  [  发送重置链接  ]       │ ← primary 全宽按钮
-│     返回登录              │ ← primary 文字链接 (14sp Bold)
-└─────────────────────────┘
+Column(spacing = 0dp)  // text-field 自带 marginBottom
+│
+├── TextField("邮箱")                   // label + input
+│   placeholder: "你的邮箱地址"
+│   leadingIcon: mail (iconSizeSm 20dp)
+│   keyboardType: Email
+│
+├── TextField("密码")
+│   placeholder: "输入密码"
+│   leadingIcon: lock (iconSizeSm 20dp)
+│   trailingIcon: visibility toggle
+│   keyboardType: Password
+│
+├── Row(fillMaxWidth, horizontalArrangement = End)
+│   margin: top -spacing.sm(8dp), bottom spacing.lg(16dp)
+│   TextButton("忘记密码？")
+│     b3(13sp), weight 500, contentBrand
+│     onClick → navigateTo(ForgotPassword)
+│
+├── PrimaryButton("登录")               // 全宽
+│   height: dimens.buttonHeight(52dp)
+│   borderRadius: shapes.full
+│   background: gradients.button
+│   shadow: shadow-brand-sm
+│   text: btn(16sp), weight 600, contentInverse
+│
+├── DividerWithText("或")               // [V2]
+│   margin: vertical spacing.xl(20dp)
+│   line: 0.5dp borderSubtle
+│   text: c1(12sp), weight 500, contentDisabled
+│
+├── SocialButtons                       // [V2] 水平排列
+│   Row(spacing = spacing.md(12dp))
+│   margin-bottom: spacing.xl(20dp)
+│   SocialButton(flex=1):
+│     height: dimens.buttonHeight(52dp)
+│     borderRadius: shapes.full
+│     border: 1.5dp borderDefault
+│     background: surfacePrimary
+│     icon: iconSizeSm(20dp)
+│     text: b2(14sp), weight 600, contentPrimary
+│     gap: spacing.sm(8dp)
+│     buttons:
+│       - Apple: Apple 图标 (currentColor) + "Apple"
+│       - WeChat: 微信图标 (#07C160) + "微信"
+│     hover: surfaceSecondary bg
+│
+└── TrustMarks (3 items)
+    Row(justifyContent = Center, spacing = spacing.xl(20dp))
+    TrustMark:
+      Column(alignItems = Center, spacing = spacing.xs(4dp))
+      icon: SVG iconSizeXs(16dp), contentDisabled
+      text: c2(10sp), weight 500, contentDisabled
+    items:
+      - 🛡️ shield icon + "隐私保护"
+      - 👥 users icon + "10万+用户"
+      - ⭐ star icon (filled) + "4.8 评分"
 ```
 
-- **成功态**: 替换表单区域，显示 "重置链接已发送到你的邮箱" + ✅ 图标 + "返回登录" 按钮
-- **错误态**: 邮箱不存在时显示错误提示
-- **V1**: Mock 实现 (delay 1s → 成功)
+### Register 表单区域
 
-## 信任标记
-**登录态** (3 项):
-- 🛡️ 隐私安全 (primary 盾牌图标)
-- ✅ 10万+用户 (primary 勾选图标)
-- ⭐ 4.8分好评 (primary 实心星图标)
+```
+Column(spacing = 0dp)
+│
+├── TextField("昵称")
+│   placeholder: "给自己取个名字吧"
+│   leadingIcon: person (iconSizeSm 20dp)
+│   keyboardType: Text
+│
+├── TextField("邮箱")
+│   placeholder: "你的邮箱地址"
+│   leadingIcon: mail (iconSizeSm 20dp)
+│   keyboardType: Email
+│
+├── TextField("密码")
+│   placeholder: "至少 6 位密码"
+│   leadingIcon: lock (iconSizeSm 20dp)
+│   trailingIcon: visibility toggle
+│   keyboardType: Password
+│
+├── TextField("确认密码")
+│   placeholder: "再次输入密码"
+│   leadingIcon: lock (iconSizeSm 20dp)
+│   trailingIcon: visibility toggle
+│   keyboardType: Password
+│
+├── PrimaryButton("创建账号")
+│   height: dimens.buttonHeight(52dp)
+│   margin-bottom: spacing.lg(16dp)
+│   (同 Login 按钮样式)
+│
+├── TrustMarks (2 items)
+│   Row(justifyContent = Center, spacing = spacing.xl(20dp))
+│   items:
+│     - 🔒 lock icon + "数据加密"
+│     - ✅ check icon + "随时取消"
+│
+└── Text("注册即同意《服务条款》和《隐私政策》")
+    c2(10sp), contentDisabled, center
+    margin-top: spacing.lg(16dp), lineHeight: 1.5
+    《服务条款》和《隐私政策》: contentBrand, clickable → 打开 WebView
+```
 
-**注册态** (2 项):
-- 🔒 数据加密 (primary 盾牌图标)
-- ✅ 随时注销 (primary 勾选图标)
+### Forgot Password 页面
 
-**样式**: 11sp onSurfaceVariant, 水平居中排列, 18dp 间距, 14dp SVG 图标 (primary 色), 底部对齐 (margin-top: auto)
+```
+Scaffold
+├── TopAppBar
+│   navigationIcon: back arrow (iconSizeMd 24dp) → popBack
+│   title: "找回密码" (h4 16sp, weight 600)
+│   height: dimens.topBarHeight(56dp)
+│
+└── Column(fillMaxSize, horizontalAlignment = Center)
+    padding: top spacing.section(32dp), horizontal spacing.lg(16dp)
+    │
+    ├── ForgotPasswordIcon
+    │   Box(88x88dp, shape = CircleShape)
+    │     background: gradients.primary
+    │     shadow: shadow-brand-md
+    │     content: lock SVG 40x40dp, white
+    │
+    ├── Spacer(spacing.xxl)              // 24dp
+    │
+    ├── Text("重置密码")
+    │   h2(24sp), weight 800, contentPrimary
+    │   letterSpacing: h2 default (-0.4sp)
+    │
+    ├── Spacer(spacing.sm)               // 8dp
+    │
+    ├── Text("输入你注册时使用的邮箱，我们会发送重置链接")
+    │   b2(14sp), contentSecondary, center
+    │   maxWidth: 280dp, lineHeight: b2 default (1.45)
+    │
+    ├── Spacer(spacing.xxl)              // 24dp
+    │
+    ├── Column(fillMaxWidth)
+    │   │
+    │   ├── TextField("邮箱")
+    │   │   placeholder: "你的邮箱地址"
+    │   │   leadingIcon: mail
+    │   │   keyboardType: Email
+    │   │
+    │   ├── InfoBox
+    │   │   padding: spacing.md(12dp)
+    │   │   borderRadius: shapes.medium(12dp)
+    │   │   background: surfaceBrandSubtle
+    │   │   borderLeft: 3dp interactivePrimary
+    │   │   text: "重置链接将在 24 小时内有效，请及时查收邮件并完成密码修改"
+    │   │   font: b3(13sp), contentBrand, lineHeight: 1.5
+    │   │   margin-bottom: spacing.xl(20dp)
+    │   │
+    │   ├── PrimaryButton("发送重置链接")
+    │   │   margin-bottom: spacing.md(12dp)
+    │   │   (同 Login 按钮样式)
+    │   │
+    │   └── TextButton("返回登录")
+    │       btn(16sp), contentTertiary, center, full width
+    │       onClick → popBack to Login
+    │
+    └── Spacer(weight 1f)
+```
 
-## Tab 切换
-- Segmented Control 样式：选中态 surface 背景 + 粗体，未选中态透明
-- 外部容器圆角 pill 形状，surfaceVariant 背景
+---
 
-## 实现状态
-✅ **已对齐** (M2.9 Phase 2) — Segmented Control + 昵称 + 确认密码 + 社交登录占位 + 信任标记 + ForgotPassword 完整 UI
+## 通用组件规格
+
+### TextField
+
+| 属性 | 值 |
+|------|------|
+| 高度 | dimens.inputHeight (52dp) |
+| 边框 | 1.5dp borderDefault |
+| 圆角 | shapes.medium (12dp) |
+| 背景 | surfaceTertiary (默认) |
+| 内边距 | horizontal spacing.lg (16dp) |
+| 文字 | b2 (14sp), contentPrimary |
+| placeholder | b2 (14sp), contentDisabled |
+| label | b3 (13sp), weight 600, contentSecondary, margin-bottom spacing.sm (8dp) |
+| 字段间距 | margin-bottom spacing.lg (16dp) |
+| 聚焦态 | border → interactivePrimary, bg → surfacePrimary, 外发光 `0 0 0 3dp rgba(42,157,124,0.1)` |
+| 错误态 | border → contentError, helper text → contentError |
+| helper text | c1 (12sp), contentTertiary, margin-top spacing.xs (4dp) |
+
+### PrimaryButton
+
+| 属性 | 值 |
+|------|------|
+| 高度 | dimens.buttonHeight (52dp) |
+| 宽度 | fillMaxWidth |
+| 圆角 | shapes.full |
+| 背景 | gradients.button |
+| 阴影 | shadow-brand-sm |
+| 文字 | btn (16sp), weight 600, contentInverse |
+| Loading | CircularProgressIndicator 替换文字, 24dp, contentInverse |
+| Disabled | opacity 0.5, 不响应点击 |
+
+---
+
+## 交互行为
+
+### Tab 切换 [V1]
+- 点击 SegmentedControl tab 切换 Login/Register
+- 动画: active 背景滑动, Motion.SHORT (150ms), easing-standard
+- 切换保留已输入内容（同一 ViewModel 持有所有字段）
+
+### 登录流程 [V1]
+1. 用户填写邮箱+密码，点击"登录"
+2. 按钮进入 loading 态（spinner + 禁用所有输入）
+3. 调用 `supabase.auth.signInWithEmail(email, password)`
+4. 成功 → navigate to Dashboard (popUpTo Auth inclusive)
+5. 失败 → 显示 Toast 错误提示 ("邮箱或密码错误")，恢复按钮
+
+### 注册流程 [V1]
+1. 用户填写昵称+邮箱+密码+确认密码，点击"创建账号"
+2. 前端校验（见下方字段规格），不通过则显示字段级错误
+3. 按钮 loading → 调用 `supabase.auth.signUp(email, password)`
+4. 成功 → 创建 profile (nickname) → navigate to Dashboard
+5. 失败 → Toast 错误提示 ("邮箱已被注册" 等)
+
+### 忘记密码流程 [V1]
+1. 点击"忘记密码？" → navigate to ForgotPassword
+2. 输入邮箱，点击"发送重置链接"
+3. 按钮 loading → 调用 `supabase.auth.resetPasswordForEmail(email)`
+4. 成功 → 替换表单为成功提示 ("重置链接已发送到你的邮箱" + 邮箱图标 + "返回登录" 按钮)
+5. 失败 → Toast 错误提示
+6. "返回登录" → popBack
+
+### 社交登录 [V2]
+- V1 阶段: 点击弹出 Toast "即将上线"
+- V2 计划: Apple Sign-In + 微信 OAuth
+
+### 字段校验
+| 字段 | 规则 | 错误提示 |
+|------|------|---------|
+| 昵称 | 非空, 1-20 字符 | "请输入昵称" |
+| 邮箱 | 非空, email 格式 | "邮箱格式不正确" |
+| 密码 | 非空, >= 6 位 | "密码至少 6 位" |
+| 确认密码 | 非空, == 密码 | "两次密码不一致" |
+
+- 校验时机: 提交时统一校验 + 字段 blur 时实时校验
+- 错误显示: 字段边框变红 (contentError) + 下方 helper text 显示错误文案
+
+---
+
+## 数据依赖
+
+| 数据 | 来源 | 说明 |
+|------|------|------|
+| 登录状态 | Supabase Auth | Session token |
+| 用户 profile | Supabase DB | nickname, 注册时创建 |
+
+**ViewModel 字段:**
+```
+email: String
+password: String
+nickname: String         // 仅注册
+confirmPassword: String  // 仅注册
+isLogin: Boolean         // tab 状态
+isLoading: Boolean
+errorMessage: String?
+fieldErrors: Map<Field, String>
+```
+
+---
+
+## 与其他页面的关系
+
+| 关系 | 目标页面 | 触发 |
+|------|---------|------|
+| → Dashboard | `DashboardScreen` | 登录/注册成功 |
+| → ForgotPassword | `ForgotPasswordScreen` | 点击"忘记密码？" |
+| ← Onboarding | `OnboardingScreen` | 引导完成 |
+| ← Settings | `SettingsScreen` | 退出登录 |
+| → WebView | 服务条款/隐私政策 | 点击法律链接 |
+
+---
+
+## 暗色模式
+
+| 元素 | Light | Dark |
+|------|-------|------|
+| Logo 背景 | gradients.hero | gradients.hero (dark variant) |
+| Logo 阴影 | shadow-brand-md | shadow-brand-md (dark, deeper) |
+| SegmentedControl 外壳 | surfaceTertiary (#F1F4F3) | surfaceTertiary (#1E2522) |
+| SegmentedControl active tab | surfacePrimary (#FFFFFF) | surfaceSecondary (#171D1A) |
+| TextField 背景 | surfaceTertiary | surfaceTertiary (dark) |
+| TextField 边框 | borderDefault (#E4E8E6) | borderDefault (rgba white 10%) |
+| TextField 聚焦 | interactivePrimary + 绿色光晕 | interactivePrimary (400) + 深色光晕 |
+| PrimaryButton | gradients.button | gradients.button (dark) |
+| 社交按钮边框 | borderDefault | borderDefault (dark) |
+| 社交按钮背景 | surfacePrimary | surfacePrimary (#0F1412) |
+| InfoBox 背景 | surfaceBrandSubtle (#E6F5F0) | surfaceBrandSubtle (rgba 12%) |
+| InfoBox 边框 | interactivePrimary (500) | interactivePrimary (400) |
+| 所有文字色 | 跟随 semantic token | 跟随 dark semantic token |
+
+所有颜色通过 semantic token 自动适配，无需额外条件判断。
+
+---
+
+## 与当前实现的差异
+
+> 基于最近 commit 对比，待核实后更新
+
+| # | 差异项 | 设计稿 | 当前实现 | 优先级 |
+|---|--------|--------|---------|--------|
+| 1 | 标语文案 | Login: "记录你的美，追踪你的变" / Register: "创建账号，开始你的护肤旅程" | 可能使用旧文案 "AI 驱动的肌肤管理助手" | P1 |
+| 2 | SegmentedControl 样式 | surfaceTertiary bg, 12dp 外圆角, 8dp 内圆角, shadow-xs on active | 需核实是否对齐 | P1 |
+| 3 | TextField label | b3(13sp), weight 600, contentSecondary | 需核实 | P2 |
+| 4 | 忘记密码链接文案 | "忘记密码？" (b3, contentBrand, right-aligned) | 需核实 | P2 |
+| 5 | 社交登录按钮 | full 圆角(pill), 1.5dp border, 52dp height | 需核实旧实现 md 圆角 | P2 |
+| 6 | Trust marks 颜色 | icon + text 统一 contentDisabled | 旧文档写 primary 色 icon | P1 |
+| 7 | 注册页底部文案 | "注册即同意《服务条款》和《隐私政策》" c2 contentDisabled, 链接 contentBrand | 需核实 | P2 |
+| 8 | InfoBox 文字色 | contentBrand | 旧文档无明确定义 | P2 |
+| 9 | FP "返回登录" 按钮 | contentTertiary text button | 旧文档写 primary 文字链接 | P1 |
+
+---
+
+## 版本标记
+
+| 功能 | 版本 |
+|------|------|
+| 邮箱登录/注册 | [V1] |
+| 忘记密码 | [V1] |
+| 字段校验 | [V1] |
+| SegmentedControl 切换 | [V1] |
+| Trust marks 展示 | [V1] |
+| 社交登录 (Apple + WeChat) | [V2] |
+| 分隔线 "或" + 社交按钮 UI | [V2] |

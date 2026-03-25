@@ -84,9 +84,9 @@ import com.skintrack.app.ui.component.animateCardEntrance
 import com.skintrack.app.ui.component.animateFadeIn
 import com.skintrack.app.ui.component.animateListItem
 import com.skintrack.app.ui.screen.HomeScreen
-import com.skintrack.app.ui.theme.Apricot300
+import com.skintrack.app.ui.theme.Secondary300
 import com.skintrack.app.ui.theme.Lavender300
-import com.skintrack.app.ui.theme.Mint300
+import com.skintrack.app.ui.theme.Primary300
 import com.skintrack.app.ui.theme.Motion
 import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.gradients
@@ -170,8 +170,8 @@ class AuthScreen : Screen {
                         drawCircle(
                             brush = Brush.radialGradient(
                                 colors = listOf(
-                                    Mint300.copy(alpha = 0.07f),
-                                    Mint300.copy(alpha = 0.02f),
+                                    Primary300.copy(alpha = 0.07f),
+                                    Primary300.copy(alpha = 0.02f),
                                     Color.Transparent,
                                 ),
                             ),
@@ -181,7 +181,7 @@ class AuthScreen : Screen {
                         drawCircle(
                             brush = Brush.radialGradient(
                                 colors = listOf(
-                                    Apricot300.copy(alpha = 0.05f),
+                                    Secondary300.copy(alpha = 0.05f),
                                     Color.Transparent,
                                 ),
                             ),
@@ -219,61 +219,75 @@ class AuthScreen : Screen {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
                 ) {
-                    // Brand logo area with glow
-                    Box(
-                        modifier = Modifier
-                            .size(72.dp)
-                            .drawBehind {
-                                drawCircle(
-                                    brush = Brush.radialGradient(
-                                        colors = listOf(
-                                            Mint300.copy(alpha = 0.12f),
-                                            Color.Transparent,
+                    // Brand area: logo + name + tagline grouped tightly
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(72.dp)
+                                .drawBehind {
+                                    drawCircle(
+                                        brush = Brush.radialGradient(
+                                            colors = listOf(
+                                                Primary300.copy(alpha = 0.12f),
+                                                Color.Transparent,
+                                            ),
                                         ),
-                                    ),
-                                    radius = 54.dp.toPx(),
-                                )
-                            }
-                            .clip(RoundedCornerShape(22.dp))
-                            .background(brush = MaterialTheme.gradients.hero)
-                            .graphicsLayer {
+                                        radius = 54.dp.toPx(),
+                                    )
+                                }
+                                .clip(RoundedCornerShape(22.dp))
+                                .background(brush = MaterialTheme.gradients.hero)
+                                .graphicsLayer {
+                                    alpha = brandAlpha.value
+                                    translationY = brandOffsetY.value
+                                },
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = "\uD83C\uDF3F",
+                                style = MaterialTheme.typography.headlineMedium,
+                            )
+                        }
+
+                        // space-12 between logo and brand name
+                        Box(modifier = Modifier.height(MaterialTheme.spacing.listGap))
+
+                        Text(
+                            text = "SkinTrack",
+                            style = MaterialTheme.typography.headlineLarge.copy(
+                                fontWeight = FontWeight.ExtraBold,
+                                letterSpacing = (-0.8).sp,
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.graphicsLayer {
                                 alpha = brandAlpha.value
                                 translationY = brandOffsetY.value
                             },
-                        contentAlignment = Alignment.Center,
-                    ) {
+                        )
+
+                        // space-4 between brand name and tagline
+                        Box(modifier = Modifier.height(4.dp))
+
                         Text(
-                            text = "\uD83C\uDF3F",
-                            style = MaterialTheme.typography.headlineMedium,
+                            text = if (uiState.isLoginMode) "记录你的美，追踪你的变"
+                                else "创建账号，开始你的护肤旅程",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier
+                                .padding(bottom = MaterialTheme.spacing.sm)  // extra to reach ~24dp total before seg
+                                .graphicsLayer {
+                                    alpha = brandAlpha.value
+                                },
                         )
                     }
-
-                    Text(
-                        text = "SkinTrack",
-                        style = MaterialTheme.typography.headlineLarge,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.graphicsLayer {
-                            alpha = brandAlpha.value
-                            translationY = brandOffsetY.value
-                        },
-                    )
-                    Text(
-                        text = "开启你的美丽旅程",
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.graphicsLayer {
-                            alpha = brandAlpha.value
-                        },
-                    )
 
                     // Segmented Control (Login / Register)
                     SegmentedControl(
                         isLoginMode = uiState.isLoginMode,
                         onModeChange = { viewModel.toggleMode() },
                         modifier = Modifier
-                            .padding(top = MaterialTheme.spacing.sm)
                             .animateFadeIn(200),
                     )
 
@@ -283,11 +297,20 @@ class AuthScreen : Screen {
                         enter = fadeIn() + expandVertically(),
                         exit = fadeOut() + shrinkVertically(),
                     ) {
+                        val nicknameMaxLength = 20
+                        val isNicknameTooLong = uiState.nickname.length >= nicknameMaxLength
                         OutlinedTextField(
                             value = uiState.nickname,
-                            onValueChange = { viewModel.updateNickname(it) },
+                            onValueChange = { if (it.length <= nicknameMaxLength) viewModel.updateNickname(it) },
                             label = { Text("昵称") },
                             singleLine = true,
+                            supportingText = {
+                                Text(
+                                    text = "${uiState.nickname.length}/$nicknameMaxLength",
+                                    color = if (isNicknameTooLong) MaterialTheme.colorScheme.error
+                                        else MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            },
                             keyboardOptions = KeyboardOptions(
                                 imeAction = ImeAction.Next,
                             ),
@@ -495,7 +518,7 @@ class AuthScreen : Screen {
                                 )
                             } else {
                                 Text(
-                                    text = if (uiState.isLoginMode) "登录" else "开始护肤之旅",
+                                    text = if (uiState.isLoginMode) "登录" else "创建账号",
                                     color = MaterialTheme.colorScheme.onPrimary,
                                     style = MaterialTheme.typography.labelLarge,
                                 )
@@ -573,30 +596,28 @@ class AuthScreen : Screen {
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
+                            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.cardInner),  // 20dp
                         ) {
                             // Divider with "或"
                             Row(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = MaterialTheme.spacing.xs),
+                                    .fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
+                                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.listGap),  // 12dp
                             ) {
                                 HorizontalDivider(modifier = Modifier.weight(1f))
                                 Text(
                                     text = "或",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = MaterialTheme.typography.labelMedium,  // c1 = 12sp/500
+                                    color = MaterialTheme.colorScheme.outline,  // content-disabled
                                 )
                                 HorizontalDivider(modifier = Modifier.weight(1f))
                             }
 
-                            // Social buttons as rectangular cards
+                            // Social buttons
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(
-                                    MaterialTheme.spacing.sm + 4.dp,
+                                    MaterialTheme.spacing.listGap,  // 12dp
                                 ),
                                 modifier = Modifier.fillMaxWidth(),
                             ) {
@@ -612,7 +633,7 @@ class AuthScreen : Screen {
                                     modifier = Modifier.weight(1f),
                                 )
                                 SocialLoginButton(
-                                    label = "WeChat",
+                                    label = "微信",
                                     onClick = comingSoonAction,
                                     modifier = Modifier.weight(1f),
                                 )
@@ -626,17 +647,17 @@ class AuthScreen : Screen {
                             .fillMaxWidth()
                             .padding(top = MaterialTheme.spacing.md),
                         horizontalArrangement = Arrangement.spacedBy(
-                            18.dp,
+                            MaterialTheme.spacing.cardInner,  // 20dp per mockup
                             Alignment.CenterHorizontally,
                         ),
                     ) {
                         if (uiState.isLoginMode) {
-                            TrustBadge(emoji = "\uD83D\uDEE1\uFE0F", label = "隐私安全")
+                            TrustBadge(emoji = "\uD83D\uDEE1\uFE0F", label = "隐私保护")
                             TrustBadge(emoji = "\u2705", label = "10万+用户")
-                            TrustBadge(icon = Icons.Default.Star, label = "4.8分好评")
+                            TrustBadge(icon = Icons.Default.Star, label = "4.8 评分")
                         } else {
                             TrustBadge(emoji = "\uD83D\uDD12", label = "数据加密")
-                            TrustBadge(emoji = "\uD83D\uDEE1\uFE0F", label = "随时注销")
+                            TrustBadge(emoji = "\u2705", label = "随时取消")
                         }
                     }
                 }
@@ -660,9 +681,9 @@ private fun SegmentedControl(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(50))
+            .clip(MaterialTheme.shapes.medium)  // radius-md = 12dp
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(3.dp),
+            .padding(4.dp),
     ) {
         SegmentButton(
             text = "登录",
@@ -688,20 +709,20 @@ private fun SegmentButton(
 ) {
     Surface(
         modifier = modifier
-            .clip(RoundedCornerShape(50))
+            .clip(MaterialTheme.shapes.small)  // radius-sm = 8dp
             .clickable(onClick = onClick),
         color = if (isSelected) MaterialTheme.colorScheme.surface else Color.Transparent,
         shadowElevation = if (isSelected) 1.dp else 0.dp,
-        shape = RoundedCornerShape(50),
+        shape = MaterialTheme.shapes.small,
     ) {
         Box(
-            modifier = Modifier.padding(vertical = 11.dp),
+            modifier = Modifier.padding(vertical = MaterialTheme.spacing.compact),  // 10dp
             contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = text,
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                style = MaterialTheme.typography.bodyMedium,  // b2 = 14sp
+                fontWeight = FontWeight.SemiBold,  // 600 always per mockup
                 color = if (isSelected) MaterialTheme.colorScheme.onSurface
                 else MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -717,16 +738,16 @@ private fun SocialLoginButton(
 ) {
     Box(
         modifier = modifier
-            .height(MaterialTheme.dimens.inputHeight)
-            .clip(MaterialTheme.shapes.medium)
-            .border(1.5.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium)
+            .height(MaterialTheme.dimens.buttonHeight)  // button-height = 52dp
+            .clip(RoundedCornerShape(50))  // radius-full (pill)
+            .border(1.5.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(50))
             .background(MaterialTheme.colorScheme.surface)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),  // 8dp
         ) {
             Text(
                 text = label.first().toString(),
@@ -736,8 +757,8 @@ private fun SocialLoginButton(
             )
             Text(
                 text = label,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.bodyMedium,  // b2 = 14sp
+                fontWeight = FontWeight.SemiBold,  // 600
                 color = MaterialTheme.colorScheme.onSurface,
             )
         }
@@ -750,25 +771,25 @@ private fun TrustBadge(
     icon: ImageVector? = null,
     emoji: String? = null,
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs),
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp),  // space-4
     ) {
         if (emoji != null) {
-            Text(text = emoji, fontSize = 13.sp)
+            Text(text = emoji, fontSize = 16.sp)  // icon-size-xs = 16dp
         } else if (icon != null) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(14.dp),
+                tint = MaterialTheme.colorScheme.outline,  // content-disabled
+                modifier = Modifier.size(16.dp),  // icon-size-xs
             )
         }
         Text(
             text = label,
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelSmall,  // c2 = 10sp
+            fontWeight = FontWeight.Medium,  // 500
+            color = MaterialTheme.colorScheme.outline,  // content-disabled
         )
     }
 }

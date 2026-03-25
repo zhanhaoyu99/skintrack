@@ -5,184 +5,203 @@
 <link rel="stylesheet" href="base.css">
 <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 <style>
-body { display: flex; gap: 32px; padding: 32px; justify-content: center; }
-.phone-frame { flex-shrink: 0; }
+body { display: flex; gap: var(--space-32); padding: var(--space-32); flex-wrap: wrap; justify-content: center; }
 
 /* Photo header */
-.dp { height: 280px; position: relative; overflow: hidden;
-  background: var(--skin-placeholder);
+.dp {
+  height: 280px; position: relative; overflow: hidden; flex-shrink: 0;
+  background: linear-gradient(180deg, #D4B8A8 0%, #C8A898 30%, #B8A088 60%, #A89480 100%);
 }
-.dp .face-ov { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-46%); opacity: 0.07; }
-.dp .face-ov svg { width: 180px; height: 230px; color: #000; fill: none; stroke-width: 0.7; }
-/* Score pill on photo */
-.dp .score-tag { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-  background: rgba(0,0,0,0.35); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  padding: 7px 18px; border-radius: var(--r-full); color: white; font-size: 14px; font-weight: 700;
-  z-index: 3; display: flex; align-items: center; gap: 7px;
-  border: 0.5px solid rgba(255,255,255,0.1);
+.dp .face { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.dp .face svg { width: 180px; height: 230px; opacity: 0.06; }
+.dp .bar {
+  position: absolute; top: 0; left: 0; right: 0; height: var(--top-bar-height);
+  padding: 0 var(--space-8); display: flex; align-items: center; justify-content: space-between; z-index: 5;
 }
-.dp .score-tag svg { width: 14px; height: 14px; }
-/* Top bar */
-.dp .tb { position: absolute; top: 54px; left: 0; right: 0; display: flex; justify-content: space-between; padding: 0 12px; z-index: 10; }
-.dp .tb .b { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  background: rgba(0,0,0,0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  border: 0.5px solid rgba(255,255,255,0.08);
+.dp .bar .btn-icon {
+  width: 40px; height: 40px; border-radius: var(--radius-full);
+  background: rgba(0,0,0,0.2); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
 }
-.dp .tb .b svg { width: 22px; height: 22px; color: white; }
-/* Date tag */
-.dp .date-tag { position: absolute; top: 110px; left: 50%; transform: translateX(-50%);
-  background: rgba(0,0,0,0.2); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  padding: 4px 14px; border-radius: var(--r-full); color: rgba(255,255,255,0.7); font-size: 12px; font-weight: 500;
-  z-index: 3; border: 0.5px solid rgba(255,255,255,0.06);
+.dp .bar .btn-icon svg { width: var(--icon-size-sm); height: var(--icon-size-sm); color: white; }
+.dp .date-tag {
+  position: absolute; bottom: var(--space-12); left: var(--space-16);
+  padding: var(--space-6) var(--space-12); border-radius: var(--radius-sm);
+  background: rgba(0,0,0,0.4); backdrop-filter: blur(12px);
+  font-size: var(--font-c1-size); font-weight: 600; color: rgba(255,255,255,0.9);
+}
+.dp .score-tag {
+  position: absolute; bottom: var(--space-12); right: var(--space-16);
+  padding: var(--space-4) var(--space-12); border-radius: var(--radius-full);
+  background: rgba(255,255,255,0.2); backdrop-filter: blur(8px);
+  font-size: var(--font-c1-size); font-weight: 700; color: white;
 }
 
 /* Score overview card */
-.so { display: flex; align-items: center; gap: 18px; padding: 18px 20px; margin: -36px 16px 14px;
-  background: var(--surface); border-radius: var(--r-xl);
-  box-shadow: var(--shadow-lg); position: relative; z-index: 5;
-  border: 0.5px solid rgba(0,0,0,0.03);
+.so {
+  margin: -40px var(--space-16) var(--space-12); padding: var(--space-20);
+  background: var(--surface-primary); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md); border: var(--card-border-width) solid var(--border-subtle);
+  display: flex; align-items: center; gap: var(--space-16); position: relative; z-index: 5;
 }
-.so .rg { width: 74px; height: 74px; position: relative; flex-shrink: 0; }
-.so .rg svg { transform: rotate(-90deg); width: 100%; height: 100%; }
-.so .rg .v { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 24px; font-weight: 800; color: var(--on-surface); letter-spacing: -0.5px; }
-.so .inf h3 { font-size: 19px; font-weight: 800; color: var(--on-surface); letter-spacing: -0.3px; }
-.so .inf p { font-size: 13px; color: var(--on-surface-variant); margin-top: 2px; }
-.so .inf .tg { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: var(--r-full);
-  font-size: 12px; font-weight: 700; margin-top: 6px; background: #ECFDF5; color: #059669;
+.so .ring { width: 74px; height: 74px; position: relative; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.so .ring .val { position: absolute; font-size: var(--font-num-lg-size); font-weight: var(--font-num-lg-weight); color: var(--content-brand); }
+.so .info h2 { font-size: var(--font-h3-size); font-weight: 700; color: var(--content-primary); margin-bottom: var(--space-4); }
+.so .info .sub { font-size: var(--font-b3-size); color: var(--content-secondary); margin-bottom: var(--space-6); }
+.so .info .pill {
+  display: inline-flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-2) var(--space-10); border-radius: var(--radius-full);
+  font-size: var(--font-c1-size); font-weight: 600;
+  background: var(--surface-success); color: var(--content-success);
 }
-.so .inf .tg svg { width: 12px; height: 12px; }
 
 /* Data card */
-.dc { background: var(--surface); border-radius: var(--r-lg); padding: 16px; margin: 0 16px 12px;
-  box-shadow: var(--shadow-sm); border: 0.5px solid rgba(0,0,0,0.03);
+.dc {
+  margin: 0 var(--space-16) var(--space-12); padding: var(--space-16);
+  background: var(--surface-primary); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm); border: var(--card-border-width) solid var(--border-subtle);
 }
 
-/* Metric row */
-.mt { display: flex; align-items: center; gap: 12px; padding: 10px 0; }
-.mt .nm { width: 52px; font-size: 13px; color: var(--on-surface-variant); font-weight: 600; flex-shrink: 0; }
-.mt .bar { flex: 1; height: 7px; background: var(--surface-variant); border-radius: var(--r-full); overflow: hidden; }
-.mt .bar .fl { height: 100%; border-radius: var(--r-full); box-shadow: 0 0 6px rgba(0,0,0,0.04); }
-.mt .vl { width: 30px; text-align: right; font-size: 15px; font-weight: 800; color: var(--on-surface); }
-.mt .ch { width: 36px; text-align: right; font-size: 11px; font-weight: 700; }
-.mt + .mt { border-top: 0.5px solid var(--outline-variant); }
+/* Radar chart */
+.radar { display: flex; justify-content: center; padding: var(--space-8) 0; }
 
-/* AI Card */
-.ai-c { border-radius: var(--r-lg); padding: 16px; margin: 0 16px 12px;
-  background: linear-gradient(135deg, #F0FAF6 0%, #F5F0FF 100%);
-  border: 1px solid rgba(45,159,127,0.08);
-  position: relative; overflow: hidden;
+/* Metric bar */
+.mt { display: flex; align-items: center; gap: var(--space-10); padding: var(--space-10) 0; }
+.mt + .mt { border-top: var(--card-border-width) solid var(--border-subtle); }
+.mt .name { width: 36px; font-size: var(--font-b3-size); font-weight: 600; color: var(--content-secondary); flex-shrink: 0; }
+.mt .bar { flex: 1; height: 8px; background: var(--surface-tertiary); border-radius: var(--radius-full); overflow: hidden; }
+.mt .bar .fill { height: 100%; border-radius: var(--radius-full); }
+.mt .val { width: 28px; text-align: right; font-size: var(--font-num-sm-size); font-weight: var(--font-num-sm-weight); color: var(--content-primary); }
+.mt .change { width: 36px; text-align: right; font-size: var(--font-c1-size); font-weight: 600; }
+
+/* AI card */
+.ai-c {
+  margin: 0 var(--space-16) var(--space-12); padding: var(--space-16);
+  background: linear-gradient(135deg, var(--primary-50), var(--lavender-50));
+  border-radius: var(--radius-lg); border: var(--card-border-width) solid rgba(42,157,124,0.08);
+  position: relative;
 }
-.ai-c::before { content: ''; position: absolute; top: 0; left: 16px; right: 16px; height: 2px; border-radius: 0 0 2px 2px; background: linear-gradient(90deg, var(--primary), var(--lavender-300), var(--rose-300)); }
-.ai-b { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: var(--r-full);
-  background: var(--primary-container); color: var(--on-primary-container); font-size: 11px; font-weight: 700; margin-bottom: 10px;
+.ai-badge {
+  display: inline-flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-2) var(--space-10); border-radius: var(--radius-full);
+  background: var(--surface-primary); font-size: var(--font-c2-size); font-weight: 600;
+  color: var(--content-brand); margin-bottom: var(--space-12); box-shadow: var(--shadow-xs);
 }
-.ai-b svg { width: 14px; height: 14px; }
-.ai-t { font-size: 14px; color: var(--on-surface); line-height: 1.7; }
-.ai-highlight { background: linear-gradient(135deg, rgba(45,159,127,0.08), rgba(167,139,250,0.06));
-  border-radius: var(--r-sm); padding: 10px 12px; margin-top: 10px; font-size: 13px; color: var(--on-surface); line-height: 1.6;
+.ai-text { font-size: var(--font-b2-size); color: var(--content-primary); line-height: 1.6; }
+.ai-highlight {
+  margin-top: var(--space-12); padding: var(--space-10) var(--space-12);
+  background: rgba(255,255,255,0.6); border-radius: var(--radius-sm);
+  font-size: var(--font-b3-size); color: var(--content-brand); font-weight: 500;
+  border-left: 3px solid var(--interactive-primary);
 }
-.ai-highlight strong { color: var(--primary); font-weight: 700; }
 
 /* Product chips */
-.pc { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: var(--r-full);
-  background: var(--surface-variant); font-size: 13px; color: var(--on-surface); font-weight: 600; margin: 0 6px 8px 0;
-  border: 0.5px solid rgba(0,0,0,0.03);
+.pc {
+  display: inline-flex; align-items: center; gap: var(--space-6);
+  padding: var(--space-6) var(--space-12); border-radius: var(--radius-full);
+  background: var(--surface-secondary); font-size: var(--font-c1-size); font-weight: 500;
+  color: var(--content-primary); border: var(--card-border-width) solid var(--border-subtle);
 }
+.pc svg { width: 14px; height: 14px; }
 </style>
 </head>
 <body>
-<div class="phone-frame">
-  <div class="status-bar light" style="position:absolute;z-index:20;width:100%"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="white" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="white" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="white" stroke-width="1" fill="none" opacity="0.5"/><rect x="2" y="2" width="18" height="9" rx="2" fill="white"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="white" opacity="0.5" stroke="none"/></svg></div></div>
-  <div class="content-no-padding" style="height:100%;overflow-y:auto">
-    <!-- Photo header -->
-    <div class="dp">
-      <div class="face-ov"><svg viewBox="0 0 180 230"><ellipse cx="90" cy="105" rx="68" ry="88"/><ellipse cx="90" cy="90" rx="50" ry="62"/><circle cx="68" cy="78" r="6"/><circle cx="112" cy="78" r="6"/><ellipse cx="90" cy="100" rx="7" ry="4.5"/><path d="M72 118 c7 10 25 10 36 0"/></svg></div>
-      <div class="tb">
-        <div class="b"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7" stroke="white"/></svg></div>
-        <div class="b"><svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13" stroke="white"/></svg></div>
-      </div>
-      <div class="date-tag">2026 年 3 月 14 日 09:23</div>
-      <div class="score-tag"><svg viewBox="0 0 14 14" stroke="white" stroke-width="2"><circle cx="7" cy="7" r="5"/></svg>82 分 · 良好</div>
-    </div>
 
-    <!-- Score overview -->
+<div>
+<div class="phone-label">Record Detail</div>
+<div class="phone-frame" style="flex-direction:column">
+  <!-- Photo Header -->
+  <div class="dp">
+    <div class="status-bar light" style="position:absolute;top:0;left:0;right:0;z-index:10"><span class="time">9:41</span><div class="icons"><svg viewBox="0 0 18 12" width="18"><path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" fill="white" stroke="none"/></svg><svg viewBox="0 0 16 12" width="16"><path d="M8 2.4A8.5 8.5 0 0 0 1.3 5.3l1.1 1.1A6.8 6.8 0 0 1 8 4.1c2.2 0 4.2.8 5.6 2.3l1.1-1.1A8.5 8.5 0 0 0 8 2.4zM8 6.1a5 5 0 0 0-3.5 1.4l1.1 1.1c.6-.5 1.5-.8 2.4-.8s1.8.3 2.4.8l1.1-1.1A5 5 0 0 0 8 6.1zM9.2 10a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z" fill="white" stroke="none"/></svg><svg viewBox="0 0 28 13" width="28"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="white" stroke-width="1" fill="none" opacity="0.35"/><rect x="2" y="2" width="18" height="9" rx="2" fill="white"/><path d="M25 4.5v4a2.2 2.2 0 0 0 0-4z" fill="white" opacity="0.4" stroke="none"/></svg></div></div>
+    <div class="bar" style="top:var(--status-bar-height)">
+      <div class="btn-icon"><svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></div>
+      <div class="btn-icon"><svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div>
+    </div>
+    <div class="face"><svg viewBox="0 0 100 130" fill="none" stroke="white" stroke-width="0.8"><ellipse cx="50" cy="60" rx="35" ry="45"/><circle cx="35" cy="52" r="3"/><circle cx="65" cy="52" r="3"/><path d="M42 75c4 5 12 5 16 0"/></svg></div>
+    <div class="date-tag">2026.03.14 09:15</div>
+    <div class="score-tag">82 分</div>
+  </div>
+
+  <div class="content-no-padding" style="flex:1;overflow-y:auto">
+    <!-- Score Overview -->
     <div class="so">
-      <div class="rg">
-        <svg viewBox="0 0 74 74">
-          <circle cx="37" cy="37" r="31" fill="none" stroke="var(--outline-variant)" stroke-width="5"/>
-          <circle cx="37" cy="37" r="31" fill="none" stroke="url(#scoreGrad)" stroke-width="5" stroke-linecap="round" stroke-dasharray="160" stroke-dashoffset="29"/>
-          <defs><linearGradient id="scoreGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2D9F7F"/><stop offset="40%" stop-color="#4ECDC4"/><stop offset="100%" stop-color="#45B7D1"/></linearGradient></defs>
-        </svg>
-        <div class="v">82</div>
+      <div class="ring">
+        <svg width="74" height="74" viewBox="0 0 74 74"><circle cx="37" cy="37" r="30" fill="none" stroke="var(--surface-tertiary)" stroke-width="5"/><circle cx="37" cy="37" r="30" fill="none" stroke="var(--primary-400)" stroke-width="5" stroke-linecap="round" stroke-dasharray="188" stroke-dashoffset="34" transform="rotate(-90 37 37)"/></svg>
+        <span class="val">82</span>
       </div>
-      <div class="inf">
-        <h3>你的肌肤状态很棒哦</h3>
-        <p>整体评分超过 78% 的用户</p>
-        <div class="tg"><svg viewBox="0 0 12 12" stroke="#059669" stroke-width="2.5" fill="none"><path d="M6 9V3M3.5 5L6 2.5 8.5 5"/></svg>+4 较上次</div>
+      <div class="info">
+        <h2>皮肤状态不错哦</h2>
+        <div class="sub">超过 75% 的同龄用户</div>
+        <div class="pill">&#8593; 较上次 +3</div>
       </div>
     </div>
 
-    <!-- Radar chart -->
+    <!-- Radar Chart -->
     <div class="dc">
-      <div class="section-header"><div class="title">多维评分</div></div>
-      <div style="width:190px;height:190px;margin:0 auto 4px">
-        <svg viewBox="0 0 190 190"><defs><radialGradient id="radarFill" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#4ECDC4"/><stop offset="60%" stop-color="#2D9F7F"/><stop offset="100%" stop-color="#A78BFA"/></radialGradient></defs>
-          <polygon points="95,15 163,40 163,103 95,128 27,103 27,40" fill="none" stroke="var(--outline-variant)" stroke-width="0.5"/>
-          <polygon points="95,35 149,53 149,90 95,108 41,90 41,53" fill="none" stroke="var(--outline-variant)" stroke-width="0.5"/>
-          <polygon points="95,55 135,66 135,77 95,88 55,77 55,66" fill="none" stroke="var(--outline-variant)" stroke-width="0.5"/>
-          <line x1="95" y1="71" x2="95" y2="15" stroke="var(--outline-variant)" stroke-width="0.5"/>
-          <line x1="95" y1="71" x2="163" y2="40" stroke="var(--outline-variant)" stroke-width="0.5"/>
-          <line x1="95" y1="71" x2="163" y2="103" stroke="var(--outline-variant)" stroke-width="0.5"/>
-          <line x1="95" y1="71" x2="95" y2="128" stroke="var(--outline-variant)" stroke-width="0.5"/>
-          <line x1="95" y1="71" x2="27" y2="103" stroke="var(--outline-variant)" stroke-width="0.5"/>
-          <line x1="95" y1="71" x2="27" y2="40" stroke="var(--outline-variant)" stroke-width="0.5"/>
-          <polygon points="95,24 156,45 148,98 95,115 40,92 42,44" fill="url(#radarFill)" fill-opacity="0.12" stroke="var(--primary)" stroke-width="2"/>
-          <circle cx="95" cy="24" r="4" fill="var(--primary)"/>
-          <circle cx="156" cy="45" r="4" fill="var(--primary)"/>
-          <circle cx="148" cy="98" r="4" fill="var(--primary)"/>
-          <circle cx="95" cy="115" r="4" fill="var(--primary)"/>
-          <circle cx="40" cy="92" r="4" fill="var(--primary)"/>
-          <circle cx="42" cy="44" r="4" fill="var(--primary)"/>
-          <text x="95" y="10" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)" font-family="var(--font)" font-weight="600" stroke="none">整体</text>
-          <text x="170" y="42" font-size="11" fill="var(--on-surface-variant)" font-family="var(--font)" font-weight="600" stroke="none">毛孔</text>
-          <text x="170" y="108" font-size="11" fill="var(--on-surface-variant)" font-family="var(--font)" font-weight="600" stroke="none">泛红</text>
-          <text x="95" y="142" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)" font-family="var(--font)" font-weight="600" stroke="none">水润</text>
-          <text x="8" y="108" font-size="11" fill="var(--on-surface-variant)" font-family="var(--font)" font-weight="600" stroke="none">均匀</text>
-          <text x="8" y="42" font-size="11" fill="var(--on-surface-variant)" font-family="var(--font)" font-weight="600" stroke="none">痘痘</text>
+      <div class="section-header"><span class="title">多维分析</span></div>
+      <div class="radar">
+        <svg width="190" height="190" viewBox="0 0 190 190">
+          <!-- 3-layer hexagons -->
+          <polygon points="95,15 160,42 160,108 95,135 30,108 30,42" fill="none" stroke="var(--border-subtle)" stroke-width="0.5"/>
+          <polygon points="95,35 145,55 145,100 95,120 45,100 45,55" fill="none" stroke="var(--border-subtle)" stroke-width="0.5"/>
+          <polygon points="95,55 130,68 130,92 95,105 60,92 60,68" fill="none" stroke="var(--border-subtle)" stroke-width="0.5"/>
+          <!-- Axes -->
+          <line x1="95" y1="15" x2="95" y2="135" stroke="var(--border-subtle)" stroke-width="0.3"/>
+          <line x1="30" y1="42" x2="160" y2="108" stroke="var(--border-subtle)" stroke-width="0.3"/>
+          <line x1="30" y1="108" x2="160" y2="42" stroke="var(--border-subtle)" stroke-width="0.3"/>
+          <!-- Data fill -->
+          <polygon points="95,22 152,48 148,102 95,122 40,96 42,46" fill="var(--primary-400)" fill-opacity="0.08" stroke="var(--primary-400)" stroke-width="2"/>
+          <!-- Vertex dots -->
+          <circle cx="95" cy="22" r="4" fill="var(--primary-400)"/>
+          <circle cx="152" cy="48" r="4" fill="var(--primary-400)"/>
+          <circle cx="148" cy="102" r="4" fill="var(--primary-400)"/>
+          <circle cx="95" cy="122" r="4" fill="var(--primary-400)"/>
+          <circle cx="40" cy="96" r="4" fill="var(--primary-400)"/>
+          <circle cx="42" cy="46" r="4" fill="var(--primary-400)"/>
+          <!-- Labels -->
+          <text x="95" y="8" text-anchor="middle" font-size="10" fill="var(--content-secondary)" font-weight="600" stroke="none" font-family="var(--font-family)">整体</text>
+          <text x="168" y="48" text-anchor="start" font-size="10" fill="var(--content-secondary)" font-weight="600" stroke="none" font-family="var(--font-family)">毛孔</text>
+          <text x="168" y="108" text-anchor="start" font-size="10" fill="var(--content-secondary)" font-weight="600" stroke="none" font-family="var(--font-family)">泛红</text>
+          <text x="95" y="148" text-anchor="middle" font-size="10" fill="var(--content-secondary)" font-weight="600" stroke="none" font-family="var(--font-family)">水润</text>
+          <text x="22" y="108" text-anchor="end" font-size="10" fill="var(--content-secondary)" font-weight="600" stroke="none" font-family="var(--font-family)">均匀</text>
+          <text x="22" y="48" text-anchor="end" font-size="10" fill="var(--content-secondary)" font-weight="600" stroke="none" font-family="var(--font-family)">痘痘</text>
         </svg>
       </div>
     </div>
 
-    <!-- Metric bars -->
+    <!-- Metric Bars -->
     <div class="dc">
-      <div class="section-header"><div class="title">各项指标</div></div>
-      <div class="mt"><div class="nm">痘痘</div><div class="bar"><div class="fl" style="width:85%;background:linear-gradient(90deg,#FF8A8A,var(--acne))"></div></div><div class="vl">85</div><div class="ch" style="color:var(--success)">+5</div></div>
-      <div class="mt"><div class="nm">毛孔</div><div class="bar"><div class="fl" style="width:78%;background:linear-gradient(90deg,#7EDCD4,var(--pore))"></div></div><div class="vl">78</div><div class="ch" style="color:var(--success)">+3</div></div>
-      <div class="mt"><div class="nm">均匀度</div><div class="bar"><div class="fl" style="width:82%;background:linear-gradient(90deg,#FFEE8D,var(--evenness))"></div></div><div class="vl">82</div><div class="ch" style="color:var(--success)">+6</div></div>
-      <div class="mt"><div class="nm">泛红</div><div class="bar"><div class="fl" style="width:75%;background:linear-gradient(90deg,#F5A1A1,var(--redness))"></div></div><div class="vl">75</div><div class="ch" style="color:var(--on-surface-variant)">+1</div></div>
-      <div class="mt"><div class="nm">水润</div><div class="bar"><div class="fl" style="width:80%;background:linear-gradient(90deg,#75C7E1,var(--hydration))"></div></div><div class="vl">80</div><div class="ch" style="color:var(--success)">+4</div></div>
+      <div class="section-header"><span class="title">指标详情</span></div>
+      <div class="mt"><span class="name">痘痘</span><div class="bar"><div class="fill" style="width:85%;background:linear-gradient(90deg,rgba(242,122,142,0.3),var(--metric-acne))"></div></div><span class="val">85</span><span class="change" style="color:var(--content-success)">+3</span></div>
+      <div class="mt"><span class="name">毛孔</span><div class="bar"><div class="fill" style="width:78%;background:linear-gradient(90deg,rgba(78,205,196,0.3),var(--metric-pore))"></div></div><span class="val">78</span><span class="change" style="color:var(--content-success)">+5</span></div>
+      <div class="mt"><span class="name">均匀</span><div class="bar"><div class="fill" style="width:82%;background:linear-gradient(90deg,rgba(245,197,66,0.3),var(--metric-evenness))"></div></div><span class="val">82</span><span class="change" style="color:var(--content-success)">+2</span></div>
+      <div class="mt"><span class="name">泛红</span><div class="bar"><div class="fill" style="width:75%;background:linear-gradient(90deg,rgba(232,120,120,0.3),var(--metric-redness))"></div></div><span class="val">75</span><span class="change" style="color:var(--content-tertiary)">0</span></div>
+      <div class="mt"><span class="name">水润</span><div class="bar"><div class="fill" style="width:80%;background:linear-gradient(90deg,rgba(69,183,209,0.3),var(--metric-hydration))"></div></div><span class="val">80</span><span class="change" style="color:var(--content-success)">+4</span></div>
     </div>
 
     <!-- AI Analysis -->
     <div class="ai-c">
-      <div class="section-header"><div class="title">AI 分析</div></div>
-      <div class="ai-b"><svg viewBox="0 0 14 14" style="color:var(--primary)"><circle cx="7" cy="7" r="6"/><path d="M5 7.5l1.5 1.5L9 6"/></svg> AI 智能生成</div>
-      <div class="ai-t">整体状态很不错呢~ 痘痘较上次减少了约 30%，主要集中在下巴区域。肤色均匀度提升明显，说明当前的护肤方案很适合你，继续坚持!</div>
-      <div class="ai-highlight">
-        <strong>贴心建议:</strong> T 区毛孔稍需关注，可以试试含水杨酸的收敛精华，每周 2-3 次局部使用。
+      <div class="ai-badge">
+        <svg viewBox="0 0 12 12" width="10" height="10" fill="var(--primary-400)" stroke="none"><circle cx="6" cy="6" r="5"/><path d="M4 6l1.5 1.5L8.5 4.5" stroke="white" stroke-width="1.5" fill="none"/></svg>
+        AI 智能生成
       </div>
+      <div class="ai-text">你的肌肤整体状态良好，水润度和痘痘指标有明显改善。毛孔方面也有收紧趋势，建议继续保持当前的护肤方案。</div>
+      <div class="ai-highlight">建议：可以适当增加含烟酰胺成分的精华，帮助进一步改善毛孔和均匀度~</div>
     </div>
 
-    <!-- Products used -->
-    <div class="dc" style="margin-bottom:24px">
-      <div class="section-header"><div class="title">当日使用产品</div><div class="action">编辑</div></div>
-      <div>
-        <span class="pc"><svg viewBox="0 0 16 16" width="14" height="14" style="color:var(--info)"><rect x="5" y="3" width="6" height="10" rx="2"/></svg>CeraVe 洁面乳</span>
-        <span class="pc"><svg viewBox="0 0 16 16" width="14" height="14" style="color:#9C27B0"><circle cx="8" cy="6" r="3"/><path d="M8 9v4"/></svg>薇诺娜 精华液</span>
-        <span class="pc"><svg viewBox="0 0 16 16" width="14" height="14" style="color:var(--apricot-400)"><circle cx="8" cy="8" r="5"/></svg>安耐晒 防晒霜</span>
-        <span class="pc"><svg viewBox="0 0 16 16" width="14" height="14" style="color:var(--success)"><rect x="4" y="4" width="8" height="8" rx="3"/></svg>珂润 面霜</span>
+    <!-- Products Used -->
+    <div class="dc" style="margin-bottom:var(--space-32)">
+      <div class="section-header"><span class="title">使用产品</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:var(--space-8)">
+        <div class="pc"><svg viewBox="0 0 14 14" style="color:var(--lavender-400)"><rect x="3" y="2" width="8" height="10" rx="2"/><line x1="7" y1="5" x2="7" y2="9"/></svg>烟酰胺精华</div>
+        <div class="pc"><svg viewBox="0 0 14 14" style="color:var(--primary-400)"><rect x="3" y="3" width="8" height="8" rx="3"/></svg>水乳面霜</div>
+        <div class="pc"><svg viewBox="0 0 14 14" style="color:var(--secondary-400)"><circle cx="7" cy="7" r="4"/><path d="M7 3v1M7 10v1M3 7h1M10 7h1"/></svg>防晒霜 SPF50</div>
+        <div class="pc"><svg viewBox="0 0 14 14" style="color:var(--info-400)"><rect x="4" y="2" width="6" height="10" rx="1.5"/></svg>氨基酸洁面</div>
       </div>
     </div>
   </div>
 </div>
-</body></html>
+</div>
+
+</body>
+</html>

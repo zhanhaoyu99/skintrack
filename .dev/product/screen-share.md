@@ -1,111 +1,234 @@
-# 分享对比卡片页 ShareCardScreen
+# Share — 分享对比卡片，将前后对比成果生成精美卡片图片分享到社交平台
 
 > 设计稿: `.figma-mockups/12-share.html` (1 屏)
+> 暗色参考: `.figma-mockups/16-dark-utility.html`
 
-## 入口
-- TimelineScreen CompareCard "分享" 按钮
-- RecordDetailScreen TopBar 分享按钮
+## 页面入口
+
+- TimelineScreen 对比卡片 "分享" 按钮
+- RecordDetailScreen TopBar 分享图标
 - DashboardScreen "分享对比" 快捷入口
 
-## 页面结构
+## 页面状态
+
+| 状态 | 条件 | 表现 |
+|------|------|------|
+| 正常 | 有 2 条含照片的记录 | 完整卡片预览 + 模板选择器 + 分享按钮 |
+| 加载中 | 照片/数据加载中 | LoadingContent 占位 |
+| 保存中 | 点击"保存图片"后 | 按钮 loading 态，Toast "已保存到相册" |
+| 分享中 | 点击"分享"后 | 系统 ShareSheet 弹出 |
+| 门控 | 免费用户 | 卡片预览可见，底部覆盖 LockedFeatureCard |
+
+## 布局结构
 
 ```
 ┌─────────────────────────┐
-│ ← 分享对比卡片           │ ← TopAppBar
+│ <- 分享对比卡片           │  TopAppBar (back + title)
 ├─────────────────────────┤
-│                         │
-│  ┌──────────────────┐   │ ← 分享卡片预览 (居中悬浮)
-│  │ 🍃 SkinTrack      │   │ ← 品牌头 (渐变 hero 背景)
-│  │                  │   │
-│  │ [72分   ] [82分  ]│   │ ← 前后对比照片
-│  │  3月1日  VS 3月14日│   │
-│  │                  │   │
-│  │   ↑ +10 分        │   │ ← 评分变化 (大号 success)
-│  │  14 天变美日记~    │   │ ← 描述文案
-│  │  📅 2026.3.1-3.14 │   │ ← 时间段
-│  │                  │   │
-│  │ 使用SkinTrack  [QR]│   │ ← 底部: 水印 + 二维码
-│  │ 追踪肌肤变化       │   │
+│         (居中)           │
+│  ┌──────────────────┐   │  Card Preview (314dp, radius-extraLarge, shadow-lg)
+│  │ [icon] SkinTrack  │   │    Header (gradients.hero bg, padding lg)
+│  │  Lisa 的蜕变       │   │    user subtitle (c2, rgba white 0.7)
+│  ├──────────────────┤   │
+│  │ [70分  ] [82分   ]│   │    Photos Section (row, 2x flex-1, 200dp height)
+│  │  2月14日 VS 3月14日│   │    VS badge (34dp circle, centered)
+│  ├──────────────────┤   │
+│  │     +10 分        │   │    Result Section (surface-primary bg)
+│  │  ↑ 皮肤在变好哦    │   │    trend pill (surface-success bg)
+│  │    30 天对比       │   │    period label
+│  ├──────────────────┤   │
+│  │ SkinTrack·记录你的美 [QR]│  Footer (surface-secondary bg)
 │  └──────────────────┘   │
 │                         │
-│ [模板1] [模板2] [模板3]  │ ← 模板选择器 (3 种样式)
+│ [模板1*] [模板2] [模板3] │  Template Selector (row of 3, gap md)
 │                         │
-│ [微信] [微博] [小红书] [更多]│ ← 分享目标
+│ [微信][微博][小红书][更多]│  Share Targets (row of 4, gap xl)
 │                         │
-│ [保存图片]  [分享]       │ ← 双按钮
+│ [ 保存图片 ]  [ 分享 ]   │  Action Buttons (row, gap md)
 └─────────────────────────┘
 ```
 
 ## 组件详细规格
 
-### 1. 分享卡片
-- **尺寸**: 314dp 宽，居中
-- **阴影**: shadow-lg (24px blur)
-- **圆角**: xl
+### 1. TopAppBar
 
-#### 品牌头
-- hero 渐变背景 (primary 色系)
-- Logo 图标 (32dp 圆角方形 9dp radius，半透明白背景) + "SkinTrack" 文字 (17sp Bold)
-- 装饰圆 (半透明白)
+- 导航图标: 返回箭头
+- 标题: "分享对比卡片"
 
-#### 照片区域
-- 两张照片并排，200dp 高
-- 底部渐变遮罩 (transparent → black 50%)
-- 左下: 分数标签 (16sp Bold 白色)
-- 右下: 日期 (11sp 白色 70%)
-- 中间: VS 圆形徽章 (34dp，白底 + shadow-md)
+### 2. Card Preview
 
-#### 评分变化
-- 分数差: 44sp Bold success 色 (如 "+10 分") + 箭头图标
-- 描述: "14 天变美日记~" (15sp)
-- 时间段: pill 标签 📅 + 日期范围 (12sp)
+- **宽度**: 314dp，水平居中
+- **圆角**: radius-extraLarge (24dp)
+- **阴影**: shadow-lg
+- **边框**: card-border-width, border-subtle
 
-#### 底部水印
-- 左侧: "使用 SkinTrack / 追踪肌肤变化" (11sp)
-- 右侧: QR 码占位 (38dp 方形)
+#### 2a. Header
 
-### 2. 模板选择器（新增）
-- 3 个模板缩略图并排 (48dp 方形, md 圆角, 10dp 间距)
-- 选中态: 2px primary 边框 + mint-50 背景
-- 未选中态: 1.5px outlineVariant 边框 + surface 背景
-- 缩略图内容:
-  - 模板 1 (默认): 上下分割线 → 对比布局
-  - 模板 2: 中央圆形 → 单照片+分数
-  - 模板 3: 十字分割 → 多照片网格
-- **V1**: 仅模板 1 可用，模板 2/3 显示 onSurfaceVariant 图标，点击无响应
+- **背景**: gradients.hero
+- **Padding**: md (12dp) 垂直, lg (16dp) 水平
+- **布局**: Row, gap sm (8dp), verticalAlignment center
+- **App Icon**: 24dp 方形, radius-extraSmall (4dp), rgba(255,255,255,0.2) 背景, 内含 14dp 白色 SVG 图标
+- **Brand Text**: "SkinTrack", c1 (12sp), weight 700, content-inverse (白色), flex 1
+- **User Subtitle**: "{userName} 的蜕变", c2 (10sp), rgba(255,255,255,0.7)
 
-### 3. 分享目标
-- 4 个圆形图标并排
-- 每个: 48dp 圆形背景 + SVG 图标 + 下方标签
+#### 2b. Photos Section
 
-| 目标 | 图标色 | 背景 |
-|------|-------|------|
-| 微信 | #4CAF50 | #E8F5E9 |
-| 微博 | #FF6D00 | #FFF3E0 |
-| 小红书 | #1976D2 | #E3F2FD |
-| 更多 | onSurfaceVariant | surfaceVariant |
+- **布局**: Row, 无间距, 高度 200dp
+- **每张照片** (flex 1):
+  - 照片填充 (ContentScale.Crop)
+  - 占位背景: gradients.skin（左侧偏亮色调 #D4B8A8→#B8A090，右侧偏深色调 #E8CFC0→#D8BCA8）
+  - 底部渐变遮罩: transparent → rgba(0,0,0,0.6)
+  - **Score overlay**: num-md (18sp), weight 800, content-inverse, 左下
+  - **Date**: c2 (10sp), rgba(255,255,255,0.7), score 下方 marginTop 1dp
+- **VS Badge**:
+  - 34dp 圆形, surface-primary 背景, shadow-md
+  - 绝对定位: 垂直水平居中 (照片区域中心)
+  - "VS" 文字: c1 (12sp), weight 800, content-brand (primary-500)
+  - z-index 高于照片
 
-### 5. QR 码
-- **尺寸**: 40dp 方形, 8dp 圆角背景 (surfaceVariant)
-- **指向**: App 下载页 URL (如 `https://skintrack.app/download`)
-- **V1**: 静态占位图标 (QR 码方块图标)，上线前替换为真实 QR
-- **不含邀请码** (V1 无邀请机制)
+#### 2c. Result Section
 
-### 6. 分享实现
-- **V1 实现**: 调用系统 `ShareSheet`，分享截图图片
-  - "保存图片": 将卡片区域截图 → 保存到相册 (需 expect/actual 存储权限)
-  - "分享": 将截图传入系统分享 Intent
-- **V2 计划**: 接入微信/微博/小红书 SDK 直接分享 (需第三方 SDK)
+- **背景**: surface-primary
+- **Padding**: lg (16dp)
+- **对齐**: center
+- **Delta**: 44sp, weight 800, content-success, letter-spacing -1.5dp
+  - 格式: "+{delta} 分"（正值加号）/ "-{delta} 分"（负值）
+  - 负值时颜色切换为 content-error
+- **Trend Pill**:
+  - marginTop sm (8dp)
+  - inline-flex, padding xs (4dp) 垂直 / md (12dp) 水平
+  - radius-full
+  - 背景: surface-success, 文字: content-success, c1 (12sp), weight 600
+  - 内容: "↑ 皮肤在变好哦"（正值）/ "↓ 需要关注一下"（负值）/ "→ 状态保持稳定"（零值）
+  - 负值: surface-error bg + content-error text; 零值: surface-secondary bg + content-tertiary text
+- **Period**: c1 (12sp), content-tertiary, marginTop sm (8dp)
+  - 格式: "{N} 天对比"
 
-### 4. 底部按钮
-- "保存图片" (outlined) + "分享" (primary)
-- 保存图片: 截图当前卡片 → 保存到相册
-- 分享: 调用系统分享 Sheet
+#### 2d. Footer
+
+- **背景**: surface-secondary
+- **Padding**: sm (8dp) 垂直 / lg (16dp) 水平 (实际 10dp 垂直按 HTML)
+- **边框顶部**: card-border-width, border-subtle
+- **布局**: Row, spaceBetween, verticalAlignment center
+- **Watermark**: "SkinTrack · 记录你的美", c2 (10sp), content-disabled
+- **QR Placeholder**: 32dp 方形, radius-extraSmall (4dp), surface-tertiary 背景, 内含 18dp QR 图标 (content-tertiary)
+  - V1: 静态占位图标; 上线前替换为真实 QR 指向 App 下载页
+
+### 3. Template Selector
+
+- **布局**: Row, gap md (12dp), 水平居中
+- **Margin**: bottom xl (20dp)
+- **每个模板**: 56dp 方形, radius-medium (12dp)
+- **选中态**: interactive-primary 边框 (2dp), surface-brand-subtle 背景, primary-500 图标色
+- **未选中态**: border-default 边框 (2dp), 透明背景, content-disabled 图标色
+- **图标内容**:
+  - 模板 1 (默认/active): 垂直分割线 — 对比布局
+  - 模板 2: 中央圆形 — 单照片+分数 (V1 占位)
+  - 模板 3: 趋势折线 — 趋势卡片 (V1 占位)
+- **V1 行为**: 仅模板 1 可用并默认选中; 模板 2/3 显示 content-disabled 图标，点击无响应（不切换选中态）
+
+### 4. Share Targets
+
+- **布局**: Row, gap xl (20dp), 水平居中
+- **Margin**: bottom xl (20dp)
+- **每个目标**: Column, center, gap 6dp
+- **Icon Circle**: 48dp, radius-full
+- **Label**: c2 (10sp), content-secondary, weight 500
+
+| 目标 | 图标背景 | 图标 | 标签 |
+|------|----------|------|------|
+| 微信 | #07C160 | 微信 SVG (白色) | "微信" |
+| 微博 | #E6162D | 微博 SVG (白色) | "微博" |
+| 小红书 | #FE2C55 | 小红书 SVG (白色) | "小红书" |
+| 更多 | surface-tertiary | 三点 SVG (content-secondary) | "更多" |
+
+- **V1 行为**: 所有 4 个目标点击统一调用系统 ShareSheet（传入卡片截图图片），不直接对接第三方 SDK
+- **V2 计划**: 接入微信/微博/小红书 SDK 实现直接分享
+
+### 5. Action Buttons
+
+- **布局**: Row, gap md (12dp), 水平填满, padding lg (16dp) 水平
+- **"保存图片"**: OutlinedButton, flex 1
+  - 点击: 将卡片区域截图保存到系统相册 (需存储权限, expect/actual)
+  - 成功 Toast: "已保存到相册"
+  - 失败 Toast: "保存失败，请检查存储权限"
+- **"分享"**: PrimaryButton (filled), flex 1
+  - 点击: 将卡片截图传入系统 ShareSheet (Android: Intent.ACTION_SEND; iOS: UIActivityViewController)
+
+## 交互行为
+
+1. **进入页面**: 接收 beforeRecordId + afterRecordId 参数，加载两条记录的照片和分数，渲染卡片预览
+2. **模板切换** (V1 仅模板 1 可用): 切换时卡片预览内容重新渲染，带 crossfade 动画 (Motion.SHORT)
+3. **保存图片**: 使用 GraphicsLayer 或 ComposeView 截图 → 请求存储权限 → 保存到 MediaStore (Android) / Photos (iOS)
+4. **分享**: 截图同上 → 缓存到临时文件 → 调用平台 ShareManager.share(imageFile)
+5. **返回**: 左上角返回箭头 → navigateUp
+
+## 数据依赖
+
+| 数据 | 来源 | 说明 |
+|------|------|------|
+| beforeRecord | Room (SkinRecord) | 前照片 + 分数 + 日期 |
+| afterRecord | Room (SkinRecord) | 后照片 + 分数 + 日期 |
+| userName | Supabase Auth profile | 显示在 header subtitle |
+| scoreDelta | 计算值 | afterScore - beforeScore |
+| daysDelta | 计算值 | afterDate - beforeDate (天数) |
+| isPro | SubscriptionRepository | 控制门控覆盖 |
+
+### 导航参数
+
+```
+ShareCardScreen(
+    beforeRecordId: String,
+    afterRecordId: String
+)
+```
+
+## 与其他页面的关系
+
+| 页面 | 关系 |
+|------|------|
+| TimelineScreen | 对比卡片"分享"按钮 → 传入 before/after recordId |
+| RecordDetailScreen | TopBar 分享按钮 → 传入当前 record + 最近一条 record |
+| DashboardScreen | "分享对比"快捷入口 → 传入最新两条 record |
+| PaywallScreen | 免费用户点击门控按钮 → navigateTo(Paywall) |
 
 ## 门控规格
-- 免费用户: 显示卡片预览但底部有"Pro 会员专享功能"锁定覆盖
-- 解锁按钮: "⭐ 升级 Pro 解锁分享" → PaywallScreen
-- 试用提示: "14 天免费试用，随时取消"
 
-## 实现状态
-✅ **已对齐** (M2.9 Phase 6) — 品牌头 + VS 徽章 + 模板选择器 + 分享目标 (微信/微博/小红书/更多) + 保存图片 + 分享按钮
+- **免费用户**: 卡片预览完整可见（激发分享欲），但底部覆盖 LockedFeatureCard
+  - 标题: "Pro 会员专享功能"
+  - 描述: "解锁分享精美对比卡片"
+  - 按钮: "升级 Pro 解锁分享" → PaywallScreen
+  - 试用提示: "14 天免费试用，随时取消"
+- **Pro 用户**: 完整功能，无锁定覆盖
+
+## 暗色模式
+
+- **页面背景**: dark surface (跟随系统 dark theme)
+- **TopAppBar**: dark 主题色
+- **Card Preview 本身保持亮色主题**（白色 surface sections），确保分享出去的卡片始终可读
+  - Header: gradients.hero (不变)
+  - Photos: 照片渐变占位使用偏暗肤色色调
+  - Result Section: 保持 surface-primary (白色)
+  - Footer: 保持 surface-secondary (浅灰)
+- **模板选择器**: 跟随 dark theme（dark surface bg, dark border）
+- **分享目标**: 图标背景色不变（品牌色），标签色跟随 dark content-secondary
+- **按钮**: 跟随 dark theme
+
+> 关键原则: 卡片是要分享出去的图片，必须保持亮色以确保在任何平台上可读。仅卡片外围区域跟随暗色主题。
+
+## 与当前实现的差异
+
+| 项目 | 设计稿规格 | 实现状态 |
+|------|-----------|---------|
+| Card 宽度 314dp | 314dp, radius-extraLarge, shadow-lg | 已对齐 |
+| Header gradients.hero | hero 渐变 + logo + brand + user | 已对齐 |
+| Photos 200dp + VS 34dp badge | 双照片 + 底部遮罩 + VS 圆形 | 已对齐 |
+| Result delta 44sp | 大号 delta + trend pill + period | 已对齐 |
+| Footer watermark + QR 32dp | 水印文案 + QR 占位 | 已对齐 |
+| Template Selector 56dp | 3 模板, active/inactive 态 | 已对齐 |
+| Share Targets (微信/微博/小红书/更多) | 4 圆形 icon + label | 已对齐 (V1 均走系统 ShareSheet) |
+| Action Buttons (outlined + primary) | 保存图片 + 分享 | 已对齐 |
+| 门控覆盖 | LockedFeatureCard | 已实现 |
+| Dark mode 卡片保持亮色 | 外围 dark, 卡片 light | 待验证 |
+| 模板 2/3 可用 | V2 计划 | V1 占位 |
+| 社交平台直接分享 | V2 SDK 接入 | V1 系统 ShareSheet |

@@ -1,12 +1,9 @@
 package com.skintrack.app.ui.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarData
@@ -14,13 +11,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.skintrack.app.ui.theme.ErrorLight
-import com.skintrack.app.ui.theme.InfoLight
-import com.skintrack.app.ui.theme.SuccessLight
-import com.skintrack.app.ui.theme.WarningLight
+import androidx.compose.ui.unit.sp
+import com.skintrack.app.ui.theme.Error500
+import com.skintrack.app.ui.theme.Info500
+import com.skintrack.app.ui.theme.Success500
+import com.skintrack.app.ui.theme.Success600
+import com.skintrack.app.ui.theme.Warning500
 import com.skintrack.app.ui.theme.spacing
 
 enum class SnackbarType {
@@ -34,12 +33,29 @@ enum class SnackbarType {
             INFO -> "\u2139"
         }
 
+    /** Accent color for icon circles in non-toast contexts */
     val color: Color
         get() = when (this) {
-            SUCCESS -> SuccessLight
-            ERROR -> ErrorLight
-            WARNING -> WarningLight
-            INFO -> InfoLight
+            SUCCESS -> Success500
+            ERROR -> Error500
+            WARNING -> Warning500
+            INFO -> Info500
+        }
+
+    /** Full-bleed container background matching HTML toast spec */
+    val containerColor: Color
+        get() = when (this) {
+            SUCCESS -> Success600    // --success-600
+            ERROR -> Error500        // --error-500
+            WARNING -> Warning500    // --warning-500
+            INFO -> Info500          // --info-500
+        }
+
+    /** Content/text color on the colored container */
+    val onContainerColor: Color
+        get() = when (this) {
+            WARNING -> Color(0xFF1A1A1A)  // dark text on yellow
+            else -> Color.White           // white text on dark bg
         }
 }
 
@@ -68,32 +84,29 @@ fun AppSnackbar(
     Snackbar(
         modifier = modifier.padding(horizontal = spacing.md, vertical = spacing.sm),
         shape = MaterialTheme.shapes.medium,
-        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-        contentColor = MaterialTheme.colorScheme.onSurface,
+        containerColor = type.containerColor,
+        contentColor = type.onContainerColor,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+            horizontalArrangement = Arrangement.spacedBy(spacing.listGap),
+            modifier = Modifier,
         ) {
-            // Icon circle
-            Box(
-                modifier = Modifier
-                    .size(28.dp)
-                    .clip(CircleShape)
-                    .background(type.color.copy(alpha = 0.15f)),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = type.icon,
-                    color = type.color,
-                    style = MaterialTheme.typography.labelMedium,
-                )
-            }
+            // Icon: 20dp matching --icon-size-sm
+            Text(
+                text = type.icon,
+                color = type.onContainerColor,
+                fontSize = 20.sp,
+                modifier = Modifier.size(20.dp),
+            )
 
+            // Message text: b2 = 14sp / weight 500
             Text(
                 text = snackbarData.visuals.message,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = type.onContainerColor,
+                modifier = Modifier.weight(1f),
             )
         }
     }

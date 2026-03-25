@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -52,13 +53,13 @@ fun LockedFeatureCard(
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = Color(0xFFD97706).copy(alpha = 0.1f),
-                shape = MaterialTheme.shapes.extraLarge,
+                color = Color(0xFFD97706).copy(alpha = 0.12f),
+                shape = MaterialTheme.shapes.large,
             ),
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent,
         ),
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = MaterialTheme.shapes.large,
     ) {
         Column(
             modifier = Modifier
@@ -72,9 +73,8 @@ fun LockedFeatureCard(
                         ),
                     ),
                 )
-                .padding(horizontal = 20.dp, vertical = MaterialTheme.spacing.lg),
+                .padding(MaterialTheme.spacing.cardInner),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
         ) {
             // Crown icon: 56dp circle with golden gradient background
             Box(
@@ -98,20 +98,23 @@ fun LockedFeatureCard(
                 )
             }
 
-            // Title (large bold text)
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.listGap))
+
+            // Title: h4 = 16sp/600/-0.1
             if (title != null) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 19.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onSurface,
-                    letterSpacing = (-0.3).sp,
+                    letterSpacing = (-0.1).sp,
                 )
             }
 
-            // Subtitle description (design shows only title + subtitle, not message)
-            // When title is present, subtitle replaces message as the description line
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
+
+            // Subtitle description: b3 = 13sp/400
             if (subtitle != null) {
                 Text(
                     text = subtitle,
@@ -120,7 +123,6 @@ fun LockedFeatureCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             } else {
-                // Fallback: show message when no subtitle is provided
                 Text(
                     text = message,
                     style = MaterialTheme.typography.bodySmall,
@@ -129,11 +131,13 @@ fun LockedFeatureCard(
                 )
             }
 
-            // Tag pills with white background and shadow
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.listGap))
+
+            // Tag pills: c2 = 10sp/600, gap=6dp, warm tint bg
             if (tags.isNotEmpty()) {
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(
-                        MaterialTheme.spacing.sm,
+                        MaterialTheme.spacing.iconGap,
                         Alignment.CenterHorizontally,
                     ),
                     verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs),
@@ -142,35 +146,31 @@ fun LockedFeatureCard(
                     tags.forEach { tag ->
                         Text(
                             text = tag,
-                            style = MaterialTheme.typography.labelSmall,
+                            fontSize = 10.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            color = Color(0xFFE07B3C),
                             modifier = Modifier
-                                .shadow(
-                                    elevation = 2.dp,
-                                    shape = FullRoundedShape,
-                                    ambientColor = Color.Black.copy(alpha = 0.06f),
-                                    spotColor = Color.Black.copy(alpha = 0.06f),
-                                )
                                 .background(
-                                    color = Color.White,
+                                    color = Color(0xFFF4A261).copy(alpha = 0.08f),
                                     shape = FullRoundedShape,
                                 )
                                 .padding(
-                                    horizontal = MaterialTheme.spacing.md,
-                                    vertical = MaterialTheme.spacing.xs + 2.dp,
+                                    horizontal = MaterialTheme.spacing.compact,
+                                    vertical = MaterialTheme.spacing.xs,
                                 ),
                         )
                     }
                 }
             }
 
-            // Gold/Amber gradient upgrade button (pill shape)
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
+
+            // Gold/Amber gradient upgrade button: btn-sm = 40dp/14sp/600
             val buttonShape = FullRoundedShape
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(MaterialTheme.dimens.buttonHeight)
+                    .height(MaterialTheme.dimens.buttonHeightSm)
                     .shadow(
                         elevation = 16.dp,
                         shape = buttonShape,
@@ -190,17 +190,18 @@ fun LockedFeatureCard(
                 Text(
                     text = "\u2B50 升级 Pro 解锁",
                     color = Color.White,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
                 )
             }
 
-            // Trial hint: green pill
+            // Trial hint: c2 = 10sp/600, green pill
             if (showTrialHint) {
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.compact))
                 Text(
                     text = "\u24D8 新用户享 14 天免费试用",
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF059669),
                     modifier = Modifier
                         .background(
@@ -208,8 +209,8 @@ fun LockedFeatureCard(
                             shape = FullRoundedShape,
                         )
                         .padding(
-                            horizontal = MaterialTheme.spacing.md,
-                            vertical = MaterialTheme.spacing.xs + 1.dp,
+                            horizontal = MaterialTheme.spacing.compact,
+                            vertical = MaterialTheme.spacing.xxs,
                         ),
                 )
             }

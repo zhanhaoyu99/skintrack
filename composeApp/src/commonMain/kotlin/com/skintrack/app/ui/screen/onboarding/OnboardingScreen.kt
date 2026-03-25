@@ -57,24 +57,24 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.skintrack.app.ui.component.animateListItem
 import com.skintrack.app.ui.screen.auth.AuthScreen
-import com.skintrack.app.ui.theme.Apricot50
-import com.skintrack.app.ui.theme.Apricot300
+import com.skintrack.app.ui.theme.Secondary50
+import com.skintrack.app.ui.theme.Secondary300
 import com.skintrack.app.ui.theme.Lavender50
 import com.skintrack.app.ui.theme.Lavender100
 import com.skintrack.app.ui.theme.Lavender300
 import com.skintrack.app.ui.theme.Lavender400
-import com.skintrack.app.ui.theme.Mint300
-import com.skintrack.app.ui.theme.Mint400
-import com.skintrack.app.ui.theme.Mint50
-import com.skintrack.app.ui.theme.Mint600
+import com.skintrack.app.ui.theme.Primary300
+import com.skintrack.app.ui.theme.Primary400
+import com.skintrack.app.ui.theme.Primary50
+import com.skintrack.app.ui.theme.Primary600
 import com.skintrack.app.ui.theme.Motion
 import com.skintrack.app.ui.theme.Rose50
 import com.skintrack.app.ui.theme.Rose100
 import com.skintrack.app.ui.theme.Rose300
 import com.skintrack.app.ui.theme.Rose400
-import com.skintrack.app.ui.theme.SkinHydrationLight
-import com.skintrack.app.ui.theme.SkinPoreLight
-import com.skintrack.app.ui.theme.SkinRednessLight
+import com.skintrack.app.ui.theme.MetricHydrationLight
+import com.skintrack.app.ui.theme.MetricPoreLight
+import com.skintrack.app.ui.theme.MetricRednessLight
 import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.gradients
 import com.skintrack.app.ui.theme.spacing
@@ -99,20 +99,20 @@ private fun carouselPages(): List<OnboardingPage> {
             icon = Icons.Default.Face,
             title = "记录你的\n肌肤变化",
             subtitle = "每天一张自拍，AI 帮你追踪痘痘、毛孔、肤色等指标，见证皮肤一天天变好",
-            bgGradientColors = if (isDark) listOf(Mint300.copy(alpha = 0.15f), Mint400.copy(alpha = 0.1f))
-            else listOf(Color(0xFFB8E8D9), Color(0xFFD1F0E4), Mint50, Rose50),
-            glowColor = Mint400,
+            bgGradientColors = if (isDark) listOf(Primary300.copy(alpha = 0.15f), Primary400.copy(alpha = 0.1f))
+            else listOf(Color(0xFFB8E8D9), Color(0xFFD1F0E4), Primary50, Rose50),
+            glowColor = Primary400,
             accentColor = Rose300,
-            iconTint = if (isDark) Mint300 else Mint600,
+            iconTint = if (isDark) Primary300 else Primary600,
         ),
         OnboardingPage(
             icon = Icons.Default.Favorite,
             title = "管理你的\n护肤方案",
             subtitle = "记录每天用了哪些护肤品，让数据告诉你什么组合最适合你的肌肤",
             bgGradientColors = if (isDark) listOf(Rose300.copy(alpha = 0.15f), Rose400.copy(alpha = 0.1f))
-            else listOf(Rose100, Rose50, Lavender50, Apricot50),
+            else listOf(Rose100, Rose50, Lavender50, Secondary50),
             glowColor = Rose300,
-            accentColor = Mint300,
+            accentColor = Primary300,
             iconTint = if (isDark) Rose300 else Rose400,
         ),
         OnboardingPage(
@@ -120,7 +120,7 @@ private fun carouselPages(): List<OnboardingPage> {
             title = "AI 帮你找到\n最佳护肤方案",
             subtitle = "哪个精华让你皮肤变好了？AI 为你分析每个产品的真实效果，科学护肤不踩坑",
             bgGradientColors = if (isDark) listOf(Lavender300.copy(alpha = 0.15f), Lavender400.copy(alpha = 0.1f))
-            else listOf(Lavender100, Lavender50, Mint50, Rose50),
+            else listOf(Lavender100, Lavender50, Primary50, Rose50),
             glowColor = Lavender300,
             accentColor = Rose300,
             iconTint = if (isDark) Lavender300 else Lavender400,
@@ -136,10 +136,10 @@ data class SkinTypeOption(
 )
 
 private val skinTypeOptions = listOf(
-    SkinTypeOption("oily", "油性肌肤", "T区容易出油，毛孔偏大", Apricot300),
-    SkinTypeOption("dry", "干性肌肤", "容易干燥紧绷，需要保湿", SkinHydrationLight),
-    SkinTypeOption("combination", "混合肌肤", "T区偏油，两颊偏干", SkinPoreLight),
-    SkinTypeOption("sensitive", "敏感肌肤", "容易泛红、刺痛，屏障脆弱", SkinRednessLight),
+    SkinTypeOption("oily", "油性肌肤", "T区容易出油，毛孔偏大", Secondary300),
+    SkinTypeOption("dry", "干性肌肤", "容易干燥紧绷，需要保湿", MetricHydrationLight),
+    SkinTypeOption("combination", "混合肌肤", "T区偏油，两颊偏干", MetricPoreLight),
+    SkinTypeOption("sensitive", "敏感肌肤", "容易泛红、刺痛，屏障脆弱", MetricRednessLight),
     SkinTypeOption("normal", "中性肌肤", "水油平衡，状态稳定", Lavender400),
 )
 
@@ -187,8 +187,8 @@ class OnboardingScreen : Screen {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 36.dp)
-                    .padding(bottom = 50.dp),
+                    .padding(horizontal = MaterialTheme.spacing.xl)
+                    .padding(bottom = MaterialTheme.spacing.section),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 // Page indicator — active = wide bar, inactive = dot
@@ -292,8 +292,8 @@ class OnboardingScreen : Screen {
                             ) {
                                 Text(
                                     text = "跳过",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.SemiBold,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontWeight = FontWeight.Medium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
@@ -313,7 +313,7 @@ private fun OnboardingPageContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 36.dp),
+            .padding(horizontal = MaterialTheme.spacing.xl),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -364,8 +364,8 @@ private fun OnboardingPageContent(
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.ExtraBold,
             textAlign = TextAlign.Center,
-            letterSpacing = (-0.6).sp,
-            lineHeight = 36.sp,
+            letterSpacing = (-0.5).sp,
+            lineHeight = 35.sp,
             modifier = Modifier
                 .padding(top = MaterialTheme.spacing.xl)
                 .animateListItem(index + 1),
@@ -379,7 +379,7 @@ private fun OnboardingPageContent(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             lineHeight = 24.sp,
             modifier = Modifier
-                .padding(top = 14.dp)
+                .padding(top = MaterialTheme.spacing.compact)
                 .animateListItem(index + 2),
         )
     }
@@ -393,15 +393,15 @@ private fun SkinTypeSelectionPage(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 28.dp),
+            .padding(horizontal = MaterialTheme.spacing.lg),
     ) {
         Text(
             text = "你的肤质是？",
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineSmall.copy(fontSize = 26.sp),
             fontWeight = FontWeight.ExtraBold,
             letterSpacing = (-0.5).sp,
             modifier = Modifier
-                .padding(top = MaterialTheme.spacing.lg)
+                .padding(top = MaterialTheme.spacing.cardInner)
                 .animateListItem(0),
         )
 
@@ -410,7 +410,7 @@ private fun SkinTypeSelectionPage(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
-                .padding(top = MaterialTheme.spacing.xs, bottom = MaterialTheme.spacing.lg)
+                .padding(top = MaterialTheme.spacing.xs, bottom = MaterialTheme.spacing.listGap)
                 .animateListItem(1),
         )
 
@@ -425,7 +425,7 @@ private fun SkinTypeSelectionPage(
                     animationSpec = tween(Motion.SHORT),
                 )
                 val bgColor by animateColorAsState(
-                    targetValue = if (isSelected) Mint50
+                    targetValue = if (isSelected) Primary50
                     else MaterialTheme.colorScheme.surface,
                     animationSpec = tween(Motion.SHORT),
                 )
@@ -434,23 +434,23 @@ private fun SkinTypeSelectionPage(
                     modifier = Modifier
                         .fillMaxWidth()
                         .animateListItem(index + 2)
-                        .clip(MaterialTheme.shapes.extraLarge)
+                        .clip(MaterialTheme.shapes.large)
                         .border(
                             width = if (isSelected) 2.dp else 1.5.dp,
                             color = borderColor,
-                            shape = MaterialTheme.shapes.extraLarge,
+                            shape = MaterialTheme.shapes.large,
                         )
                         .background(bgColor)
                         .clickable { onSkinTypeSelected(option.id) }
-                        .padding(MaterialTheme.spacing.md),
+                        .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.listGap),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.listGap),
                 ) {
-                    // Color icon container (44dp rounded square, 13dp radius)
+                    // Color icon container (40dp rounded square, medium radius)
                     Box(
                         modifier = Modifier
-                            .size(44.dp)
-                            .clip(RoundedCornerShape(13.dp))
+                            .size(40.dp)
+                            .clip(MaterialTheme.shapes.medium)
                             .background(option.color.copy(alpha = 0.2f)),
                         contentAlignment = Alignment.Center,
                     ) {
@@ -468,13 +468,13 @@ private fun SkinTypeSelectionPage(
                         Text(
                             text = option.label,
                             style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.SemiBold,
                         )
                         Text(
                             text = option.description,
-                            style = MaterialTheme.typography.labelSmall,
+                            style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(top = 2.dp),
+                            modifier = Modifier.padding(top = 1.dp),
                         )
                     }
 

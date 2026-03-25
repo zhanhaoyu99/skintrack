@@ -31,7 +31,7 @@ import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import com.skintrack.app.domain.model.SkinRecord
 import com.skintrack.app.platform.pathToImageModel
-import com.skintrack.app.ui.theme.Mint50
+import com.skintrack.app.ui.theme.Primary50
 import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.extendedColors
 import com.skintrack.app.ui.theme.gradients
@@ -56,14 +56,14 @@ fun ShareCardContent(
             .fillMaxWidth()
             .shadow(
                 elevation = 24.dp,
-                shape = MaterialTheme.shapes.medium,
+                shape = MaterialTheme.shapes.extraLarge,
                 ambientColor = Color.Black.copy(alpha = 0.12f),
                 spotColor = Color.Black.copy(alpha = 0.05f),
             )
             .border(
                 width = 0.5.dp,
                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.06f),
-                shape = MaterialTheme.shapes.medium,
+                shape = MaterialTheme.shapes.extraLarge,
             ),
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -72,7 +72,7 @@ fun ShareCardContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.gradients.hero)
-                    .padding(horizontal = spacing.md, vertical = spacing.md),
+                    .padding(horizontal = spacing.md, vertical = spacing.listGap),
             ) {
                 // Decorative circle
                 Box(
@@ -89,31 +89,31 @@ fun ShareCardContent(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(spacing.sm),
                 ) {
-                    // Logo icon (32dp rounded square)
+                    // Logo icon (24dp rounded square)
                     Box(
                         modifier = Modifier
-                            .size(32.dp)
+                            .size(24.dp)
                             .background(
                                 color = Color.White.copy(alpha = 0.18f),
-                                shape = MaterialTheme.shapes.small,
+                                shape = MaterialTheme.shapes.extraSmall,
                             ),
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
                             text = "\uD83C\uDF3F",
-                            fontSize = 16.sp,
+                            fontSize = 14.sp,
                         )
                     }
                     Text(
                         text = "SkinTrack",
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
                         modifier = Modifier.weight(1f),
                     )
                     Text(
                         text = "变美日记",
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.labelSmall,
                         color = Color.White.copy(alpha = 0.7f),
                     )
                 }
@@ -154,8 +154,8 @@ fun ShareCardContent(
                 ) {
                     Text(
                         text = "\u203A",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.ExtraBold,
                         color = MaterialTheme.colorScheme.primary,
                     )
                 }
@@ -167,7 +167,7 @@ fun ShareCardContent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = spacing.md, vertical = spacing.lg),
+                    .padding(spacing.md),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(spacing.sm),
             ) {
@@ -195,7 +195,7 @@ fun ShareCardContent(
                         fontSize = 44.sp,
                         fontWeight = FontWeight.ExtraBold,
                         color = scoreColor,
-                        letterSpacing = (-2).sp,
+                        letterSpacing = (-1.5).sp,
                     )
                 }
                 // Description with days
@@ -204,14 +204,14 @@ fun ShareCardContent(
                 val daysBetween = beforeDate.date.daysUntil(afterDate.date)
                 Text(
                     text = "${daysBetween} 天变美日记~",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 // Time range pill
                 Text(
                     text = "\uD83D\uDCC5 ${formatFullDate(before.recordedAt)} - ${formatFullDate(after.recordedAt)}",
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
@@ -219,7 +219,7 @@ fun ShareCardContent(
                             color = MaterialTheme.colorScheme.surfaceVariant,
                             shape = com.skintrack.app.ui.theme.FullRoundedShape,
                         )
-                        .padding(horizontal = spacing.sm, vertical = spacing.xs),
+                        .padding(horizontal = spacing.listGap, vertical = spacing.xs),
                 )
             }
 
@@ -229,26 +229,26 @@ fun ShareCardContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 18.dp, vertical = 12.dp),
+                    .padding(horizontal = spacing.md, vertical = spacing.compact),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column {
                     Text(
                         text = "使用 SkinTrack",
-                        fontSize = 11.sp,
+                        style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(
                         text = "见证每一天的美好变化",
-                        fontSize = 11.sp,
+                        style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 // QR placeholder
                 Box(
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(32.dp)
                         .background(
                             color = MaterialTheme.colorScheme.surfaceVariant,
                             shape = MaterialTheme.shapes.extraSmall,
@@ -274,7 +274,7 @@ internal fun TemplateSelector(
 
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(spacing.sm, Alignment.CenterHorizontally),
+        horizontalArrangement = Arrangement.spacedBy(spacing.listGap, Alignment.CenterHorizontally),
     ) {
         repeat(3) { index ->
             val isSelected = index == 0
@@ -293,9 +293,9 @@ internal fun TemplateSelector(
                             Modifier
                         },
                     )
-                    .size(48.dp)
+                    .size(56.dp)
                     .background(
-                        color = if (isSelected) Mint50
+                        color = if (isSelected) Primary50
                         else MaterialTheme.colorScheme.surface,
                         shape = MaterialTheme.shapes.medium,
                     )
@@ -362,7 +362,7 @@ internal fun ShareTargets(
         targets.forEach { target ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(spacing.xs),
+                verticalArrangement = Arrangement.spacedBy(spacing.iconGap),
             ) {
                 Box(
                     modifier = Modifier

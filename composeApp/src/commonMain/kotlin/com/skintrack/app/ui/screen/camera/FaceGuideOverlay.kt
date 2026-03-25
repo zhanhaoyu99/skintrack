@@ -90,7 +90,7 @@ fun FaceGuideOverlay(modifier: Modifier = Modifier) {
 
         Text(
             text = "将面部置于框内",
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.extendedColors.camera.guideBorder,
             modifier = Modifier
                 .align(Alignment.Center)

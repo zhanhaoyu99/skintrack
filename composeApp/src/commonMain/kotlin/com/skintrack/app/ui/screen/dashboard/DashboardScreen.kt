@@ -60,16 +60,16 @@ import com.skintrack.app.ui.screen.camera.CameraScreen
 import com.skintrack.app.ui.screen.product.ProductManageScreen
 import com.skintrack.app.ui.screen.share.ShareCardScreen
 import com.skintrack.app.ui.screen.timeline.TrendChart
-import com.skintrack.app.ui.theme.Apricot100
-import com.skintrack.app.ui.theme.Apricot50
+import com.skintrack.app.ui.theme.Secondary100
+import com.skintrack.app.ui.theme.Secondary50
 import com.skintrack.app.ui.theme.FullRoundedShape
 import com.skintrack.app.ui.theme.Lavender50
 import com.skintrack.app.ui.theme.Lavender100
 import com.skintrack.app.ui.theme.Lavender200
 import com.skintrack.app.ui.theme.Lavender300
-import com.skintrack.app.ui.theme.Mint50
-import com.skintrack.app.ui.theme.Mint100
-import com.skintrack.app.ui.theme.Mint200
+import com.skintrack.app.ui.theme.Primary50
+import com.skintrack.app.ui.theme.Primary100
+import com.skintrack.app.ui.theme.Primary200
 import com.skintrack.app.ui.theme.Rose50
 import com.skintrack.app.ui.theme.Rose100
 import com.skintrack.app.ui.theme.Rose200
@@ -103,11 +103,13 @@ import org.koin.compose.viewmodel.koinViewModel
     if (isSystemInDarkTheme()) Rose300.copy(alpha = 0.1f) else Rose50
 
 @Composable private fun avatarGradient() =
-    if (isSystemInDarkTheme()) listOf(Rose500, Rose600) else listOf(Rose200, Rose300)
+    if (isSystemInDarkTheme()) listOf(Rose500, Rose600) else listOf(Rose300, Rose400)
 
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel = koinViewModel(),
+    onSwitchToTimeline: () -> Unit = {},
+    onSwitchToProfile: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val selectedPeriod by viewModel.selectedTrendPeriod.collectAsState()
@@ -131,10 +133,11 @@ fun DashboardScreen(
                 selectedPeriod = selectedPeriod,
                 onPeriodChange = viewModel::onTrendPeriodChange,
                 onTakePhoto = { navigator.push(CameraScreen()) },
-                onNavigateTimeline = { /* Tab switch handled by HomeScreen */ },
+                onNavigateTimeline = onSwitchToTimeline,
                 onNavigateProduct = { navigator.push(ProductManageScreen()) },
                 onNavigateAttribution = { navigator.push(AttributionReportScreen()) },
                 onNavigateShare = { navigator.push(ShareCardScreen()) },
+                onNavigateProfile = onSwitchToProfile,
             )
         }
     }
@@ -146,6 +149,7 @@ fun DashboardScreen(
 private fun DashboardHeader(
     username: String,
     modifier: Modifier = Modifier,
+    onAvatarClick: () -> Unit = {},
 ) {
     val spacing = MaterialTheme.spacing
 
@@ -168,15 +172,15 @@ private fun DashboardHeader(
             Text(
                 text = greeting,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.Normal,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                letterSpacing = 0.1.sp,
+                letterSpacing = 0.05.sp,
             )
             Text(
                 text = username,
                 fontSize = 26.sp,
-                fontWeight = FontWeight.ExtraBold,
-                letterSpacing = (-0.6).sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = (-0.5).sp,
                 modifier = Modifier.padding(top = 2.dp),
             )
         }
@@ -216,14 +220,15 @@ private fun DashboardHeader(
                 )
             }
 
-            // User avatar
+            // User avatar — tap to navigate to Profile
             Box(
                 modifier = Modifier
                     .size(44.dp)
                     .clip(CircleShape)
                     .background(
                         brush = Brush.linearGradient(avatarGradient()),
-                    ),
+                    )
+                    .clickable(onClick = onAvatarClick),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
@@ -260,7 +265,7 @@ private fun DashboardEmptyContent(
                     // Decorative gradient background circles
                     drawCircle(
                         brush = Brush.radialGradient(
-                            colors = listOf(Mint100.copy(alpha = 0.5f), Color.Transparent),
+                            colors = listOf(Primary100.copy(alpha = 0.5f), Color.Transparent),
                         ),
                         radius = 110.dp.toPx(),
                         center = Offset(-40.dp.toPx(), size.height * 0.12f),
@@ -305,7 +310,7 @@ private fun DashboardEmptyContent(
                             .clip(CircleShape)
                             .background(
                                 brush = Brush.radialGradient(
-                                    colors = listOf(Mint100, Mint50, MaterialTheme.colorScheme.surfaceVariant),
+                                    colors = listOf(Primary100, Primary50, MaterialTheme.colorScheme.surfaceVariant),
                                 ),
                             ),
                     )
@@ -373,8 +378,8 @@ private fun DashboardEmptyContent(
                     EmptyStepItem(
                         emoji = "\uD83D\uDCF7",
                         label = "拍照",
-                        borderColor = Mint200,
-                        bgColor = Mint50,
+                        borderColor = Primary200,
+                        bgColor = Primary50,
                     )
                     EmptyStepItem(
                         emoji = "\uD83D\uDD2C",
@@ -477,11 +482,15 @@ private fun DashboardContent(
     onNavigateProduct: () -> Unit,
     onNavigateAttribution: () -> Unit,
     onNavigateShare: () -> Unit,
+    onNavigateProfile: () -> Unit = {},
 ) {
     val spacing = MaterialTheme.spacing
 
     Column(modifier = Modifier.fillMaxSize()) {
-        DashboardHeader(username = state.username)
+        DashboardHeader(
+            username = state.username,
+            onAvatarClick = onNavigateProfile,
+        )
 
         LazyColumn(
             contentPadding = PaddingValues(horizontal = spacing.md, vertical = spacing.sm),
@@ -575,7 +584,7 @@ private fun HeroCard(
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(28.dp),
+        shape = MaterialTheme.shapes.extraLarge, // radius-xl = 24dp
     ) {
         Box(
             modifier = Modifier
@@ -608,7 +617,7 @@ private fun HeroCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 18.dp),
+                    .padding(spacing.cardInner), // 20dp all sides per HTML
             ) {
                 // Top: ScoreRing + status text
                 Row(
@@ -634,10 +643,10 @@ private fun HeroCard(
                         Text(
                             text = getScoreStatusTitle(record.overallScore),
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.SemiBold, // h3 = 600
                             color = Color.White,
                             fontSize = 19.sp,
-                            letterSpacing = (-0.3).sp,
+                            letterSpacing = (-0.2).sp, // h3 ls
                         )
                         Text(
                             text = getScoreStatusSubtitle(record.overallScore),
@@ -653,7 +662,7 @@ private fun HeroCard(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 14.dp),
+                        .padding(top = spacing.md), // 16dp per HTML
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -667,7 +676,7 @@ private fun HeroCard(
                             modifier = Modifier
                                 .clip(FullRoundedShape)
                                 .background(Color.White.copy(alpha = 0.15f))
-                                .padding(horizontal = 14.dp, vertical = 6.dp),
+                                .padding(horizontal = spacing.md, vertical = spacing.iconGap), // 16dp, 6dp
                         ) {
                             Text(
                                 text = "$arrow 较上周 $sign${scoreChange.let { "%.1f".format(it) }}",
@@ -840,7 +849,7 @@ private fun CameraReminderCard(
             Box(
                 modifier = Modifier
                     .size(44.dp)
-                    .clip(RoundedCornerShape(13.dp))
+                    .clip(MaterialTheme.shapes.medium) // radius-md = 12dp
                     .background(
                         brush = Brush.linearGradient(
                             listOf(
@@ -861,8 +870,8 @@ private fun CameraReminderCard(
                 modifier = Modifier.weight(1f),
             ) {
                 Text(
-                    text = "今天还没拍照哦，别忘了记录~",
-                    fontSize = 15.sp,
+                    text = "今天还没拍照哦~",
+                    fontSize = 14.sp, // b2
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -918,7 +927,7 @@ private fun QuickActionsGrid(
                 title = "肌肤趋势",
                 subtitle = "7 天变化",
                 iconEmoji = "\uD83D\uDCC8",
-                iconBgColor = Mint100,
+                iconBgColor = Primary100,
                 onClick = onNavigateTimeline,
                 modifier = Modifier.weight(1f),
             )
@@ -926,7 +935,7 @@ private fun QuickActionsGrid(
                 title = "护肤品",
                 subtitle = if (productCount > 0) "$productCount 个在用" else "在用产品",
                 iconEmoji = "\uD83E\uDDF4",
-                iconBgColor = Apricot100,
+                iconBgColor = Secondary100,
                 onClick = onNavigateProduct,
                 modifier = Modifier.weight(1f),
             )
@@ -1002,7 +1011,7 @@ private fun QuickActionCard(
                 )
                 Text(
                     text = subtitle,
-                    fontSize = 11.sp,
+                    fontSize = 10.sp, // c2
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 1.dp),
                 )
@@ -1049,9 +1058,9 @@ private fun SkincareTipCard(
                 .background(
                     brush = Brush.linearGradient(listOf(lavenderBg(), roseBgLight())),
                 )
-                .padding(horizontal = spacing.md, vertical = 12.dp),
+                .padding(horizontal = spacing.md, vertical = spacing.listGap), // 12dp
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            horizontalArrangement = Arrangement.spacedBy(spacing.listGap), // 12dp per HTML
         ) {
             // Icon box
             Box(
@@ -1158,10 +1167,10 @@ private fun CheckInCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp)
-                    .clip(MaterialTheme.shapes.small)
+                    .clip(MaterialTheme.shapes.medium) // radius-md = 12dp
                     .background(
                         brush = Brush.linearGradient(
-                            listOf(Mint50, Apricot50),
+                            listOf(Primary50, Secondary50),
                         ),
                     )
                     .padding(horizontal = 12.dp, vertical = spacing.sm),
@@ -1186,7 +1195,7 @@ private fun DayCircle(day: DayCheckIn) {
     ) {
         Text(
             text = day.weekdayLabel,
-            fontSize = 11.sp,
+            fontSize = 10.sp, // c2
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -1200,7 +1209,7 @@ private fun DayCircle(day: DayCheckIn) {
                             .background(MaterialTheme.colorScheme.primary)
                         day.isToday -> Modifier
                             .clip(CircleShape)
-                            .background(Mint50)
+                            .background(Primary50)
                             .border(2.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
                         else -> Modifier
                             .clip(CircleShape)
@@ -1280,7 +1289,7 @@ private fun TrendChartCard(
                             else MaterialTheme.colorScheme.surfaceVariant,
                         )
                         .clickable { onPeriodChange(days) }
-                        .padding(horizontal = 14.dp, vertical = 5.dp),
+                        .padding(horizontal = 16.dp, vertical = 6.dp), // per CSS period-chip
                 ) {
                     Text(
                         text = label,
@@ -1319,7 +1328,7 @@ private fun TrendChartCard(
                 dateLabels.forEach { label ->
                     Text(
                         text = label,
-                        fontSize = 11.sp,
+                        fontSize = 10.sp, // c2
                         fontWeight = if (label == "今天") FontWeight.Bold else FontWeight.Medium,
                         color = if (label == "今天") MaterialTheme.colorScheme.primary
                         else MaterialTheme.colorScheme.onSurfaceVariant,

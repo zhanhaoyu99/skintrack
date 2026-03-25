@@ -128,7 +128,7 @@ class EditProfileScreen : Screen {
                     .padding(padding)
                     .imePadding()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = MaterialTheme.spacing.lg),
+                    .padding(horizontal = MaterialTheme.spacing.md),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
             ) {
@@ -142,7 +142,7 @@ class EditProfileScreen : Screen {
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(80.dp)
+                            .size(88.dp)
                             .clip(CircleShape)
                             .background(
                                 brush = Brush.linearGradient(
@@ -155,8 +155,8 @@ class EditProfileScreen : Screen {
                             text = initial,
                             style = MaterialTheme.typography.headlineMedium,
                             color = Color.White,
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 34.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 30.sp,
                         )
                     }
                     // Camera icon overlay
@@ -185,19 +185,28 @@ class EditProfileScreen : Screen {
                 ) {
                     Text(
                         text = "昵称",
-                        style = MaterialTheme.typography.labelLarge,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                    val nicknameMaxLength = 20
+                    val isNicknameTooLong = uiState.displayName.length >= nicknameMaxLength
                     OutlinedTextField(
                         value = uiState.displayName,
-                        onValueChange = viewModel::updateDisplayName,
+                        onValueChange = { if (it.length <= nicknameMaxLength) viewModel.updateDisplayName(it) },
                         placeholder = { Text("输入你的昵称") },
                         singleLine = true,
                         isError = uiState.error != null,
                         supportingText = if (uiState.error != null) {
                             { Text(uiState.error!!) }
                         } else {
-                            null
+                            {
+                                Text(
+                                    text = "${uiState.displayName.length}/$nicknameMaxLength",
+                                    color = if (isNicknameTooLong) MaterialTheme.colorScheme.error
+                                        else MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
                         },
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                         keyboardActions = KeyboardActions(
@@ -216,7 +225,8 @@ class EditProfileScreen : Screen {
                 ) {
                     Text(
                         text = "邮箱",
-                        style = MaterialTheme.typography.labelLarge,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     OutlinedTextField(
@@ -236,7 +246,8 @@ class EditProfileScreen : Screen {
                 ) {
                     Text(
                         text = "肤质",
-                        style = MaterialTheme.typography.labelLarge,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     FlowRow(
@@ -274,7 +285,8 @@ class EditProfileScreen : Screen {
                 ) {
                     Text(
                         text = "肌肤目标",
-                        style = MaterialTheme.typography.labelLarge,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(

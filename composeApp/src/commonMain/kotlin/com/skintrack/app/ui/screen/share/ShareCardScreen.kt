@@ -156,7 +156,7 @@ private fun ShareCardContentView(
         if (state.canShare) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(spacing.md),
+                horizontalArrangement = Arrangement.spacedBy(spacing.listGap),
             ) {
                 OutlinedButton(
                     onClick = onSaveImage,

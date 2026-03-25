@@ -55,12 +55,13 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.skintrack.app.domain.model.SubscriptionPlan
-import com.skintrack.app.ui.theme.Apricot300
-import com.skintrack.app.ui.theme.Apricot400
+import com.skintrack.app.ui.theme.Secondary300
+import com.skintrack.app.ui.theme.Secondary400
 import com.skintrack.app.ui.theme.FullRoundedShape
 import com.skintrack.app.ui.theme.Lavender50
-import com.skintrack.app.ui.theme.Mint50
+import com.skintrack.app.ui.theme.Primary50
 import com.skintrack.app.ui.theme.Rose50
+import com.skintrack.app.ui.theme.appTypography
 import com.skintrack.app.ui.theme.dimens
 import com.skintrack.app.ui.theme.spacing
 import org.koin.compose.viewmodel.koinViewModel
@@ -208,14 +209,14 @@ private fun PaywallContent(
                     }
                     Text(
                         text = "开启你的\n变美之旅",
-                        style = MaterialTheme.typography.headlineMedium,
+                        style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.ExtraBold,
                         color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center,
                     )
                     Text(
                         text = "科学护肤，让每一天的努力都被看见",
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
                     )
@@ -223,8 +224,8 @@ private fun PaywallContent(
                     // Trial badge (green pill with gradient)
                     Text(
                         text = "\u24D8 新用户享 14 天免费试用",
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.SemiBold,
                         color = Color(0xFF059669),
                         modifier = Modifier
                             .background(
@@ -233,7 +234,7 @@ private fun PaywallContent(
                                 ),
                                 shape = FullRoundedShape,
                             )
-                            .padding(horizontal = spacing.md, vertical = spacing.sm),
+                            .padding(horizontal = spacing.md, vertical = spacing.xs),
                     )
 
                     // Social proof: overlapping avatars + subscriber count
@@ -262,7 +263,7 @@ private fun PaywallContent(
         item(key = "plans") {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(spacing.compact),
             ) {
                 PlanCard(
                     title = "月度会员",
@@ -303,8 +304,7 @@ private fun PaywallContent(
             ) {
                 Text(
                     text = if (uiState.isPurchasing) "处理中..." else "立即订阅",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.labelLarge,
                 )
             }
         }
@@ -331,8 +331,7 @@ private fun PaywallContent(
                 TextButton(onClick = onRestore) {
                     Text(
                         "恢复购买",
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
@@ -357,16 +356,16 @@ private fun BenefitItem(title: String, subtitle: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 11.dp),
-        horizontalArrangement = Arrangement.spacedBy(14.dp),
+            .padding(vertical = MaterialTheme.spacing.compact),
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.listGap),
         verticalAlignment = Alignment.Top,
     ) {
-        // Green check circle (26dp)
+        // Green check circle (24dp)
         Box(
             modifier = Modifier
-                .size(26.dp)
+                .size(24.dp)
                 .background(
-                    brush = Brush.linearGradient(listOf(Mint50, MaterialTheme.colorScheme.primaryContainer)),
+                    brush = Brush.linearGradient(listOf(Primary50, MaterialTheme.colorScheme.primaryContainer)),
                     shape = CircleShape,
                 ),
             contentAlignment = Alignment.Center,
@@ -381,8 +380,8 @@ private fun BenefitItem(title: String, subtitle: String) {
         Column {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
@@ -410,7 +409,7 @@ private fun PlanCard(
     val borderColor = if (isSelected) MaterialTheme.colorScheme.primary
     else MaterialTheme.colorScheme.outlineVariant
     val containerColor = if (isSelected) {
-        Mint50
+        Primary50
     } else {
         MaterialTheme.colorScheme.surface
     }
@@ -452,15 +451,14 @@ private fun PlanCard(
                             Modifier
                         },
                     )
-                    .padding(horizontal = 12.dp, vertical = 18.dp),
+                    .padding(spacing.md),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(spacing.xs),
             ) {
                 // Plan period label
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 // Price: large number + small unit
@@ -469,13 +467,12 @@ private fun PlanCard(
                 ) {
                     Text(
                         text = price,
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.ExtraBold,
+                        style = MaterialTheme.appTypography.numLg,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                     Text(
                         text = unit,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(bottom = 4.dp),
@@ -513,7 +510,7 @@ private fun PlanCard(
                     modifier = Modifier
                         .background(
                             brush = Brush.horizontalGradient(
-                                listOf(Apricot300, Apricot400),
+                                listOf(Secondary300, Secondary400),
                             ),
                             shape = FullRoundedShape,
                         )
@@ -565,13 +562,13 @@ private fun SocialProofInline() {
         Row {
             Text(
                 text = "12,580",
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = " 位用户已订阅",
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }

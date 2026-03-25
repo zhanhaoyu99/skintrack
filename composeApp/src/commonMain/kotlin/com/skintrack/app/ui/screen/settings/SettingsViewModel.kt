@@ -52,6 +52,9 @@ class SettingsViewModel(
     private val _deleteState = MutableStateFlow<DeleteState>(DeleteState.Idle)
     val deleteState: StateFlow<DeleteState> = _deleteState.asStateFlow()
 
+    private val _showLogoutConfirm = MutableStateFlow(false)
+    val showLogoutConfirm: StateFlow<Boolean> = _showLogoutConfirm.asStateFlow()
+
     private val _loggedOut = MutableStateFlow(false)
     val loggedOut: StateFlow<Boolean> = _loggedOut.asStateFlow()
 
@@ -64,6 +67,7 @@ class SettingsViewModel(
                 _reminderEnabled.value = prefs?.reminderEnabled ?: false
                 _reminderTime.value = prefs?.reminderTime ?: "08:00"
                 _weeklyReportEnabled.value = prefs?.weeklyReportEnabled ?: true
+                _aiNotificationEnabled.value = prefs?.aiNotificationEnabled ?: false
             }
         }
     }
@@ -90,7 +94,10 @@ class SettingsViewModel(
     }
 
     fun toggleAiNotification() {
-        _aiNotificationEnabled.value = !_aiNotificationEnabled.value
+        viewModelScope.launch {
+            ensurePreferencesExist()
+            userPreferencesDao.setAiNotificationEnabled(!_aiNotificationEnabled.value)
+        }
     }
 
     fun exportData() {
@@ -157,7 +164,16 @@ class SettingsViewModel(
         }
     }
 
-    fun logout() {
+    fun requestLogout() {
+        _showLogoutConfirm.value = true
+    }
+
+    fun dismissLogoutConfirm() {
+        _showLogoutConfirm.value = false
+    }
+
+    fun confirmLogout() {
+        _showLogoutConfirm.value = false
         viewModelScope.launch {
             authRepository.logout()
             _loggedOut.value = true
